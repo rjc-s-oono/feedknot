@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}&nbsp;|&nbsp;サンプルページ - 完了{% endblock %}
+{% block include_css %}
+<link href="/media/css/members/information.css?{{ QUERY_STRING }}" type="text/css"  rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <h2>サンプルページ - 完了</h2>
+    <div class="complete-messages">
+        サンプルページの編集が完了しました。
+    </div>
+
+    <div class="operation">
+        <a href="{% url index %}">一覧に戻る</a>
+    </div>
+{% endblock %}

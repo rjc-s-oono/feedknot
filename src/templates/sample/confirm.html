@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}&nbsp;|&nbsp;サンプルページ({{ proc_title }}){% endblock %}
+
+{% block include_css %}
+{% endblock %}
+{% block include_js %}
+{% endblock %}
+
+{% block content %}
+    <h3>{{ proc_title }}</h3><br/>
+
+    <div class="validation">
+        <form action="." method="post" accept-charset="utf-8">
+            {% csrf_token %}
+            {% for field in form %}{{ field.as_hidden }}{% endfor %}
+            <label for="id_title">{{ form.title.label }}</label>{{ form.title.data }}<br/><br/>
+            <label for="id_content">{{ form.content.label }}</label>{{ form.content.data }}<br/><br/>
+            <p><input class="button return" type="submit" name="return" value="戻る"></p><br/>
+            <p><input type="submit" value="登録" /></p><br/>
+        </form>
+    </div>
+
+    <div class="operation">
+        <a href="{% url index %}">一覧に戻る</a>
+    </div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}&nbsp;|&nbsp;サンプルページ{% endblock %}
+
+{% block include_css %}
+{% endblock %}
+{% block include_js %}
+{% endblock %}
+
+{% block content %}
+<h3>一覧</h3>
+
+{% for data in data_list %}
+<dt>
+    <a href="{% url detail data.id %}">{{ data.title }}</a>
+</dt>
+
+<dd>
+    {{ data.content }}
+</dd><br />
+
+<dd class="operation">
+    <a href="{% url edit data.id %}">編集</a>
+    <a href="{% url delete data.id %}">削除</a>
+</dd>
+<hr />
+{% endfor %}
+{% endblock %}
