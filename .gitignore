@@ -1,4 +1,11 @@
 *.log
 *.pot
 *.pyc
+__pycache__
+
+.project
+.settings
+.pydevproject
+
 local_settings.py
+feedknot.db
