@@ -2,7 +2,7 @@
 import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -130,6 +130,13 @@ INSTALLED_APPS = (
     'sample',
 )
 
+LOG_LEVEL = 'INFO'
+
+try:
+    from feedknot.local_settings import *
+except ImportError:
+    pass
+
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.
@@ -158,3 +165,36 @@ LOGGING = {
         },
     }
 }
+
+#if DEBUG:
+#    MIDDLEWARE_CLASSES += (
+#        'debug_toolbar.middleware.DebugToolbarMiddleware',
+#    )
+#
+#    INTERNAL_IPS = ('127.0.0.1',)
+#
+#    INSTALLED_APPS += (
+#        'debug_toolbar',
+#    )
+#
+#    DEBUG_TOOLBAR_PANELS = (
+#        'debug_toolbar.panels.version.VersionDebugPanel',
+#        'debug_toolbar.panels.timer.TimerDebugPanel',
+#        'debug_toolbar.panels.settings_vars.SettingsVarsDebugPanel',
+#        'debug_toolbar.panels.headers.HeaderDebugPanel',
+#        'debug_toolbar.panels.request_vars.RequestVarsDebugPanel',
+#        'debug_toolbar.panels.template.TemplateDebugPanel',
+#        'debug_toolbar.panels.sql.SQLDebugPanel',
+#        'debug_toolbar.panels.signals.SignalDebugPanel',
+#        'debug_toolbar.panels.logger.LoggingPanel',
+#    )
+#
+#    def custom_show_toolbar(request):
+#        return True # Always show toolbar, for example purposes only.
+#
+#    DEBUG_TOOLBAR_CONFIG = {
+#        'INTERCEPT_REDIRECTS': False,
+#        'SHOW_TOOLBAR_CALLBACK': custom_show_toolbar,
+#        #'EXTRA_SIGNALS': ['myproject.signals.MySignal'],
+#        'HIDE_DJANGO_SQL': False,
+#    }
