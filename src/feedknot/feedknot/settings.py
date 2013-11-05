@@ -128,6 +128,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
 
     'sample',
+    'feed',
 )
 
 LOG_LEVEL = 'INFO'

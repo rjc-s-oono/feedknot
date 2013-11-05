@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}&nbsp;|&nbsp;メイン{% endblock %}
+
+{% block include_css %}
+{% endblock %}
+{% block include_js %}
+{% endblock %}
+
+{% block content %}
+<h3>{{box_title}}</h3>
+<hr />
+{% for feed in feed_list %}
+{{feed.id}}<br>
+{{feed.feed_id}}<br>
+{{feed.box_id}}<br>
+{{feed.user_id}}<br>
+{{feed.article_title}}<br>
+{{feed.article_address}}<br>
+{{feed.pub_date}}<br>
+{{feed.read_flg}}<br>
+<hr />
+{% endfor %}
+{% endblock %}

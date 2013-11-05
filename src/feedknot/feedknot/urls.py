@@ -21,7 +21,7 @@ urlpatterns = patterns('',
     url(r'^create/$', 'sample.views.create', name='create'),
     url(r'^edit/(?P<sample_id>\d+)/$', 'sample.views.edit', name='edit'),
     url(r'^delete/(?P<sample_id>\d+)/$', 'sample.views.delete', name='delete'),
-
+    url(r'^main/$', 'feed.views.main', name='main'),
 )
 
 if settings.DEBUG:
