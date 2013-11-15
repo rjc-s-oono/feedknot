@@ -4,14 +4,20 @@ from feed.models import Article
 from feed.models import Feed
 from time import mktime
 from datetime import datetime
+from django.core.exceptions import ObjectDoesNotExist
 
 import feedparser
 
 def main(request):
 
-    feedInfo = Feed.objects.get(id=1,box_id=1,user_id=1)
+    try:
+        feedInfo = Feed.objects.get(id=1,box_id=1,user_id=1)
+    except ObjectDoesNotExist:
+        Feed.objects.create(box_id=1,user_id=1,rss_address="http://rss.dailynews.yahoo.co.jp/fc/rss.xml",last_take_date=datetime.today(),feed_priority=1)
+        feedInfo = Feed.objects.get(id=1,box_id=1,user_id=1)
     rssurl= feedInfo.rss_address
     ltd = feedInfo.last_take_date
+    tz = ltd.tzinfo
     feedInfo.last_take_date = datetime.today()
 
 
@@ -21,8 +27,9 @@ def main(request):
     for entry in fdp['entries']:
         title = entry['title']
         link = entry['link']
-        dt = datetime.fromtimestamp(mktime(entry['published_parsed']))
-        Article.objects.create(feed_id=1,box_id=1,user_id=1,article_title=title,article_address=link,pub_date=dt)
+        dt = datetime.fromtimestamp(mktime(entry['published_parsed']), tz)
+        if ltd < dt:
+            Article.objects.create(feed_id=1,box_id=1,user_id=1,article_title=title,article_address=link,pub_date=dt)
         #feed={'feedId':'1234',
         #       'url':link,
         #       'articleSubject':title,

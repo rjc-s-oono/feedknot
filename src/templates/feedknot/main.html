@@ -10,15 +10,15 @@
 {% block content %}
 <h3>{{box_title}}</h3>
 <hr />
-{% for feed in feed_list %}
-{{feed.id}}<br>
-{{feed.feed_id}}<br>
-{{feed.box_id}}<br>
-{{feed.user_id}}<br>
-{{feed.article_title}}<br>
-{{feed.article_address}}<br>
-{{feed.pub_date}}<br>
-{{feed.read_flg}}<br>
+{% for article in article_list %}
+{{article.id}}<br>
+{{article.feed_id}}<br>
+{{article.box_id}}<br>
+{{article.user_id}}<br>
+{{article.article_title}}<br>
+{{article.article_address}}<br>
+{{article.pub_date}}<br>
+{{article.read_flg}}<br>
 <hr />
 {% endfor %}
 {% endblock %}
