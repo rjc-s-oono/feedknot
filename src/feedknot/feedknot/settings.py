@@ -129,6 +129,8 @@ INSTALLED_APPS = (
 
     'sample',
     'feed',
+    'box',
+    'administration',
 )
 
 LOG_LEVEL = 'INFO'

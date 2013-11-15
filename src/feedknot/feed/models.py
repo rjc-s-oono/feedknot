@@ -5,7 +5,7 @@ class Feed(models.Model):
      box_id = models.IntegerField(u'ボックスID',max_length = 5)
 #     user_id = models.ForeignKey()
      user_id = models.IntegerField(u'ユーザID',max_length = 5)
-     rss_address = models.URLField(u'RSSアドレス',max_length = 5)
+     rss_address = models.URLField(u'RSSアドレス',max_length = 255)
      last_take_date = models.DateTimeField(u'最終読込日時', auto_now_add=False, blank=False, null=False)
      feed_priority= models.IntegerField(u'優先度',max_length = 1)
 
