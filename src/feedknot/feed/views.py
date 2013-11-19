@@ -1,5 +1,5 @@
-from django.http import HttpResponse
 from django.shortcuts import render_to_response
+from box.models import Box
 from feed.models import Article
 from feed.models import Feed
 from time import mktime
@@ -10,6 +10,13 @@ import feedparser
 
 def main(request):
 
+    boxName = ""
+    try:
+        boxInfo = Box.objects.get(id=1)
+        boxName = boxInfo.box_name
+    except ObjectDoesNotExist:
+        boxName = "NoName"
+
     try:
         feedInfo = Feed.objects.get(id=1,box_id=1,user_id=1)
     except ObjectDoesNotExist:
@@ -19,9 +26,6 @@ def main(request):
     ltd = feedInfo.last_take_date
     tz = ltd.tzinfo
     feedInfo.last_take_date = datetime.today()
-
-
-    article_list=[]
 
     fdp = feedparser.parse(rssurl)
     for entry in fdp['entries']:
@@ -51,5 +55,5 @@ def main(request):
     article_list = Article.objects.filter(feed_id=1,box_id=1,user_id=1)
 
     return render_to_response('feedknot/main.html',
-                               {'box_title':'ボックスタイトル',
+                               {'box_name' : boxName,
                                 'article_list' : article_list})

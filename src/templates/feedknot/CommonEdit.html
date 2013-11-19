@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ja" manifest="drawing.manifest">
+<head>
+    <title>マイページ</title>
+    <style type="text/css">
+    <!--
+        html,body {
+            margin:0;
+            padding:0;
+            line-height:1.4;
+            color:#333;
+            font-family:Arial, sans-serif;
+            font-size:1.1em;
+            width:100%;
+            height:100%;
+        }
+
+        header {
+            width:100%;
+            height:20%;
+        }
+        table {
+            width:100%;
+        }
+        .header {
+            height:100%;
+        }
+        .feed_menu.tr {
+        	height:8%;
+        	border-style: outset;
+        }
+        tr.feed_record {
+        	border-bottom: 1px solid blue;
+        }
+        span.menu_triangle {
+            border-radius: 0.5em;
+            background-color: gray;
+            color: white;
+            font-size: 12px;
+            margin: 0 10px;
+            padding: 0 15px;
+            cursor: pointer;
+        }
+        span.menu_triangle:hover {
+            background-color: red;
+        }
+        textarea {
+            font-family:Arial, sans-serif;
+            font-size:1.2em;
+            border:0;
+            background-color:silver;
+            color:#000000;"
+        }
+        addBox {
+        	background-color: gray;
+        }
+		footer {
+		    position: absolute;
+		    bottom: 0;
+		    width: 100%;
+			height: 100px;
+		}
+    -->
+    </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+
+<!--[if lt IE 9]>
+	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+    <script type="text/javascript">
+    <!--
+    $( function() {
+        $( '#box_arrow_1' ).click( function() {
+        	alert("a");
+            $( "#feed_records_1" ) . slideToggle( 'normal' );
+        } );
+        $( '#box_target_1' ).click( function() {
+        	alert("box_target_1");
+        } );
+        $( '#box_edit_1' ).click( function() {
+       	 alert("box_edit_1");
+       	 $( "#box_name_1" ) .readonly = "false";
+        } );
+        $( '#box_delete_1' ).click( function() {
+        	alert("box_delete_1");
+        } );
+        $( '#box_review_1' ).click( function() {
+        	alert("box_review_1");
+        } );
+        $( '#feed_remove_1_1' ).click( function() {
+        	alert("feed_remove_1_1");
+        } );
+        $( '#feed_delete_1_1' ).click( function() {
+        	alert("feed_delete_1_1");
+        } );
+        $( '#feed_review_1_1' ).click( function() {
+        	alert("feed_review_1_1");
+        } );
+    } );
+    // -->
+    </script>
+</head>
+
+<body align="center">
+    <header>
+        <table cellspacing="0" class="header">
+            <tr bgcolor="orange">
+                <td nowrap align="center" width="20%">
+                    <a href="{% url 'main'%}">
+                        <img src="/static_media/drawable/ic_home.png" alt="home_icon" width="50" height="50">
+                    </a>
+                </td>
+                <td nowrap align="center" width="60%">
+                    <H3>登録フィード</H3>
+                </td>
+                <td nowrap align="center" width="20%">
+                    <input type="button" value="戻る" style="width: 50px;height: 50px" onclick="location.href='{% url 'login'%}'">
+                </td>
+            </tr>
+        </table>
+    </header>
+    <table class="feed_menu" cellspacing="0">
+        <div class="box_records_1">
+            <tr width="100%" bgcolor="silver">
+	            <td id="box_arrow_1" rowspan="2" nowrap>　<img src="/static_media/drawable/ic_arrow_down.png" alt="box" width="30" height="30">　</td>
+                <td colspan="2" id="" align="left"><span style="width: 10">&nbsp;</span><TEXTAREA id="box_name_1" ROWS="1" COLS="20" readonly>ボックス1</TEXTAREA></td>
+                <td id="box_target_1" nowrap>　<img src="/static_media/drawable/ic_box_default.png" alt="box" width="50" height="50">　</td>
+                <td id="box_edit_1" width="10%" nowrap><img src="/static_media/drawable/ic_edit.png" alt="edit" width="50" height="50"></td>
+                <td id="box_delete_1" width="10%" nowrap><img src="/static_media/drawable/ic_delete.png" alt="delete" width="50" height="50" id="review"></td>
+            </tr>
+            <tr bgcolor="silver">
+                <td id="box_review_1" colspan="2" align="right" width="100%" height="8%" border-bottom>★★★</td>
+                <td colspan="3" align="right" ><a href="{% url 'searchFeed'%}">フィードを追加</a></td>
+            </tr>
+        </div>
+        <div class="feed_records_1">
+            <tr class="feed_record" id="feed_menu_1" style="border:1px solid black">
+                <td rowspan="2" nowrap></td>
+                <td nowrap>・</td>
+                <td colspan="2" id="" align="left"><p id="feed_name_1_1">フィード1</p></td>
+                <td id="feed_remove_1_1" rowspan="2" nowrap><img src="/static_media/drawable/ic_box_move.png" alt="edit" width="50" height="50"></td>
+                <td id="feed_delete_1_1" rowspan="2" nowrap><img src="/static_media/drawable/ic_delete.png" alt="delete" width="50" height="50"></td>
+            </tr>
+            <tr>
+                <td>　</td>
+                <td id="feed_review_1_1" align="right" width="100%" height="8%">★★★</td>
+            </tr>
+            <tr><td colspan="6" style="border:1px solid black"></td></tr>
+            <tr class="feed_record" id="feed_menu_2">
+                <td rowspan="2" nowrap></td>
+                <td nowrap>・</td>
+                <td colspan="2" id="" align="left"><p id="feed_name">フィード2</p></td>
+                <td id="feed_remove_1_2" rowspan="2" nowrap><img src="/static_media/drawable/ic_box_move.png" alt="edit" width="50" height="50"></td>
+                <td id="feed_delete_1_2" rowspan="2" nowrap><img src="/static_media/drawable/ic_delete.png" alt="delete" width="50" height="50"></td>
+            </tr>
+            <tr>
+                <td>　</td>
+                <td id="feed_review_1_2" align="right" width="100%" height="8%">★★</td>
+            </tr>
+            <tr><td colspan="6" style="border:1px solid black"></td></tr>
+        </div>
+    </table>
+    <footer>
+    	<div align="right" class="addBox"><a href="{% url 'searchFeed'%}">ボックスを追加</a></div>
+    	<font color="gray">※ボックスアイコンを選択するとボックスが赤(デフォルト設定)になり、<br>新規登録フィードは自動的にそのボックスに入ります</font>
+    </footer>
+</body>
+</html>

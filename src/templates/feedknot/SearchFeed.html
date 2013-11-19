@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ja" manifest="drawing.manifest">
+<head>
+    <title>フィード検索</title>
+    <style type="text/css">
+    <!--
+        html,body {
+            margin:0;
+            padding:0;
+            line-height:1.4;
+            color:#333;
+            font-family:Arial, sans-serif;
+            font-size:1.1em;
+            width:100%;
+            height:100%;
+        }
+
+        header {
+            width:100%;
+            height:20%;
+        }
+        div.search_teritory {
+            width:100%;
+            height:80%;
+        }
+        table {
+            width:100%;
+        }
+        .header {
+            height:100%;
+        }
+        .feed_list {
+            width:80%;
+        }
+
+        div.search_frame{
+            width: 80%;
+            height: 50px;
+            position: relative;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .search_word {
+            width: 100%;
+            height: 35px;
+            padding: 3px 5px;
+        }
+        .search_button {
+            width: 30px;
+            height: 30px;
+            position: absolute;
+            right: 1px;
+            top: 8px;
+        }
+            -->
+    </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.css" />
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+
+<!--[if lt IE 9]>
+	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+</head>
+
+<body align="center">
+    <header>
+        <table cellspacing="0" class="header">
+            <tr bgcolor="orange">
+                <td nowrap align="center" width="20%">
+                    <a href="{% url 'main'%}">
+                        <img src="/static_media/drawable/ic_home.png" alt="home_icon" width="50" height="50">
+                    </a>
+                </td>
+                <td nowrap align="center" width="60%">
+                    <H3>フィード検索</H3>
+                </td>
+                <td nowrap align="center" width="20%">
+                    <input type="button" value="戻る" style="width: 50px;height: 50px" onclick="location.href='{% url 'commonEdit'%}'">
+                </td>
+            </tr>
+        </table>
+    </header>
+    <div id="search_teritory">
+        <div class="search_frame" >
+            <input class="search_word" value="" type="text" />
+            <img class="search_button" src="/static_media/drawable/ic_search.png" alt="search" />
+        </div>
+        <hr />
+        <table class="feed_list" cellspacing="0" align="center">
+            <tr>
+                <td rowspan="2" nowrap>　　　　　</td>
+                <td align="left"><H3 id="feed_title_1">フィードタイトル1</H3></td>
+                <td id="feed_add_1" rowspan="2" nowrap><img src="/static_media/drawable/ic_add.png" alt="add" width="50" height="50"></td>
+            </tr>
+            <tr>
+                <td id="feed_summary_1" align="right" width="100%" height="8%">yyyy/MM/dd HH:MM (サイト名)</td>
+            </tr>
+            <tr><td colspan="3" style="border:1px solid black"></td></tr>
+            <tr>
+                <td rowspan="2" nowrap>　　　　　</td>
+                <td align="left"><H3 id="feed_title_1">フィードタイトル2</H3></td>
+                <td id="feed_add_2" rowspan="2" nowrap><img src="/static_media/drawable/ic_add.png" alt="add" width="50" height="50"></td>
+            </tr>
+            <tr>
+                <td id="feed_summary_2" align="right" width="100%" height="8%">yyyy/MM/dd HH:MM (サイト名)</td>
+            </tr>
+            <tr><td colspan="3" style="border:1px solid black"></td></tr>
+            <tr>
+                <td rowspan="2" nowrap>　　　　　</td>
+                <td align="left"><H3 id="feed_title_3">フィードタイトル3</H3></td>
+                <td id="feed_add_3" rowspan="2" nowrap><img src="/static_media/drawable/ic_add.png" alt="add" width="50" height="50"></td>
+            </tr>
+            <tr>
+                <td id="feed_summary_3" align="right" width="100%" height="8%">yyyy/MM/dd HH:MM (サイト名)</td>
+            </tr>
+            <tr><td colspan="3" style="border:1px solid black"></td></tr>
+            <tr>
+                <td rowspan="2" nowrap>　　　　　</td>
+                <td align="left"><H3 id="feed_title_4">フィードタイトル4</H3></td>
+                <td id="feed_add_4" rowspan="2" nowrap><img src="/static_media/drawable/ic_add.png" alt="add" width="50" height="50"></td>
+            </tr>
+            <tr>
+                <td id="feed_summary_4" align="right" width="100%" height="8%">yyyy/MM/dd HH:MM (サイト名)</td>
+            </tr>
+            <tr><td colspan="3" style="border:1px solid black"></td></tr>
+        </table>
+    </div>
+</body>
+</html>

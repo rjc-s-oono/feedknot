@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ja" manifest="drawing.manifest">
+<head>
+    <meta charset="UTF-8">
+    <title>管理</title>
+    <style type="text/css">
+    <!--
+        html,body {
+            margin:0;
+            padding:0;
+            line-height:1.4;
+            color:#333;
+            font-family:Arial, sans-serif;
+            font-size:1.2em;
+            width:100%;
+            height:100%;
+        }
+        .contents {
+            width:100%;
+            height:80%;
+        }
+        .btn {
+            color:#ffffff;
+            background-color:#0000ff;
+            width:60%;
+            height:50px;
+        }
+
+        header {
+            width:100%;
+            height:20%;
+        }
+        table {
+            width:100%;
+            height:100%;
+        }
+        .contents {
+            width:100%;
+            height:80%;
+        }
+    -->
+    </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!--
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.css" />
+    -->
+    <script type="text/javascript">
+    <!--
+        var isLogin;
+        var userName;
+        function initDisplay() {
+            var btnAreaHeight=document.getElementsByClassName("contents").item(0).offsetHeight;
+            getLoginInfo();
+            if (!isLogin || isLogin != 1) {
+                document.getElementById("btn_1").style.height=btnAreaHeight/3;
+                document.getElementById("btn_2").style.height=btnAreaHeight/3;
+                document.getElementById("btn_3").style.height=btnAreaHeight/3;
+            } else {
+                document.getElementById("btn_1").style.height=btnAreaHeight/2;
+                document.getElementById("btn_2").style.height=btnAreaHeight/2;
+                document.getElementById("btn_3").parentNode.style.visivility="collapse";
+
+            }
+        }
+        btnHeader="<input type='button' onmouseover='this.style.background=\"#99ccff\"' onmouseout='this.style.background=\"#0000ff\"' class='btn' value='";
+        btnFooterOAuth="' onclick='location.href=\"{% url 'oAuth'%}\"' />";
+        btnFooterCommonEdit="' onclick='location.href=\"{% url 'commonEdit'%}\"' />";
+        btnFooterMyPage="' onclick='location.href=\"{% url 'logout'%}\"' />";
+        function changeDisplay() {
+            getLoginInfo();
+            if (!isLogin || isLogin != 1) {
+                document.getElementById("user_title").innerHTML="ログイン選択";
+                document.getElementById("btn_1").innerHTML=btnHeader+"Googleアカウント"+btnFooterOAuth;
+                document.getElementById("btn_2").innerHTML=btnHeader+"Twitterアカウント" +btnFooterOAuth;
+                document.getElementById("btn_3").innerHTML=btnHeader+"Facebookアカウント" +btnFooterOAuth;
+            } else {
+                document.getElementById("user_title").innerHTML=userName;
+                document.getElementById("btn_1").innerHTML=btnHeader+"フィードを管理"+btnFooterCommonEdit;
+                document.getElementById("btn_2").innerHTML=btnHeader+"ログアウト"+btnFooterMyPage;
+            }
+        }
+        function getRequest(){
+            if(location.search.length > 1) {
+                var get = new Object();
+                var ret = location.search.substr(1).split("&");
+                for(var i = 0; i < ret.length; i++) {
+                    var r = ret[i].split("=");
+                    get[r[0]] = r[1];
+                }
+                return get;
+            } else {
+                return false;
+            }
+        }
+        function getLoginInfo() {
+            var get=getRequest();
+            //isLogin=get['isLogin'];
+            //userName=get['userName'];
+            isLogin='{{login_flg}}';
+            userName='{{user_name}}';
+        }
+    -->
+    </script>
+</head>
+
+<body align="center" onload="changeDisplay();">
+    <header>
+        <table cellspacing="0">
+            <tr bgcolor="orange">
+                <td nowrap align="center" width="20%">
+                    <a href="{% url 'main'%}">
+                        <img src="/static_media/drawable/ic_home.png" alt="home_icon" width="50" height="50">
+                    </a>
+                </td>
+                <td nowrap align="center" width="60%">
+                    <H3 id="user_title"></H3>
+                </td>
+                <td nowrap align="center" width="20%">
+                    <img src="/static_media/drawable/ic_user.png" alt="user_icon" width="50" height="50">
+                </td>
+            </tr>
+        </table>
+    </header>
+    <table class="contents">
+        <tr><td id="btn_1"></td></tr>
+        <tr><td id="btn_2"></td></tr>
+        <tr><td id="btn_3"></td></tr>
+    </table>
+    <script type="text/javascript">
+        initDisplay();
+    </script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ja" manifest="drawing.manifest">
+    <head>
+        <title>OAuth</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.css" />
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+        <script type="text/javascript" src="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.js"></script>
+<!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+    </head>
+    <body>
+        <center>
+            <br />
+            <br />
+            <br />
+            <H3>OAuth</H3>
+            <br />
+            <br />
+            <br />
+            <br />
+            <input type="button" value="認証を許可" onclick="location.href='{% url 'login'%}'"/>
+            <br />
+            <br />
+            <br />
+            <br />
+            <input type="button" value="キャンセル" onclick="location.href='{% url 'logout'%}'"/>
+        </center>
+    </body>
+</html>
