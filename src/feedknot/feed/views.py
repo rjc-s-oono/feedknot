@@ -52,7 +52,7 @@ def main(request):
 
     feedInfo.save();
 
-    article_list = Article.objects.filter(feed_id=1,box_id=1,user_id=1)
+    article_list = Article.objects.filter(feed_id=1,box_id=1,user_id=1).order_by('-pub_date')
 
     return render_to_response('feedknot/main.html',
                                {'box_name' : boxName,

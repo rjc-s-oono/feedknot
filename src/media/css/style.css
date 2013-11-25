@@ -1,1 +1,68 @@
 @charset "utf-8" ;
+
+/* メイン画面 */
+
+/*要素のフォントサイズやマージン・パディングをリセットしています*/
+html, body, div, span, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+abbr, address, cite, code,
+del, dfn, em, img, ins, kbd, q, samp,
+small, strong, sub, sup, var,
+b, i,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section, summary,
+time, mark, audio, video {
+    margin:0;
+    padding:0;
+    border:0;
+    outline:0;
+    font-size:100%;
+    vertical-align:baseline;
+    background:transparent;
+}
+/*行の高さをフォントサイズと同じにしています*/
+body {
+    line-height:1;
+}
+/*新規追加要素のデフォルトはすべてインライン要素になっているので、section要素などをブロック要素へ変更しています*/
+article,aside,details,figcaption,figure,
+footer,header,hgroup,menu,nav,section {
+    display:block;
+}
+
+
+
+
+body {
+    margin:20px auto;
+}
+header, view, footer {
+    display:block;
+    border:1px solid #ccc;
+    margin:5px;
+    padding:5px;
+}
+header {
+    display:block;
+    text-align:center;
+    padding:2px;
+}
+header ul, header li {
+    list-style-type:none;
+    display:inline;
+}
+view {
+}
+footer {
+    height:10%;
+    clear:both !important;
+}
+
+
+span.rogo img {
+	width:100px;
+	height:30px;
+}
