@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}&nbsp;|&nbsp;メイン{% endblock %}
+
+{% block include_css %}
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.css" />
+{% endblock %}
+{% block include_js %}
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+	<script type="text/javascript">
+		// 年・月を変わるごとに表示
+		var curYear = 0;
+		var curMonth = 0;
+		$(document).ready(function() {
+			$("#feedUL").children("li").each(function() {
+				var year = $(this).find("#pub_year").val();
+				var month = $(this).find("#pub_month").val();
+				if (curYear != year || curMonth != month) {
+					$(this).before("<li data-role='list-divider'>" + year + "/" + month + "</li>");
+					curYear = year;
+					curMonth = month;
+				}
+			});
+		});
+	</script>
+	<script type="text/javascript" src="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.js"></script>
+{% endblock %}
+
+{% block content %}
+	<div data-role="page">
+    	<div data-role="header" data-position="fixed" data-theme="e">
+            <a href="/login" data-prefetch="true" data-transition="slide" data-direction="reverse" data-iconpos="notext" data-icon="gear" rel="external">管理画面</a>
+            <h1>{{box_name}}</h1>
+        </div>
+		<div data-role="content">
+			<ul data-role="listview" data-divider-theme="e" data-inset="true" data-filter="true" id="feedUL">
+			{% for article in article_list %}
+				<li data-theme="c" id="feedLI">
+					<a href="{{article.article_address}}">
+						<p class="ui-li-aside">{{article.pub_date}}</p>
+						<h1>{{article.article_title}}</h1>
+						<p>ArticleId={{article.id}},
+						FeedId={{article.feed_id}},
+						BoxId={{article.box_id}},
+						UserId={{article.user_id}},
+						readFlag={{article.read_flg}}</p>
+					</a>
+					<input type="hidden" id="pub_year" value="{{article.pub_date.year}}" />
+					<input type="hidden" id="pub_month" value="{{article.pub_date.month}}" />
+			  	</li>
+			{% endfor %}
+			</ul>
+		</div>
+        <div data-role="footer" data-theme="e">
+        <h3>
+        	<span class="rogo">
+				<a href="http://www.r-jc.jp/"><img src="/static_media/drawable/rogo.jpg"></a>
+			</span>
+        </h3>
+        </div>
+    </div>
+{% endblock %}
