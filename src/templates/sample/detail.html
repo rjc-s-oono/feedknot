@@ -17,11 +17,11 @@
     </dd><br />
 
     <dd class="operation">
-        <a href="{% url edit data.id %}">編集</a>
-        <a href="{% url delete data.id %}">削除</a>
+        <a href="{% url 'edit' data.id %}">編集</a>
+        <a href="{% url 'delete' data.id %}">削除</a>
     </dd><br />
 
     <div class="operation">
-        <a href="{% url index %}">一覧に戻る</a>
+        <a href="{% url 'index' %}">一覧に戻る</a>
     </div>
 {% endblock %}

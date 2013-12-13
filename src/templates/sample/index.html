@@ -12,7 +12,7 @@
 
 {% for data in data_list %}
 <dt>
-    <a href="{% url detail data.id %}">{{ data.title }}</a>
+    <a href="{% url 'detail' data.id %}">{{ data.title }}</a>
 </dt>
 
 <dd>
@@ -20,8 +20,8 @@
 </dd><br />
 
 <dd class="operation">
-    <a href="{% url edit data.id %}">編集</a>
-    <a href="{% url delete data.id %}">削除</a>
+    <a href="{% url 'edit' data.id %}">編集</a>
+    <a href="{% url 'delete' data.id %}">削除</a>
 </dd>
 <hr />
 {% endfor %}
