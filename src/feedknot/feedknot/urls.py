@@ -16,7 +16,7 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
     # 要検討 とりあえずstaticで画像表示
-    url(r'^static_media/(?P<path>.*)$', 'django.views.static.serve',{'document_root': settings.STATIC_MEDIA_DIR}),
+    #url(r'^static_media/(?P<path>.*)$', 'django.views.static.serve',{'document_root': settings.STATIC_MEDIA_DIR}),
 
     #url(r'^$', 'sample.views.index', name='index'),
     #url(r'^detail/(?P<sample_id>\d+)/$', 'sample.views.detail', name='detail'),

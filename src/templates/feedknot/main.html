@@ -36,7 +36,7 @@
 			<ul data-role="listview" data-divider-theme="e" data-inset="true" data-filter="true" id="feedUL">
 			{% for article in article_list %}
 				<li data-theme="c" id="feedLI">
-					<a href="{{article.article_address}}">
+					<a target="_blank" href="{{article.article_address}}">
 						<p class="ui-li-aside">{{article.pub_date}}</p>
 						<h1>{{article.article_title}}</h1>
 						<p>ArticleId={{article.id}},
@@ -54,7 +54,7 @@
         <div data-role="footer" data-theme="e">
         <h3>
         	<span class="rogo">
-				<a href="http://www.r-jc.jp/"><img src="/static_media/drawable/rogo.jpg"></a>
+				<a href="http://www.r-jc.jp/"><img src="/media/drawable/rogo.jpg"></a>
 			</span>
         </h3>
         </div>

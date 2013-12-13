@@ -3,6 +3,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 DEBUG = False
+
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -74,7 +75,7 @@ STATICFILES_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
 )
 
-STATIC_MEDIA_DIR = BASE_DIR+os.sep+'..'+os.sep+'..'+os.sep+'media'
+#STATIC_MEDIA_DIR = BASE_DIR+os.sep+'..'+os.sep+'..'+os.sep+'media'
 
 # List of finder classes that know how to find static files in
 # various locations.
