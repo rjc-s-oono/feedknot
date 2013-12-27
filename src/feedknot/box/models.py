@@ -1,4 +1,5 @@
 from django.db import models
+from feed.models import Feed
 
 class Box(models.Model):
     user_id = models.IntegerField(u'ユーザID', max_length = 5)
@@ -9,3 +10,8 @@ class Box(models.Model):
 
     def __unicode__(self):
         return self.box_name
+
+    def readFeed(self):
+        feed_info_list = Feed.objects.filter(box_id=self.id)
+        for feed_info in feed_info_list:
+            feed_info.readArticle()
