@@ -18,13 +18,14 @@ class Feed(models.Model):
         tz = ltd.tzinfo
         self.last_take_date = datetime.today()
         fdp = feedparser.parse(rssurl)
+        stitle = fdp.feed.title
         for entry in fdp['entries']:
             title = entry['title']
             link = entry['link']
             #要相談 日本時間の設定方法、rdfの読み込み（published_parsed取得でエラー）
             dt = datetime.fromtimestamp(mktime(entry['published_parsed']) + 32400, tz)
             if ltd < dt:
-                Article.objects.create(feed_id=1,box_id=1,user_id=1,article_title=title,article_address=link,pub_date=dt)
+                Article.objects.create(feed_id=1,box_id=1,user_id=1,site_title=stitle,article_title=title,article_address=link,pub_date=dt)
         self.save();
 
 class Article(models.Model):
@@ -34,6 +35,7 @@ class Article(models.Model):
     box_id = models.IntegerField(u'ボックスID',max_length = 5)
 #     user_id = models.ForeignKey()
     user_id = models.IntegerField(u'ユーザID',max_length = 5)
+    site_title = models.CharField(u'サイトタイトル',max_length = 100)
     article_title = models.CharField(u'記事タイトル',max_length = 100)
     article_address = models.URLField(u'記事アドレス')
     pub_date = models.DateTimeField(u'配信日', auto_now_add=False, blank=False, null=False)

@@ -15,8 +15,10 @@ def main(request):
         boxName = "NoName"
 
     article_list = Article.objects.filter(box_id=1).order_by('-pub_date')
+    box_list = Box.objects.filter(user_id=1).order_by('box_priority')
 
     return render_to_response('feedknot/main.html',
                                {'box_name' : boxName,
-                                'article_list' : article_list})
+                                'article_list' : article_list,
+                                'box_list' : box_list})
 
