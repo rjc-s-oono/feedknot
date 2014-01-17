@@ -29,7 +29,7 @@ urlpatterns = patterns('',
     url(r'^logout/$', 'administration.views.logout', name='logout'),
     url(r'^commonEdit/$', 'box.views.commonEdit', name='commonEdit'),
     url(r'^searchFeed/$', 'box.views.searchFeed', name='searchFeed'),
-    url(r'^main/$', 'feed.views.main', name='main'),
+    url(r'^main/(?P<user_id>\d+)/(?P<box_id>\d+)/$', 'feed.views.main', name='main'),
 )
 
 if settings.DEBUG:
