@@ -91,11 +91,15 @@
 
 			{% comment %} == ↓ポップアップ内容  ========== {% endcomment %}
 			<div data-role="popup" id="popupMenu">
+				<form method="post" action="{% url 'main' %}" name="frm">
+					<input type="hidden" name="box_id" value="">
+					{% csrf_token %}
+				</form>
 			  <a href="#" data-rel="back" data-role="button" data-theme="c" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
 			  <ul data-role="listview" data-inset="true" style="min-width:210px;" data-theme="c">
 			    <li data-role="divider" data-theme="e">ナビゲーションメニュー</li>
 				{% for box in box_list %}
-					<li><a href="{% url 'main' user_id box.id %}">{{box.box_name}}</a></li>
+					<li><a href="#" onclick="frm.box_id.value = '{{box.id}}';document.frm.submit();">{{box.box_name}}</a></li>
 				{% endfor %}
 			  </ul>
 			  <ul data-role="listview" data-inset="true" style="min-width:210px;" data-theme="c">
