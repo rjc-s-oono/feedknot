@@ -1,76 +1,78 @@
-<!DOCTYPE html>
-<html lang="ja" manifest="drawing.manifest">
-<head>
-    <title>フィード検索</title>
-    <style type="text/css">
-    <!--
-        html,body {
-            margin:0;
-            padding:0;
-            line-height:1.4;
-            color:#333;
-            font-family:Arial, sans-serif;
-            font-size:1.1em;
-            width:100%;
-            height:100%;
-        }
+{% extends "base.html" %}
 
-        header {
-            width:100%;
-            height:20%;
-        }
-        div.search_teritory {
-            width:100%;
-            height:80%;
-        }
-        table {
-            width:100%;
-        }
-        .header {
-            height:100%;
-        }
-        .feed_list {
-            width:80%;
-        }
+{% comment %} == ↓タイトル部分 ====================================== {% endcomment %}
+    {% block title %}&nbsp;|&nbsp;フィード検索{% endblock %}
+{% comment %} == ↑タイトル部分 ====================================== {% endcomment %}
 
-        div.search_frame{
-            width: 80%;
-            height: 50px;
-            position: relative;
-            display: inline-block;
-            margin-top: 20px;
-        }
-        .search_word {
-            width: 100%;
-            height: 35px;
-            padding: 3px 5px;
-        }
-        .search_button {
-            width: 30px;
-            height: 30px;
-            position: absolute;
-            right: 1px;
-            top: 8px;
-        }
-            -->
-    </style>
+{% comment %} == ↓スタイルシート部分 ====================================== {% endcomment %}
+    {% block include_css %}
+
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.css" />
-	<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
-
+    {% endblock %}
+{% comment %} == ↑スタイルシート部分 ====================================== {% endcomment %}
+{% comment %} == ↓ジャバスクリプト部分 ====================================== {% endcomment %}
+    {% block include_js %}
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <!--[if lt IE 9]>
-	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
-</head>
 
+    {% endblock %}
+    {% block include_rear_js %}
+    <script type="text/javascript">
+        google.load("feeds", "1");
+
+        $(document).ready(function() {
+            $(".search_box").bind("change",function(event, ui) {
+                var searchTxt = $(this).val();
+                //alert("検索値：" + searchTxt);
+                google.feeds.findFeeds(searchTxt, dispFeed);
+            });
+        });
+        
+        function dispFeed(result) {
+            if (!result.error){
+                // エラーが発生していない場合の処理
+                if (0 < result.entries.length) {
+                    $(".feed_list").empty();
+
+                    for (var i = 0; i < result.entries.length; i++) {
+                        var title =  result.entries[i].title;
+                        var link =  result.entries[i].link;
+                        var contentSnippet =  result.entries[i].contentSnippet;
+                        var url =  result.entries[i].url;
+                        $(".feed_list")
+                            .append("<a href=\">" + link + "\" data-role=\"button\">" + title + "</a>");
+                        //alert(link);
+                     }
+                     $(".feed_list").trigger("create");
+                }
+            }
+        }
+    </script>
+    {% endblock %}
+{% comment %} == ↑ジャバスクリプト部分 ====================================== {% endcomment %}
+
+{% comment %} == ↓表示部分 ====================================== {% endcomment %}
+{% block content %}
+    <div id="main"  data-role="page">
+
+        {% comment %} == タイトルバー ========== {% endcomment %}
+        <div data-role="header" data-position="fixed" data-theme="e">
+            <a href="/main/1/0" data-prefetch="true" data-transition="slide" data-direction="reverse" data-iconpos="notext" data-icon="home" rel="external">ホーム</a>
+            <h1 id="title">フィード検索</h1>
+            <a href="/commonEdit" data-prefetch="true" data-transition="slide" data-direction="reverse" data-iconpos="notext" data-icon="arrow-l" rel="external">戻る</a>
+        </div> <!-- header -->
+
+        {% comment %} == ↓検索ボックス ========== {% endcomment %}
 <body align="center">
     <header>
         <table cellspacing="0" class="header">
             <tr bgcolor="orange">
                 <td nowrap align="center" width="20%">
-                    <a href="{% url 'main' 1 0 %}">
+                    <a href="{% url 'main' %}">
                         <img src="/media/drawable/ic_home.png" alt="home_icon" width="50" height="50">
                     </a>
                 </td>
@@ -85,48 +87,26 @@
     </header>
     <div id="search_teritory">
         <div class="search_frame" >
-            <input class="search_word" value="" type="text" />
-            <img class="search_button" src="/media/drawable/ic_search.png" alt="search" />
+            <input type="search" name="search" id="searc-basic" value="" data-mini="true" class="search_box" placeholder="RSS検索ワードを入力してください。" />
         </div>
-        <hr />
-        <table class="feed_list" cellspacing="0" align="center">
-            <tr>
-                <td rowspan="2" nowrap>　　　　　</td>
-                <td align="left"><H3 id="feed_title_1">フィードタイトル1</H3></td>
-                <td id="feed_add_1" rowspan="2" nowrap><img src="/media/drawable/ic_add.png" alt="add" width="50" height="50"></td>
-            </tr>
-            <tr>
-                <td id="feed_summary_1" align="right" width="100%" height="8%">yyyy/MM/dd HH:MM (サイト名)</td>
-            </tr>
-            <tr><td colspan="3" style="border:1px solid black"></td></tr>
-            <tr>
-                <td rowspan="2" nowrap>　　　　　</td>
-                <td align="left"><H3 id="feed_title_1">フィードタイトル2</H3></td>
-                <td id="feed_add_2" rowspan="2" nowrap><img src="/media/drawable/ic_add.png" alt="add" width="50" height="50"></td>
-            </tr>
-            <tr>
-                <td id="feed_summary_2" align="right" width="100%" height="8%">yyyy/MM/dd HH:MM (サイト名)</td>
-            </tr>
-            <tr><td colspan="3" style="border:1px solid black"></td></tr>
-            <tr>
-                <td rowspan="2" nowrap>　　　　　</td>
-                <td align="left"><H3 id="feed_title_3">フィードタイトル3</H3></td>
-                <td id="feed_add_3" rowspan="2" nowrap><img src="/media/drawable/ic_add.png" alt="add" width="50" height="50"></td>
-            </tr>
-            <tr>
-                <td id="feed_summary_3" align="right" width="100%" height="8%">yyyy/MM/dd HH:MM (サイト名)</td>
-            </tr>
-            <tr><td colspan="3" style="border:1px solid black"></td></tr>
-            <tr>
-                <td rowspan="2" nowrap>　　　　　</td>
-                <td align="left"><H3 id="feed_title_4">フィードタイトル4</H3></td>
-                <td id="feed_add_4" rowspan="2" nowrap><img src="/media/drawable/ic_add.png" alt="add" width="50" height="50"></td>
-            </tr>
-            <tr>
-                <td id="feed_summary_4" align="right" width="100%" height="8%">yyyy/MM/dd HH:MM (サイト名)</td>
-            </tr>
-            <tr><td colspan="3" style="border:1px solid black"></td></tr>
-        </table>
-    </div>
-</body>
-</html>
+        {% comment %} == ↑検索ボックス ========== {% endcomment %}
+
+        {% comment %} == ↓フィード情報  ========== {% endcomment %}
+        <div class="feed_list" data-role="controlgroup">
+            <a href="index.html" data-role="button">フィード名１</a>
+            <a href="index.html" data-role="button">フィード名２</a>
+            <a href="index.html" data-role="button">フィード名３</a>
+        </div> <!-- feed_list -->
+        {% comment %} == ↑フィード情報  ========== {% endcomment %}
+
+        {% comment %} == 会社ロゴ  ========== {% endcomment %}
+        <div data-role="footer" data-theme="e">
+        <h3>
+            <span class="rogo">
+                <a href="http://www.r-jc.jp/"><img src="/media/drawable/rogo.jpg"></a>
+            </span>
+        </h3>
+        </div> <!-- footer -->
+    </div> <!-- main -->
+{% endblock %}
+{% comment %} == ↑表示部分 ====================================== {% endcomment %}
