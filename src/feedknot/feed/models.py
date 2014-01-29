@@ -25,7 +25,7 @@ class Feed(models.Model):
             #要相談 日本時間の設定方法、rdfの読み込み（published_parsed取得でエラー）
             dt = datetime.fromtimestamp(mktime(entry['published_parsed']) + 32400, tz)
             if ltd < dt:
-                Article.objects.create(feed_id=1,box_id=1,user_id=1,site_title=stitle,article_title=title,article_address=link,pub_date=dt)
+                Article.objects.create(feed_id=self.id ,box_id=self.box_id ,user_id=self.user_id ,site_title=stitle,article_title=title,article_address=link,pub_date=dt)
         self.save();
 
 class Article(models.Model):
