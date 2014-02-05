@@ -37,7 +37,7 @@ def main(request):
         except ObjectDoesNotExist:
             boxName = "NoName"
 
-    article_list = Article.objects.filter(box_id=box_id).order_by('-pub_date')
+    article_list = Article.objects.filter(box_id=box_id).order_by('-pub_date', 'id')
     box_list = Box.objects.filter(user_id=user_id).order_by('box_priority')
 
     param = {'user_id' : user_id,
