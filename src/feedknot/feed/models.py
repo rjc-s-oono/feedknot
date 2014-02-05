@@ -16,7 +16,6 @@ class Feed(models.Model):
         rssurl= self.rss_address
         ltd = self.last_take_date
         tz = ltd.tzinfo
-        self.last_take_date = datetime.today()
         fdp = feedparser.parse(rssurl)
         stitle = fdp.feed.title
         for entry in fdp['entries']:
@@ -26,6 +25,9 @@ class Feed(models.Model):
             dt = datetime.fromtimestamp(mktime(entry['published_parsed']) + 32400, tz)
             if ltd < dt:
                 Article.objects.create(feed_id=self.id ,box_id=self.box_id ,user_id=self.user_id ,site_title=stitle,article_title=title,article_address=link,pub_date=dt)
+
+            if self.last_take_date < dt:
+                self.last_take_date = dt
         self.save();
 
 class Article(models.Model):
