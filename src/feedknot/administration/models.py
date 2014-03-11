@@ -1,12 +1,13 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class LoginMaster(models.Model):
-    google_id = models.CharField(u'Google メールアドレス', max_length = 127, blank = True)
-    facebook_id = models.CharField(u'Facebook メールアドレス', max_length = 127, blank = True)
-    twitter_id = models.CharField(u'Twitter アカウント', max_length = 127, blank = True)
-    mail_address = models.EmailField(u'メールアドレス')
-    default_box_id = models.IntegerField(u'ボックスID', max_length = 5)
+    user = models.ForeignKey(User, unique=True)
+    default_box_id = models.IntegerField(u'デフォルトボックスID', max_length = 5)
     #default_box_id = models.ForeignKey(Box,null=True)
 
+    class Meta:
+        pass
+
     def __unicode__(self):
-        return self.mail_address
+        return self.user.id
