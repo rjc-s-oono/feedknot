@@ -6,13 +6,18 @@ from feed.models import Feed
 from administration.models import LoginMaster
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def main(request):
 
     user_id = 1
     box_id = -1
     if request.user.is_authenticated():
         user_id=request.user.id
+
+    print('user_id')
+    print(user_id)
 
     try:
         box_id = int(request.POST['box_id'])

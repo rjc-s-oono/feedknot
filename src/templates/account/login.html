@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja" manifest="drawing.manifest">
+    <head>
+        <title>OAuth</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.css" />
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+        <script type="text/javascript" src="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.js"></script>
+<!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+    </head>
+    <body>
+        <center>
+{% load account %}
+{% load socialaccount %}
+{% load url from future %}
+{% block content %}
+    <div class="container">
+        <form class="login_form">
+            {% if not user.is_authenticated %}
+                {% if socialaccount.providers %}
+                    <div class="socialaccount_ballot">
+                        <h4>ログイン</h4>
+                        <div>
+                            {% for provider in socialaccount.providers %}
+                             	<input type="button" value="{{provider.name}}アカウントでログイン" onclick="location.href='{% provider_login_url provider.id %}'"/>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
+        </form>
+    </div>
+{% endblock %}
+    </body>
+</html>

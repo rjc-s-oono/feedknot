@@ -82,7 +82,7 @@ a[name="hed_icon"] {
 		<div data-role="content">
 			{% comment %} 各ページ遷移ボタン {% endcomment %}
 			<a href="{% url 'commonEdit'%}" data-role="button" data-icon="arrow-r" data-theme="e" data-iconpos="right" data-transition="slide">フィードを管理</a>
-			<a href="http://www.yahoo.co.jp/" data-role="button" data-icon="arrow-r" data-theme="e" data-iconpos="right" data-transition="fade">ログアウト</a>
+			<a href="{% url 'account_logout' %}" data-role="button" data-icon="arrow-r" data-theme="e" data-iconpos="right" data-transition="fade">ログアウト</a>
 
 		</div>
 
@@ -123,7 +123,7 @@ a[name="hed_icon"] {
 		<div data-role="content">
 			{% comment %} 各ページ遷移ボタン {% endcomment %}
 			<a href="{% url 'commonEdit'%}" data-role="button" data-icon="arrow-r" data-theme="e" data-iconpos="right" data-transition="slide">フィードを管理</a>
-			<a href="http://www.yahoo.co.jp/" data-role="button" data-icon="arrow-r" data-theme="e" data-iconpos="right" data-transition="fade">ログアウト</a>
+			<a href="{% url 'account_logout' %}" data-role="button" data-icon="arrow-r" data-theme="e" data-iconpos="right" data-transition="fade">ログアウト</a>
 
 		</div>
 
@@ -214,7 +214,7 @@ a[name="hed_icon"] {
         btnHeader="<input type='button' onmouseover='this.style.background=\"#99ccff\"' onmouseout='this.style.background=\"#0000ff\"' class='btn' value='";
         btnFooterOAuth="' onclick='location.href=\"{% url 'oAuth'%}\"' />";
         btnFooterCommonEdit="' onclick='location.href=\"{% url 'commonEdit'%}\"' />";
-        btnFooterMyPage="' onclick='location.href=\"{% url 'logout'%}\"' />";
+        btnFooterMyPage="' onclick='location.href=\"{% url 'account_logout' %}\"' />";
         function changeDisplay() {
             getLoginInfo();
             if (!isLogin || isLogin != 1) {
@@ -350,7 +350,7 @@ a[name="hed_icon"] {
         btnHeader="<input type='button' onmouseover='this.style.background=\"#99ccff\"' onmouseout='this.style.background=\"#0000ff\"' class='btn' value='";
         btnFooterOAuth="' onclick='location.href=\"{% url 'oAuth'%}\"' />";
         btnFooterCommonEdit="' onclick='location.href=\"{% url 'commonEdit'%}\"' />";
-        btnFooterMyPage="' onclick='location.href=\"{% url 'logout'%}\"' />";
+        btnFooterMyPage="' onclick='location.href=\"{% url 'account_logout' %}\"' />";
         function changeDisplay() {
             getLoginInfo();
             if (!isLogin || isLogin != 1) {

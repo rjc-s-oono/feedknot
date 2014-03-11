@@ -95,6 +95,20 @@ TEMPLATE_LOADERS = (
 #     'django.template.loaders.eggs.Loader',
 )
 
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.static',
+    'django.contrib.auth.context_processors.auth',
+    'django.contrib.messages.context_processors.messages',
+    'django.core.context_processors.request',
+
+    # 追加
+    "allauth.account.context_processors.account",
+    "allauth.socialaccount.context_processors.socialaccount",
+)
+
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -133,7 +147,36 @@ INSTALLED_APPS = (
     'feed',
     'box',
     'administration',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+
+        # ... include the providers you want to enable:
+    #'allauth.socialaccount.providers.twitter',
+    #'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.github',
+    #'allauth.socialaccount.providers.linkedin',
+    #'allauth.socialaccount.providers.openid',
+    #'allauth.socialaccount.providers.persona',
+    #'allauth.socialaccount.providers.soundcloud',
+    #'allauth.socialaccount.providers.stackexchange',
 )
+
+SOCIALACCOUNT_PROVIDERS = {
+    'facebook': {
+        'SCOPE': ['email', 'publish_stream'],
+        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
+        'METHOD': 'oauth2',
+        'LOCALE_FUNC': lambda request: 'ja_JP'
+    },
+    'github': {
+        'SCOPE': ['user:follow', 'gist']
+    }
+}
+
+LOGIN_REDIRECT_URL = '/'
+#LOGIN_URL = '/feedknot/login'
 
 LOG_LEVEL = 'INFO'
 
