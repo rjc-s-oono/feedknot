@@ -28,7 +28,7 @@
         $(document).ready(function() {
             $(".search_box").bind("change",function(event, ui) {
                 var searchTxt = $(this).val();
-                alert("検索値：" + searchTxt);
+                //alert("検索値：" + searchTxt);
                 google.feeds.findFeeds(searchTxt, dispFeed);
             });
         });
@@ -46,8 +46,8 @@
                         var contentSnippet = result.entries[i].contentSnippet;
                         var url = result.entries[i].url;
 
-                        var tag = "<li data-theme=\"c\" id=\"feedLI\" data-icon=\"plus\">" +
-                                  "<a onclick=\"addFeed('#link#', '#title#')\">#title#</a>" +
+                        var tag = "<li data-theme=\"c\" id=\"feedLI\" data-icon=\"plus\" class=\"feedLI" + i + "\">" +
+                                  "<a onclick=\"addFeed('#link#', '#title#','feedLI" + i + "')\">#title#</a>" +
                                   "</li>";
                         tag = tag.replace("#link#", link);
                         tag = tag.replace("#title#", title);
@@ -67,7 +67,7 @@
 
         var isWaiting = false;
         // タッチしたフィードをDBに追加
-        function addFeed(url, title) {
+        function addFeed(url, title, className) {
             if (isWaiting) {
                 alert("通信中です。しばらくお待ちください。");
                 return;
@@ -76,7 +76,8 @@
 
             $("form#feed_form #url").val(url);
             $("form#feed_form #title").val(title);
-            alert("send feed." + $("form#feed_form #title").val());
+            $("form#feed_form #className").val(className);
+            //alert("send feed." + $("form#feed_form #title").val());
 
             // フィードを追加
             $.ajax({
@@ -95,6 +96,8 @@
                     } else if ("success" == data.result) {
                         // 成功
                         alert("フィード【" + data.title + "】の追加が完了しました。");
+                        $("." + data.className).hide();
+                        $(".feed_list_ul").listview().listview('refresh');
                     } else {
                         // 失敗
                         alert("フィード【" + data.title + "】の追加に失敗しました。暫くしてから再度お試しください。");
@@ -136,6 +139,7 @@
             <form id="feed_form" action="{% url 'add_feed' %}" method="POST">
                 <input type="hidden" id="url" name="url" value="" />
                 <input type="hidden" id="title" name="title" value="" />
+                <input type="hidden" id="className" name="className" value="" />
                 <input type="hidden" id="box_id" name="box_id" value="{{box_id}}" />
                 {% csrf_token %}
             </form>
