@@ -17,10 +17,11 @@ import locale
 @login_required
 def main(request):
 
-    user_id = 1
+    user_id=request.user.id
     box_id = -1
-    if request.user.is_authenticated():
-        user_id=request.user.id
+
+    print('user_id')
+    print(user_id)
 
     try:
         box_id = int(request.POST['box_id'])
@@ -34,16 +35,16 @@ def main(request):
             boxName = boxInfo.box_name
             boxInfo.readFeed()
         except ObjectDoesNotExist:
-            boxName = "NoName"
+            boxName = "ボックスが登録されていません。"
     else:
         try:
-            loginInfo = LoginMaster.objects.get(id=user_id)
+            loginInfo = LoginMaster.objects.get(user=request.user)
             box_id = loginInfo.default_box_id
             boxInfo = Box.objects.get(id=box_id)
             boxName = boxInfo.box_name
             boxInfo.readFeed()
         except ObjectDoesNotExist:
-            boxName = "NoName"
+            boxName = "ボックスが登録されていません。"
 
     article_list = Article.objects.filter(box_id=box_id).order_by('-pub_date', 'id')
     box_list = Box.objects.filter(user_id=user_id).order_by('box_priority')
