@@ -33,6 +33,7 @@ urlpatterns = patterns('',
     url(r'^searchFeed/$', 'box.views.searchFeed', name='searchFeed'),
     url(r'^main/$', 'feed.views.main', name='main'),
     url(r'^add_feed/$', 'feed.views.add_feed', name='add_feed'),
+    url(r'^del_feed/$', 'feed.views.del_feed', name='del_feed'),
 
 )
 

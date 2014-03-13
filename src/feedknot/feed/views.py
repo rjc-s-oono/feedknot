@@ -78,13 +78,10 @@ def add_feed(request):
     else:
         user_id=1
 
-    # ボックスID取得
+    # リクエストパラメータ取得
     try:
-        if 'box_id' in request.POST:
-            if request.POST['box_id'].isdigit():
-                box_id = int(request.POST['box_id'])
-            else:
-                box_id = 1
+        if 'box_id' in request.POST and request.POST['box_id'].isdigit():
+            box_id = int(request.POST['box_id'])
         else:
             box_id = 1
         rssaddress = request.POST['url']
@@ -104,7 +101,7 @@ def add_feed(request):
         feed.save()
     except Exception:
         # フィードの登録失敗
-        return HttpResponse(json.dumps({'result': 'creating feed faild.'}), mimetype='application/json')
+        return HttpResponse(json.dumps({'result': 'regist feed faild.'}), mimetype='application/json')
 
     # タグを一時的に削除
     # のちのちdivかなんかのメッセージウィンドウで表示すると思うので、その時に消します
@@ -115,3 +112,46 @@ def add_feed(request):
 
     return HttpResponse(res, mimetype='application/json')
 
+
+# フィード削除(ajax)
+def del_feed(request):
+    box_id = -1
+    user_id = 1
+    feed_id = 1
+
+    if not request.is_ajax():
+        # Ajaxではない為エラー
+        return HttpResponse(json.dumps({'result': 'request is not ajax.'}), mimetype='application/json')
+
+    # ユーザID取得
+    if request.user.is_authenticated():
+        user_id=request.user.id
+    else:
+        user_id=1
+
+    # リクエストパラメータ取得
+    try:
+        if 'box_id' in request.POST and request.POST['box_id'].isdigit():
+            box_id = int(request.POST['box_id'])
+        else:
+            box_id = 1
+        if 'feed_id' in request.POST and request.POST['feed_id'].isdigit():
+            feed_id = int(request.POST['feed_id'])
+        else:
+            feed_id = 1
+    except Exception:
+        # リクエストパラメータの取得に失敗
+        return HttpResponse(json.dumps({
+                'result': 'getting param faild.[box_id=' +
+                str(box_id) + ',user_id=' + str(user_id) + ',feed_id=' + str(feed_id) + ']'}),
+                mimetype='application/json')
+
+    # フィード削除
+    try:
+        Feed.objects.filter(box_id=box_id, user_id=user_id, id=feed_id).delete()
+    except Exception:
+        # フィードの削除失敗
+        return HttpResponse(json.dumps({'result': 'delete feed faild.[box_id=' +
+                str(box_id) + ',user_id=' + str(user_id) + ',feed_id=' + str(feed_id) + ']'}), mimetype='application/json')
+
+    return HttpResponse(json.dumps({'result': 'success', 'feed_id': feed_id}), mimetype='application/json')
