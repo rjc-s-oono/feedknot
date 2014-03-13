@@ -1,4 +1,5 @@
 from django.shortcuts import render_to_response
+from django.template.context import RequestContext
 from django.contrib.auth.decorators import login_required
 
 @login_required
@@ -7,4 +8,5 @@ def commonEdit(request):
 
 @login_required
 def searchFeed(request):
-    return render_to_response('feedknot/SearchFeed.html',{})
+    ctxt = RequestContext(request, {})
+    return render_to_response('feedknot/SearchFeed.html',ctxt)
