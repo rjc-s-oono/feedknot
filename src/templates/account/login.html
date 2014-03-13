@@ -1,38 +1,67 @@
-<!DOCTYPE html>
-<html lang="ja" manifest="drawing.manifest">
-    <head>
-        <title>OAuth</title>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.css" />
-        <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
-        <script type="text/javascript" src="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.js"></script>
-<!--[if lt IE 9]>
-    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-<![endif]-->
-    </head>
-    <body>
-        <center>
-{% load account %}
-{% load socialaccount %}
-{% load url from future %}
+{% extends "base.html" %}
+
+{% comment %} == ↓タイトル部分 ====================================== {% endcomment %}
+	{% block title %}&nbsp;|&nbsp;ログイン{% endblock %}
+{% comment %} == ↑タイトル部分 ====================================== {% endcomment %}
+
+{% comment %} == ↓スタイルシート部分 ====================================== {% endcomment %}
+	{% block include_css %}
+
+$(document).bind("mobileinit", function(){
+    $.mobile.ajaxLinksEnabled = false; // Ajax を使用したページ遷移を無効にする
+    $.mobile.ajaxFormsEnabled = false; // Ajax を使用したフォーム遷移を無効にする
+});
+
+
+	{% endblock %}
+{% comment %} == ↑スタイルシート部分 ====================================== {% endcomment %}
+
 {% block content %}
-    <div class="container">
-        <form class="login_form">
-            {% if not user.is_authenticated %}
-                {% if socialaccount.providers %}
-                    <div class="socialaccount_ballot">
-                        <h4>ログイン</h4>
-                        <div>
-                            {% for provider in socialaccount.providers %}
-                             	<input type="button" value="{{provider.name}}アカウントでログイン" onclick="location.href='{% provider_login_url provider.id %}'"/>
-                            {% endfor %}
-                        </div>
-                    </div>
-                {% endif %}
-            {% endif %}
-        </form>
-    </div>
+
+{% block include_js %}
+{% endblock %}
+
+
+<div id="auth"  data-role="page">
+
+
+    	<div data-role="header" data-position="fixed" data-theme="e">
+            <a href="{% url 'main' %}" data-prefetch="true" data-transition="slide" data-direction="reverse" data-iconpos="notext" data-icon="gear" rel="external">ログイン画面</a>
+            <h1 id="siteName">feedknot</h1>
+        </div>
+
+
+		<div data-role="content">
+			{% load account %}
+			{% load socialaccount %}
+			{% load url from future %}
+
+	        <form class="login_form">
+	            {% if not user.is_authenticated %}
+	                {% if socialaccount.providers %}
+	                    <div class="socialaccount_ballot">
+	                        <div>
+	                            {% for provider in socialaccount.providers %}
+	                             	<input type="button" value="{{provider.name}}アカウントでログイン" onclick="location.href='{% provider_login_url provider.id %}'"  data-role="button" data-icon="arrow-r" data-theme="e" data-iconpos="right" data-transition="slide"/>
+	                            {% endfor %}
+	                        </div>
+	                    </div>
+	                {% endif %}
+	            {% endif %}
+	        </form>
+		</div>
+
+
+		{% comment %} == 会社ロゴ  ========== {% endcomment %}
+        <div data-role="footer" data-theme="e">
+        <h3>
+        	<span class="rogo">
+				<a href="http://www.r-jc.jp/"><img src="/media/drawable/rogo.jpg"></a>
+			</span>
+        </h3>
+        </div>
+
+</div>
 {% endblock %}
     </body>
 </html>
