@@ -66,6 +66,7 @@ def add_feed(request):
     user_id = 1
     rssaddress = ''
     title = ''
+    className = ''
 
     if not request.is_ajax():
         # Ajaxではない為エラー
@@ -88,6 +89,7 @@ def add_feed(request):
             box_id = 1
         rssaddress = request.POST['url']
         title = request.POST['title']
+        className = request.POST['className']
     except Exception:
         # リクエストパラメータの取得に失敗
         return HttpResponse(json.dumps({
@@ -108,7 +110,7 @@ def add_feed(request):
     # のちのちdivかなんかのメッセージウィンドウで表示すると思うので、その時に消します
     title = re.sub(r'</*[bBuU]>', '', title)
 
-    res = json.dumps({'result': 'success', 'title': title})
+    res = json.dumps({'result': 'success', 'title': title, 'className': className})
     #res.update(csrf(request))
 
     return HttpResponse(res, mimetype='application/json')
