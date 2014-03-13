@@ -32,7 +32,7 @@
                 google.feeds.findFeeds(searchTxt, dispFeed);
             });
         });
-        
+
         // 検索結果 (Google findFeeds)
         function dispFeed(result) {
             if (!result.error){
@@ -45,14 +45,14 @@
                         var link = result.entries[i].link;
                         var contentSnippet = result.entries[i].contentSnippet;
                         var url = result.entries[i].url;
-                        
+
                         var tag = "<li data-theme=\"c\" id=\"feedLI\" data-icon=\"plus\">" +
                                   "<a onclick=\"addFeed('#link#', '#title#')\">#title#</a>" +
                                   "</li>";
                         tag = tag.replace("#link#", link);
                         tag = tag.replace("#title#", title);
                         tag = tag.replace("#title#", title);
-                        
+
                         $(".feed_list_ul")
                             .attr("data-role","listview")
                             .append(tag);
@@ -64,7 +64,7 @@
                 }
             }
         }
-        
+
         var isWaiting = false;
         // タッチしたフィードをDBに追加
         function addFeed(url, title) {
@@ -73,22 +73,22 @@
                 return;
             }
             isWaiting = true;
-            
+
             $("form#feed_form #url").val(url);
             $("form#feed_form #title").val(title);
             alert("send feed." + $("form#feed_form #title").val());
-            
+
             // フィードを追加
             $.ajax({
+                type: "POST",
                 url: $("form#feed_form").attr("action"),
                 data: $("form#feed_form").serialize(),
                 dataType: "json",
                 success: function(data, status, xhr) {
-                    //xhr.getResponseHeader('');
                     isWaiting = false;
-                    alert(status);
-                    alert(data);
-                    alert(data.result);
+                    //alert("status:" + status);
+                    //alert("data:" + data);
+                    //alert("result:" + data.result);
                     //alert($("#csrfmiddlewaretoken").val());
                     if (data == null) {
                         alert("フィードの追加に失敗しました。ログインし直してください。");
@@ -105,7 +105,7 @@
                     alert("失敗！");
                 }
             });
-            
+
         }
     </script>
     {% endblock %}
@@ -130,7 +130,7 @@
 
         {% comment %} == ↓フィード情報  ========== {% endcomment %}
         <div data-role="content">
-            <ul data-role="listview" data-divider-theme="e" data-inset="true" 
+            <ul data-role="listview" data-divider-theme="e" data-inset="true"
                 data-filter="true" id="feedUL" class="feed_list_ul">
             </ul>
             <form id="feed_form" action="{% url 'add_feed' %}" method="POST">

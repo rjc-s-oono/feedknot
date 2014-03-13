@@ -1,4 +1,4 @@
-from django.core.context_processors import csrf
+from django.core.context_processors import csrf, request
 from django.shortcuts import render_to_response
 from box.models import Box
 from feed.models import Article
@@ -8,6 +8,10 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 import json
 from django.http.response import HttpResponse
+
+# TMP：日付関数ができるまでのとりあえずimport
+import datetime
+import locale
 
 def main(request):
 
@@ -51,8 +55,6 @@ def main(request):
     return render_to_response('feedknot/main.html',
                                param)
 
-# 返却値(失敗)
-RESPONSE_ERR = HttpResponse(json.dumps({'result': 'err'}), mimetype='application/json')
 
 # フィード追加(ajax)
 def add_feed(request):
@@ -60,36 +62,46 @@ def add_feed(request):
     user_id = 1
     rssaddress = ''
     title = ''
-    
+
     if not request.is_ajax():
-        return RESPONSE_ERR
-    
+        # Ajaxではない為エラー
+        return HttpResponse(json.dumps({'result': 'request is not ajax.'}), mimetype='application/json')
+
     # ユーザID取得
     if request.user.is_authenticated():
         user_id=request.user.id
     else:
         user_id=1
-    
-    try:
-        rssaddress = request.POST.is_valid()
-    except Exception:
-        return HttpResponse(json.dumps({'result': '[1]koko?'}), mimetype='application/json')
-    
+
     # ボックスID取得
     try:
-        box_id = int(request.POST['box_id'])
+        if 'box_id' in request.POST:
+            if request.POST['box_id'].isdigit():
+                box_id = int(request.POST['box_id'])
+            else:
+                box_id = 1
+        else:
+            box_id = 1
         rssaddress = request.POST['url']
         title = request.POST['title']
     except Exception:
-        return RESPONSE_ERR
-    
-    # フィード登録
-    feed = Feed(box_id=box_id, user_id=user_id,
-                rss_address=rssaddress,feed_priority=3)
-    feed.save()
-    
+        # リクエストパラメータの取得に失敗
+        return HttpResponse(json.dumps({
+                'result': 'getting param faild.[box_id=' +
+                box_id + ',rssaddress=' + rssaddress + ',title=' + title + ']'}),
+                mimetype='application/json')
+
+    try:
+        # フィード登録
+        feed = Feed(box_id=box_id, user_id=user_id,
+                    rss_address=rssaddress,feed_priority=3,last_take_date=datetime.datetime.today())
+        feed.save()
+    except Exception:
+        # フィードの登録失敗
+        return HttpResponse(json.dumps({'result': 'creating feed faild.'}), mimetype='application/json')
+
     res = json.dumps({'result': 'success', 'title': title})
     #res.update(csrf(request))
-    
-    return HttpResponse(json.dumps(res), mimetype='application/json')
+
+    return HttpResponse(res, mimetype='application/json')
 
