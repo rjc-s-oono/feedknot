@@ -28,7 +28,7 @@
         $(document).ready(function() {
             $(".search_box").bind("change",function(event, ui) {
                 var searchTxt = $(this).val();
-                alert("検索値：" + searchTxt);
+                //alert("検索値：" + searchTxt);
                 google.feeds.findFeeds(searchTxt, dispFeed);
             });
         });
@@ -76,7 +76,7 @@
 
             $("form#feed_form #url").val(url);
             $("form#feed_form #title").val(title);
-            alert("send feed." + $("form#feed_form #title").val());
+            //alert("send feed." + $("form#feed_form #title").val());
 
             // フィードを追加
             $.ajax({

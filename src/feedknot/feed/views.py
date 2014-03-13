@@ -13,6 +13,7 @@ from django.contrib.auth.decorators import login_required
 # TMP：日付関数ができるまでのとりあえずimport
 import datetime
 import locale
+import re
 
 @login_required
 def main(request):
@@ -102,6 +103,10 @@ def add_feed(request):
     except Exception:
         # フィードの登録失敗
         return HttpResponse(json.dumps({'result': 'creating feed faild.'}), mimetype='application/json')
+
+    # タグを一時的に削除
+    # のちのちdivかなんかのメッセージウィンドウで表示すると思うので、その時に消します
+    title = re.sub(r'</*[bBuU]>', '', title)
 
     res = json.dumps({'result': 'success', 'title': title})
     #res.update(csrf(request))
