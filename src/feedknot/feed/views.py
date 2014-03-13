@@ -8,11 +8,13 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 import json
 from django.http.response import HttpResponse
+from django.contrib.auth.decorators import login_required
 
 # TMP：日付関数ができるまでのとりあえずimport
 import datetime
 import locale
 
+@login_required
 def main(request):
 
     user_id = 1
