@@ -156,6 +156,7 @@ INSTALLED_APPS = (
     'allauth.socialaccount.providers.twitter',
     #'allauth.socialaccount.providers.facebook',
     'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.google'
     #'allauth.socialaccount.providers.linkedin',
     #'allauth.socialaccount.providers.openid',
     #'allauth.socialaccount.providers.persona',
