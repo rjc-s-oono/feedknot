@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}&nbsp;|&nbsp;404 Not Found.{% endblock %}
+
+{% block content %}
+<h2>お探しのページが見つかりません</h2>
+<div>
+    <div class="error-messages">
+        お探しのページは一時的にアクセスできない状況にあるか<br />
+        移動もしくは削除された可能性があります。<br />
+    </div>
+    <h3 class="subtitle">解決のヒント</h3>
+    <div class="error-messages">
+        ・URL（アドレス）に誤りがある可能性がありますので、綴りをご確認下さい。<br />
+        ・検索エンジン(google,Yahoo!など)からアクセスされている場合は、ページが削除されている可能性がございます。<br />
+        　メニューよりアクセス頂きます様お願い致します。<br />
+    </div>
+</div>
+{% endblock %}
