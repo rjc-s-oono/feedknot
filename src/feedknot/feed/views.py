@@ -1,19 +1,21 @@
-from django.core.context_processors import csrf, request
-from django.shortcuts import render_to_response
-from box.models import Box
-from feed.models import Article
-from feed.models import Feed
-from administration.models import LoginMaster
-from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth.models import User
-import json
-from django.http.response import HttpResponse
-from django.contrib.auth.decorators import login_required
-
-# TMP：日付関数ができるまでのとりあえずimport
-import datetime
-import locale
+# -*- coding: utf-8 -*-
 import re
+import datetime
+from django.contrib.auth.decorators import login_required
+from django.template import RequestContext
+from django.shortcuts import render_to_response
+from django.http import HttpResponse
+
+from django.core.exceptions import ObjectDoesNotExist
+
+from common.utils import datetime_util
+
+from administration.models import LoginMaster
+from box.models import Box
+from feed.models import Article, Feed
+
+# FIXME simplejsonを使用してください
+import json
 
 @login_required
 def main(request):
@@ -54,11 +56,10 @@ def main(request):
          'box_name' : boxName,
          'article_list' : article_list,
          'box_list' : box_list}
-    param.update(csrf(request))
 
     return render_to_response('feedknot/main.html',
-                               param)
-
+                              param,
+                              context_instance=RequestContext(request))
 
 # フィード追加(ajax)
 def add_feed(request):
@@ -95,9 +96,14 @@ def add_feed(request):
                 mimetype='application/json')
 
     try:
+        today = datetime.date.today()
+        # TBD いつの日付設定かわからないので。。。(by sugano)
+        # 下記で1日前取得できます。
+        # one_days_ago = datetime_util.get_days_ago(today, 1)
+
         # フィード登録
         feed = Feed(box_id=box_id, user_id=user_id,
-                    rss_address=rssaddress,feed_priority=3,last_take_date=datetime.datetime.today())
+                    rss_address=rssaddress,feed_priority=3,last_take_date=today)
         feed.save()
     except Exception:
         # フィードの登録失敗
