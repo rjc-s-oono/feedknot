@@ -144,7 +144,9 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 
-    'sample',
+    'common',
+
+    #'sample',
     'feed',
     'box',
     'administration',
@@ -153,7 +155,7 @@ INSTALLED_APPS = (
     'allauth.account',
     'allauth.socialaccount',
 
-        # ... include the providers you want to enable:
+    # ... include the providers you want to enable:
     'allauth.socialaccount.providers.twitter',
     #'allauth.socialaccount.providers.facebook',
     'allauth.socialaccount.providers.github',
@@ -231,3 +233,27 @@ if DEBUG:
     INSTALLED_APPS += (
         'debug_toolbar',
     )
+
+    DEBUG_TOOLBAR_PANELS = [
+        'debug_toolbar.panels.versions.VersionsPanel',
+        'debug_toolbar.panels.timer.TimerPanel',
+        'debug_toolbar.panels.settings.SettingsPanel',
+        'debug_toolbar.panels.headers.HeadersPanel',
+        'debug_toolbar.panels.request.RequestPanel',
+        'debug_toolbar.panels.sql.SQLPanel',
+        'debug_toolbar.panels.staticfiles.StaticFilesPanel',
+        'debug_toolbar.panels.templates.TemplatesPanel',
+        'debug_toolbar.panels.cache.CachePanel',
+        'debug_toolbar.panels.signals.SignalsPanel',
+        'debug_toolbar.panels.logging.LoggingPanel',
+        'debug_toolbar.panels.redirects.RedirectsPanel',
+    ]
+
+    def custom_show_toolbar(request):
+        return True
+
+    DEBUG_TOOLBAR_CONFIG = {
+        'INTERCEPT_REDIRECTS': False,
+        'SHOW_TOOLBAR_CALLBACK': 'feedknot.settings.custom_show_toolbar',
+        #'EXTRA_SIGNALS': ['myproject.signals.MySignal'],
+    }
