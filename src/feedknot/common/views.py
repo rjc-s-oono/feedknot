@@ -1,4 +1,4 @@
-# encoding: UTF-8
+# -*- coding: utf-8 -*-
 import logging
 from django.template import RequestContext
 from django.shortcuts import render_to_response

@@ -1,4 +1,4 @@
-# encoding: UTF-8
+# -*- coding: utf-8 -*-
 import datetime
 from calendar import monthrange
 from dateutil.relativedelta import relativedelta
