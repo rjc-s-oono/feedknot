@@ -107,6 +107,7 @@ TEMPLATE_CONTEXT_PROCESSORS = \
     "allauth.socialaccount.context_processors.socialaccount",
 
     'feedknot.context_processors.staticQueryString',
+    'feedknot.context_processors.debugMode',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -208,6 +209,9 @@ LOGGING = {
         'verbose': {
             'format': '[%(asctime)s] %(levelname)s (%(pathname)s:%(lineno)d %(funcName)s) [%(process)d:%(thread)d] %(message)s'
         },
+        'general': {
+            'format': '[%(asctime)s] %(levelname)s %(message)s'
+        },
         'simple': {
             'format': '%(levelname)s %(message)s'
         },
@@ -230,8 +234,14 @@ LOGGING = {
         'to_file_app': {
             'level': LOG_LEVEL,
             'class': 'logging.FileHandler',
-            'filename': LOG_DIR_ROOT+'/log/app/'+datetime.now().strftime("%Y%m%d")+'.log',
+            'filename': LOG_DIR_ROOT+'/log/app/app_'+datetime.now().strftime("%Y%m%d")+'.log',
             'formatter': 'verbose'
+        },
+        'to_file_js': {
+            'level': LOG_LEVEL,
+            'class': 'logging.FileHandler',
+            'filename': LOG_DIR_ROOT+'/log/app/js_'+datetime.now().strftime("%Y%m%d")+'.log',
+            'formatter': 'general'
         },
 #        'to_file_bat': {
 #            'level': LOG_LEVEL,
@@ -253,7 +263,7 @@ LOGGING = {
             'level': LOG_LEVEL,
         },
         'django.request': {
-            'handlers': ['mail_admins'],
+            'handlers': ['mail_admins', 'to_file_app'],
             'level': 'ERROR',
             'propagate': True,
         },
@@ -264,6 +274,11 @@ LOGGING = {
         },
         'application': {
             'handlers': ['console', 'to_file_app'],
+            'level': LOG_LEVEL,
+            'propagate': True,
+        },
+        'js': {
+            'handlers': ['console', 'to_file_js'],
             'level': LOG_LEVEL,
             'propagate': True,
         },

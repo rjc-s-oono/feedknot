@@ -9,6 +9,12 @@
     <script src="/media/js/jquery-1.11.0.min.js"></script>
     <script src="/media/js/jquery-migrate-1.2.1.min.js"></script>
     <script src="/media/js/jquery.mobile-1.2.1.min.js"></script>
+    <script src="/media/js/jquery.logging.js"></script>
+    <script type="text/javascript">
+    <!--
+        var logger = $(window).logging({requestUrl: "{% url 'common_write_logging' %}",debug:{% if DEBUG_MODE %}true{% else %}false{% endif %}});
+    //-->
+    </script>
     {% block include_js %}{% endblock %}
     {% block include_rear_js %}{% endblock %}
 </head>
