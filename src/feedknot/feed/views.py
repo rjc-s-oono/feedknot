@@ -32,13 +32,14 @@ def main(request):
         box_id = -1
 
     boxName = ""
+    defBoxExistFlg = True;
     if box_id > 0:
         try:
             boxInfo = Box.objects.get(id=box_id)
             boxName = boxInfo.box_name
             boxInfo.readFeed()
         except ObjectDoesNotExist:
-            boxName = "ボックスが登録されていません。"
+            defBoxExistFlg = False
     else:
         try:
             loginInfo = LoginMaster.objects.get(user=request.user)
@@ -47,10 +48,22 @@ def main(request):
             boxName = boxInfo.box_name
             boxInfo.readFeed()
         except ObjectDoesNotExist:
+            defBoxExistFlg = False
+
+
+    box_list_len = Box.objects.filter(user_id=user_id).count()
+    box_list = Box.objects.filter(user_id=user_id).order_by('box_priority')
+
+    if (not defBoxExistFlg):
+        if box_list_len > 0:
+            boxInfo =  box_list[0]
+            boxName = boxInfo.box_name
+            box_id = boxInfo.id
+            boxInfo.readFeed()
+        else:
             boxName = "ボックスが登録されていません。"
 
     article_list = Article.objects.filter(box_id=box_id).order_by('-pub_date', 'id')
-    box_list = Box.objects.filter(user_id=user_id).order_by('box_priority')
 
     param = {'user_id' : user_id,
          'box_name' : boxName,
