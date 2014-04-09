@@ -20,10 +20,25 @@ class Feed(models.Model):
         fdp = feedparser.parse(rssurl)
         stitle = fdp.feed.title
         for entry in fdp['entries']:
-            title = entry['title']
-            link = entry['link']
+            try:
+                title = entry['title']
+            except KeyError:
+                title = "タイトルなし"
+
+            try:
+                link = entry['link']
+            except KeyError:
+                link = "about:blank"
+
             #要相談 日本時間の設定方法、rdfの読み込み（published_parsed取得でエラー）
-            dt = datetime.fromtimestamp(mktime(entry['published_parsed']) + 32400, tz)
+            try:
+                dt = datetime.fromtimestamp(mktime(entry['published_parsed']) + 32400, tz)
+            except KeyError:
+                try:
+                    dt = datetime.fromtimestamp(mktime(entry['updated_parsed']) + 32400, tz)
+                except KeyError:
+                    continue
+
             if ltd < dt:
                 Article.objects.create(feed_id=self.id ,box_id=self.box_id ,user_id=self.user_id ,site_title=stitle,article_title=title,article_address=link,pub_date=dt)
 
