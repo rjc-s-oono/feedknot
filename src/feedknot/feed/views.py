@@ -13,6 +13,7 @@ from common.utils import datetime_util
 from administration.models import LoginMaster
 from box.models import Box
 from feed.models import Article, Feed
+import common.views
 
 # FIXME simplejsonを使用してください
 import json
@@ -74,10 +75,68 @@ def main(request):
                     'feedknot/main.html',
                     param)
 
+@login_required
+def get_feeds(request):
+
+    user_id=request.user.id
+    box_id = -1
+
+    print('user_id')
+    print(user_id)
+
+    # リクエストのボックスID取得
+    try:
+        box_id = int(request.POST['box_id'])
+    except Exception:
+        box_id = -1
+
+    print('box_id(request)')
+    print(box_id)
+
+    defBoxExistFlg = True
+    # デフォルトボックスID取得
+    if box_id < 0:
+        try:
+            loginInfo = LoginMaster.objects.get(user=request.user)
+            box_id = loginInfo.default_box_id
+        except ObjectDoesNotExist:
+            defBoxExistFlg = False
+            box_id = -1
+
+    print('box_id(default)')
+    print(box_id)
+
+    if box_id < 0:
+        print('[get_feeds] box_idが設定されていません。')
+        return common.views.err(request)
+
+    boxName = ""
+
+    if (not defBoxExistFlg):
+        try:
+            boxInfo = Box.objects.get(id=box_id)
+            boxName = boxInfo.box_name
+            boxInfo.readFeed()
+        except ObjectDoesNotExist:
+            defBoxExistFlg = False
+
+    if (not defBoxExistFlg):
+        boxName = "ボックスが登録されていません。"
+
+    feed_list = Feed.objects.filter(user_id=user_id,box_id=box_id).order_by('priority', 'id')
+
+    param = {'user_id' : user_id,
+         'box_name' : boxName,
+         'feed_list' : feed_list}
+
+    return render(request,
+                    'feedknot/main.html',
+                    param)
+
 # フィード追加(ajax)
 def add_feed(request):
     box_id = -1
-    user_id = 1
+    user_id = -1
     rssaddress = ''
     title = ''
     className = ''
@@ -90,14 +149,17 @@ def add_feed(request):
     if request.user.is_authenticated():
         user_id = request.user.id
     else:
-        user_id = 1
+        print('[add_feed] ユーザが存在しません。')
+        return common.views.err(request)
 
     # リクエストパラメータ取得
     try:
         if 'box_id' in request.POST and request.POST['box_id'].isdigit():
             box_id = int(request.POST['box_id'])
         else:
-            box_id = 1
+            print('[add_feed] box_idが設定されていません。')
+            return common.views.err(request)
+
         rssaddress = request.POST['url']
         title = request.POST['title']
         className = request.POST['className']
@@ -109,13 +171,14 @@ def add_feed(request):
                 mimetype='application/json')
 
     try:
-        today = datetime.date.today()
+        # 最初は2000年1月1日からのフィードを全て取得する
+        today = datetime.date(2000, 1, 1)
         # TBD いつの日付設定かわからないので。。。(by sugano)
         # 下記で1日前取得できます。
         # one_days_ago = datetime_util.get_days_ago(today, 1)
 
         # フィード登録
-        feed = Feed(box_id=box_id, user_id=user_id,
+        feed = Feed(box_id=box_id, user_id=user_id,name=title,
                     rss_address=rssaddress,feed_priority=3,last_take_date=today)
         feed.save()
     except Exception:
@@ -124,7 +187,7 @@ def add_feed(request):
 
     # タグを一時的に削除
     # のちのちdivかなんかのメッセージウィンドウで表示すると思うので、その時に消します
-    title = re.sub(r'</*[bBuU]>', '', title)
+    #title = re.sub(r'</*[bBuU]>', '', title)
 
     res = json.dumps({'result': 'success', 'title': title, 'className': className})
     #res.update(csrf(request))
@@ -135,8 +198,8 @@ def add_feed(request):
 # フィード削除(ajax)
 def del_feed(request):
     box_id = -1
-    user_id = 1
-    feed_id = 1
+    user_id = -1
+    feed_id = -1
 
     if not request.is_ajax():
         # Ajaxではない為エラー
@@ -146,18 +209,22 @@ def del_feed(request):
     if request.user.is_authenticated():
         user_id=request.user.id
     else:
-        user_id=1
+        print('[del_feed] ユーザが存在しません。')
+        return common.views.err(request)
 
     # リクエストパラメータ取得
     try:
         if 'box_id' in request.POST and request.POST['box_id'].isdigit():
             box_id = int(request.POST['box_id'])
         else:
-            box_id = 1
+            print('[del_feed] box_idが設定されていません。')
+            return common.views.err(request)
+
         if 'feed_id' in request.POST and request.POST['feed_id'].isdigit():
             feed_id = int(request.POST['feed_id'])
         else:
-            feed_id = 1
+            print('[del_feed] feed_idが存在しません。')
+            return common.views.err(request)
     except Exception:
         # リクエストパラメータの取得に失敗
         return HttpResponse(json.dumps({
@@ -179,9 +246,9 @@ def del_feed(request):
 # 記事既読更新(ajax)
 def upd_article(request):
     box_id = -1
-    user_id = 1
-    feed_id = 1
-    article_id = 1
+    user_id = -1
+    feed_id = -1
+    article_id = -1
 
     if not request.is_ajax():
         # Ajaxではない為エラー
@@ -191,22 +258,29 @@ def upd_article(request):
     if request.user.is_authenticated():
         user_id = request.user.id
     else:
-        user_id = 1
+        print('[upd_article] ユーザが存在しません。')
+        return common.views.err(request)
 
     # リクエストパラメータ取得
     try:
         if 'box_id' in request.POST and request.POST['box_id'].isdigit():
             box_id = int(request.POST['box_id'])
         else:
-            box_id = 1
+            print('[upd_article] box_idが設定されていません。')
+            return common.views.err(request)
+
         if 'feed_id' in request.POST and request.POST['feed_id'].isdigit():
             feed_id = int(request.POST['feed_id'])
         else:
-            feed_id = 1
+            print('[upd_article] feed_idが存在しません。')
+            return common.views.err(request)
+
         if 'article_id' in request.POST and request.POST['article_id'].isdigit():
             article_id = int(request.POST['article_id'])
         else:
-            article_id = 1
+            print('[upd_article] article_idが存在しません。')
+            return common.views.err(request)
+
     except Exception:
         # リクエストパラメータの取得に失敗
         return HttpResponse(json.dumps({
@@ -229,8 +303,8 @@ def upd_article(request):
 # フィードのボックスID更新(ajax)
 def change_box(request):
     box_id = -1
-    user_id = 1
-    feed_id = 1
+    user_id = -1
+    feed_id = -1
 
     if not request.is_ajax():
         # Ajaxではない為エラー
@@ -240,18 +314,23 @@ def change_box(request):
     if request.user.is_authenticated():
         user_id = request.user.id
     else:
-        user_id = 1
+        print('[change_box] ユーザが存在しません。')
+        return common.views.err(request)
 
     # リクエストパラメータ取得
     try:
         if 'box_id' in request.POST and request.POST['box_id'].isdigit():
             box_id = int(request.POST['box_id'])
         else:
-            box_id = 1
+            print('[change_box] box_idが設定されていません。')
+            return common.views.err(request)
+
         if 'feed_id' in request.POST and request.POST['feed_id'].isdigit():
             feed_id = int(request.POST['feed_id'])
         else:
-            feed_id = 1
+            print('[change_box] feed_idが存在しません。')
+            return common.views.err(request)
+
     except Exception:
         # リクエストパラメータの取得に失敗
         return HttpResponse(json.dumps({
