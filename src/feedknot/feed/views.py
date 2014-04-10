@@ -269,4 +269,3 @@ def change_box(request):
         return HttpResponse(json.dumps({'result': 'update feed(box_id) faild.'}), mimetype='application/json')
 
     return HttpResponse(json.dumps({'result': 'success', 'feed_id': feed_id}), mimetype='application/json')
-
