@@ -1,7 +1,7 @@
 # coding: utf-8
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 
@@ -11,16 +11,16 @@ from sample.forms import SampleForm
 def index(request):
     data_list = Sample.objects.filter(del_flg=False)
 
-    return render_to_response('sample/index.html',
-                              {'data_list':data_list},
-                              context_instance=RequestContext(request))
+    return render(request,
+                        'sample/index.html',
+                        {'data_list':data_list})
 
 def detail(request, sample_id):
     data = get_object_or_404(Sample, pk=sample_id, del_flg=False)
 
-    return render_to_response('sample/detail.html',
-                              {'data':data},
-                              context_instance=RequestContext(request))
+    return render(request,
+                        'sample/detail.html',
+                        {'data':data})
 
 def create(request):
 
@@ -34,20 +34,20 @@ def create(request):
                 sample.add_sample(request)
                 return HttpResponseRedirect(reverse('complete'))
             else:
-                return render_to_response('sample/confirm.html',
-                            {'proc_title':'新規作成',
-                             'form':form
-                            },
-                            context_instance=RequestContext(request))
+                return render(request,
+                                'sample/confirm.html',
+                                {'proc_title':'新規作成',
+                                 'form':form
+                                 })
 
     else:
         form = SampleForm()
 
-    return render_to_response('sample/edit.html',
-                  {'proc_title':'新規作成',
-                   'form':form
-                  },
-                  context_instance=RequestContext(request))
+    return render(request,
+                    'sample/edit.html',
+                    {'proc_title':'新規作成',
+                     'form':form
+                     })
 
 def edit(request, sample_id):
 
@@ -66,19 +66,19 @@ def edit(request, sample_id):
                 editSample.edit_sample(request)
                 return HttpResponseRedirect(reverse('complete'))
             else:
-                return render_to_response('sample/confirm.html',
-                              {'proc_title':'編集',
-                               'form':form
-                              },
-                              context_instance=RequestContext(request))
+                return render(request,
+                                'sample/confirm.html',
+                                {'proc_title':'編集',
+                                 'form':form
+                                })
     else:
         form = SampleForm(instance=sample)
 
-    return render_to_response('sample/edit.html',
+    return render(request,
+                  'sample/edit.html',
                   {'proc_title':'編集',
                    'form':form
-                  },
-                  context_instance=RequestContext(request))
+                  })
 
 def delete(request, sample_id):
 
@@ -93,5 +93,5 @@ def delete(request, sample_id):
 
 def complete(request):
 
-    return render_to_response('sample/complete.html',
-                              context_instance=RequestContext(request))
+    return render(request,
+                  'sample/complete.html')

@@ -3,7 +3,7 @@ import re
 import datetime
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.http import HttpResponse
 
 from django.core.exceptions import ObjectDoesNotExist
@@ -70,9 +70,9 @@ def main(request):
          'article_list' : article_list,
          'box_list' : box_list}
 
-    return render_to_response('feedknot/main.html',
-                              param,
-                              context_instance=RequestContext(request))
+    return render(request,
+                    'feedknot/main.html',
+                    param)
 
 # フィード追加(ajax)
 def add_feed(request):

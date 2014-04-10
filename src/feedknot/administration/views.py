@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from administration.models import LoginMaster
 from django.core.exceptions import ObjectDoesNotExist
@@ -12,5 +12,7 @@ def index(request):
         userInfo = LoginMaster.objects.create(user=request.user, default_box_id=-1)
 
     userName = userInfo.user.username
-    return render_to_response('feedknot/Mypage.html',{'login_flg':'1','user_name':userName})
+    return render(request,
+                  'feedknot/Mypage.html',
+                  {'login_flg':'1','user_name':userName})
 
