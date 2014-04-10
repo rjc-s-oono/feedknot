@@ -1,19 +1,21 @@
-from django.core.context_processors import csrf, request
-from django.shortcuts import render_to_response
-from box.models import Box
-from feed.models import Article
-from feed.models import Feed
-from administration.models import LoginMaster
-from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth.models import User
-import json
-from django.http.response import HttpResponse
-from django.contrib.auth.decorators import login_required
-
-# TMP：日付関数ができるまでのとりあえずimport
-import datetime
-import locale
+# -*- coding: utf-8 -*-
 import re
+import datetime
+from django.contrib.auth.decorators import login_required
+from django.template import RequestContext
+from django.shortcuts import render
+from django.http import HttpResponse
+
+from django.core.exceptions import ObjectDoesNotExist
+
+from common.utils import datetime_util
+
+from administration.models import LoginMaster
+from box.models import Box
+from feed.models import Article, Feed
+
+# FIXME simplejsonを使用してください
+import json
 
 @login_required
 def main(request):
@@ -30,13 +32,14 @@ def main(request):
         box_id = -1
 
     boxName = ""
+    defBoxExistFlg = True;
     if box_id > 0:
         try:
             boxInfo = Box.objects.get(id=box_id)
             boxName = boxInfo.box_name
             boxInfo.readFeed()
         except ObjectDoesNotExist:
-            boxName = "ボックスが登録されていません。"
+            defBoxExistFlg = False
     else:
         try:
             loginInfo = LoginMaster.objects.get(user=request.user)
@@ -45,20 +48,31 @@ def main(request):
             boxName = boxInfo.box_name
             boxInfo.readFeed()
         except ObjectDoesNotExist:
+            defBoxExistFlg = False
+
+
+    box_list_len = Box.objects.filter(user_id=user_id).count()
+    box_list = Box.objects.filter(user_id=user_id).order_by('box_priority')
+
+    if (not defBoxExistFlg):
+        if box_list_len > 0:
+            boxInfo =  box_list[0]
+            boxName = boxInfo.box_name
+            box_id = boxInfo.id
+            boxInfo.readFeed()
+        else:
             boxName = "ボックスが登録されていません。"
 
     article_list = Article.objects.filter(box_id=box_id).order_by('-pub_date', 'id')
-    box_list = Box.objects.filter(user_id=user_id).order_by('box_priority')
 
     param = {'user_id' : user_id,
          'box_name' : boxName,
          'article_list' : article_list,
          'box_list' : box_list}
-    param.update(csrf(request))
 
-    return render_to_response('feedknot/main.html',
-                               param)
-
+    return render(request,
+                    'feedknot/main.html',
+                    param)
 
 # フィード追加(ajax)
 def add_feed(request):
@@ -95,9 +109,14 @@ def add_feed(request):
                 mimetype='application/json')
 
     try:
+        today = datetime.date.today()
+        # TBD いつの日付設定かわからないので。。。(by sugano)
+        # 下記で1日前取得できます。
+        # one_days_ago = datetime_util.get_days_ago(today, 1)
+
         # フィード登録
         feed = Feed(box_id=box_id, user_id=user_id,
-                    rss_address=rssaddress,feed_priority=3,last_take_date=datetime.datetime.today())
+                    rss_address=rssaddress,feed_priority=3,last_take_date=today)
         feed.save()
     except Exception:
         # フィードの登録失敗
@@ -250,4 +269,3 @@ def change_box(request):
         return HttpResponse(json.dumps({'result': 'update feed(box_id) faild.'}), mimetype='application/json')
 
     return HttpResponse(json.dumps({'result': 'success', 'feed_id': feed_id}), mimetype='application/json')
-
