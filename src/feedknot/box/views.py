@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.core.context_processors import csrf, request
 from django.http.response import HttpResponse
 import json
 from box.models import Box
@@ -9,7 +10,68 @@ from feed.models import Feed
 
 @login_required
 def commonEdit(request):
+
+    user_id = request.user.id
+
+    print('user_id')
+    print(user_id)
+
+    box_list = Box.objects.filter(user_id=user_id).order_by('box_priority')
+
+    print(box_list)
+
+    article_list = ''
+#     for box in [box_list]:
+#         article_list[request.box.id] = Article.objects.filter(box_id=request.box.id)
+
+    print(article_list)
+
+    param = {'user_id' : user_id,
+         'article_list' : article_list,
+         'box_list' : box_list}
+    param.update(csrf(request))
+
     return render(request,'feedknot/CommonEdit.html',{})
+
+#     print(user_id)
+#
+#     try:
+#         box_id = int(request.POST['box_id'])
+#     except Exception:
+#         box_id = -1
+#
+#     boxName = ""
+#     if box_id > 0:
+#         try:
+#             boxInfo = Box.objects.get(id=box_id)
+#             boxName = boxInfo.box_name
+#             boxInfo.readFeed()
+#         except ObjectDoesNotExist:
+#             boxName = "ボックスが登録されていません。"
+#     else:
+#         try:
+#             loginInfo = LoginMaster.objects.get(user=request.user)
+#
+#
+#             box_id = loginInfo.default_box_id
+#             boxInfo = Box.objects.get(id=box_id)
+#             boxName = boxInfo.box_name
+#             boxInfo.readFeed()
+#         except ObjectDoesNotExist:
+#             boxName = "ボックスが登録されていません。"
+#
+#     article_list = Article.objects.filter(box_id=box_id).order_by('-pub_date', 'id')
+#     box_list = Box.objects.filter(user_id=user_id).order_by('box_priority')
+#
+#     print(box_list)
+#
+#     param = {'user_id' : user_id,
+#          'box_name' : boxName,
+#          'article_list' : article_list,
+#          'box_list' : box_list}
+#     param.update(csrf(request))
+#
+#     return render_to_response('feedknot/CommonEdit.html',{})
 
 @login_required
 def searchFeed(request):
