@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>feedknot{% block title %}{% endblock %}</title>
-    <link rel="stylesheet" href="/media/css/style.css" type="text/css"  >
+    <link rel="stylesheet" href="/media/css/style.css?{{ QUERY_STRING }}" type="text/css"  >
     <link rel="stylesheet" href="/media/css/jquery/jquery.mobile-1.2.1.min.css" />
     {% block include_css %}{% endblock %}
     <script src="https://www.google.com/jsapi"></script>
@@ -11,6 +11,12 @@
     <script src="/media/js/jquery-migrate-1.2.1.min.js"></script>
     <script src="/media/js/jquery.mobile-1.2.1.min.js"></script>
     <script src="/media/js/common.js"></script>
+    <script src="/media/js/jquery.logging.js"></script>
+    <script type="text/javascript">
+    <!--
+        var logger = $(window).logging({requestUrl: "{% url 'common_write_logging' %}",debug:{% if DEBUG_MODE %}true{% else %}false{% endif %}});
+    //-->
+    </script>
     {% block include_js %}{% endblock %}
 </head>
 
