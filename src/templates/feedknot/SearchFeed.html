@@ -10,10 +10,22 @@
 
         {% comment %} == タイトルバー ========== {% endcomment %}
         <div data-role="header" data-position="fixed" data-theme="e">
+            {% comment %} ホームボタン {% comment %}
             <a href="/main/" data-prefetch="true" data-transition="slide" data-direction="reverse" data-iconpos="notext" data-icon="home" rel="external">ホーム</a>
+
+            {% comment %} タイトル {% comment %}
             <h1 id="title">フィード検索</h1>
+
+            {% comment %} 戻るボタン {% comment %}
             <a href="/commonEdit" data-prefetch="true" data-transition="slide" data-direction="reverse" data-iconpos="notext" data-icon="arrow-l" rel="external">戻る</a>
         </div> <!-- header -->
+
+		{% comment %} == ↓ポップアップ内容  ========== {% endcomment %}
+		<div data-role="popup" id="popupNotice">
+			<div data-role="content" data-theme="d" class="ui-corner-bottom ui-content" id="popupMsg">
+			</div>
+		</div>
+		{% comment %} == ↑ポップアップ内容  ========== {% endcomment %}
 
         {% comment %} == ↓検索ボックス ========== {% endcomment %}
         <div class="search_frame" >

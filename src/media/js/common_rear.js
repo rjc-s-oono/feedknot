@@ -6,6 +6,12 @@ google.load("feeds", "1");
 // フィード検索開始 (Google findFeeds)
 function searchFeed(searchTxt) {
     //alert("検索値：" + searchTxt);
+	$.mobile.loading( 'show', {
+		text: 'Loading...',
+		textVisible: true,
+		theme: 'z',
+		html: ""
+	});
     google.feeds.findFeeds(searchTxt, dispFeed);
 }
 
@@ -37,6 +43,7 @@ function dispFeed(result) {
             }
             $(".feed_list_ul")
                 .listview().listview('refresh');
+            $.mobile.loading( 'hide', {});
         }
     }
 }
@@ -49,6 +56,12 @@ function addFeed(url, title, className) {
         return;
     }
     isWaiting = true;
+    $.mobile.loading( 'show', {
+		text: 'Adding...',
+		textVisible: true,
+		theme: 'z',
+		html: ""
+	});
 
     $("form#feed_form #url").val(url);
     $("form#feed_form #title").val(title);
@@ -71,13 +84,16 @@ function addFeed(url, title, className) {
                 alert("フィードの追加に失敗しました。ログインし直してください。");
             } else if ("success" == data.result) {
                 // 成功
-                alert("フィード【" + data.title + "】の追加が完了しました。");
+                //alert("フィード【" + data.title + "】の追加が完了しました。");
+                $("#popupNotice #popupMsg").html("フィード【" + data.title + "】の追加が完了しました。");
                 $("." + data.className).hide();
                 $(".feed_list_ul").listview().listview('refresh');
+                $("#popupNotice").popup("open");
             } else {
                 // 失敗
                 alert("フィード【" + data.title + "】の追加に失敗しました。暫くしてから再度お試しください。");
             }
+            $.mobile.loading( 'hide', {});
         },
         error: function() {
             isWaiting = false;
