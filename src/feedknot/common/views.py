@@ -1,4 +1,4 @@
-# encoding: UTF-8
+# -*- coding: utf-8 -*-
 import logging
 
 from django.views.decorators.csrf import csrf_exempt
