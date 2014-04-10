@@ -44,7 +44,10 @@ urlpatterns = patterns('',
     url(r'^upd_article/$', 'feed.views.upd_article', name='upd_article'),
     url(r'^change_box/$', 'feed.views.change_box', name='change_box'),
 
-    url(r'^error/$', 'common.views.err', name='common-error'),
+    url(r'^error/$', 'common.views.err', name='common_error'),
+
+    url(r'^log/$', 'common.views.write_logging', name='common_write_logging'),
+
 )
 
 handler500 = 'common.views.err_500'
