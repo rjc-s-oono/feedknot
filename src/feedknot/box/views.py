@@ -100,7 +100,7 @@ def searchFeed(request):
         print('[searchFeed] box_idが設定されていません。')
         return common.views.err(request)
 
-    return render(request,'feedknot/SearchFeed.html',{})
+    return render(request,'feedknot/SearchFeed.html',{'box_id': box_id})
 
 # ボックス登録
 def add_box(request):

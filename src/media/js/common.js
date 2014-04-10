@@ -103,7 +103,7 @@ function addFeed(url, title, className) {
             //alert("data:" + data);
             //alert("result:" + data.result);
             //alert($("#csrfmiddlewaretoken").val());
-            if (data == null) {
+            if (data == null || undefined == data.title || undefined == data.result) {
                 alert("フィードの追加に失敗しました。ログインし直してください。");
             } else if ("success" == data.result) {
                 // 成功
