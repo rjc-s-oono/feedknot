@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
 from administration.models import LoginMaster

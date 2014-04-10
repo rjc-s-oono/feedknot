@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Django settings for feedknot project.
 import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -144,7 +145,9 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 
-    'sample',
+    'common',
+
+    #'sample',
     'feed',
     'box',
     'administration',
@@ -153,10 +156,11 @@ INSTALLED_APPS = (
     'allauth.account',
     'allauth.socialaccount',
 
-        # ... include the providers you want to enable:
-    #'allauth.socialaccount.providers.twitter',
+    # ... include the providers you want to enable:
+    'allauth.socialaccount.providers.twitter',
     #'allauth.socialaccount.providers.facebook',
     'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.google'
     #'allauth.socialaccount.providers.linkedin',
     #'allauth.socialaccount.providers.openid',
     #'allauth.socialaccount.providers.persona',
@@ -178,6 +182,11 @@ SOCIALACCOUNT_PROVIDERS = {
 
 LOGIN_REDIRECT_URL = '/'
 #LOGIN_URL = '/feedknot/login'
+
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+)
 
 LOG_LEVEL = 'INFO'
 
@@ -226,24 +235,26 @@ if DEBUG:
         'debug_toolbar',
     )
 
-    DEBUG_TOOLBAR_PANELS = (
-        'debug_toolbar.panels.version.VersionDebugPanel',
-        'debug_toolbar.panels.timer.TimerDebugPanel',
-        'debug_toolbar.panels.settings_vars.SettingsVarsDebugPanel',
-        'debug_toolbar.panels.headers.HeaderDebugPanel',
-        'debug_toolbar.panels.request_vars.RequestVarsDebugPanel',
-        'debug_toolbar.panels.template.TemplateDebugPanel',
-        'debug_toolbar.panels.sql.SQLDebugPanel',
-        'debug_toolbar.panels.signals.SignalDebugPanel',
-        'debug_toolbar.panels.logger.LoggingPanel',
-    )
+    DEBUG_TOOLBAR_PANELS = [
+        'debug_toolbar.panels.versions.VersionsPanel',
+        'debug_toolbar.panels.timer.TimerPanel',
+        'debug_toolbar.panels.settings.SettingsPanel',
+        'debug_toolbar.panels.headers.HeadersPanel',
+        'debug_toolbar.panels.request.RequestPanel',
+        'debug_toolbar.panels.sql.SQLPanel',
+        'debug_toolbar.panels.staticfiles.StaticFilesPanel',
+        'debug_toolbar.panels.templates.TemplatesPanel',
+        'debug_toolbar.panels.cache.CachePanel',
+        'debug_toolbar.panels.signals.SignalsPanel',
+        'debug_toolbar.panels.logging.LoggingPanel',
+        'debug_toolbar.panels.redirects.RedirectsPanel',
+    ]
 
     def custom_show_toolbar(request):
-        return True # Always show toolbar, for example purposes only.
+        return True
 
     DEBUG_TOOLBAR_CONFIG = {
         'INTERCEPT_REDIRECTS': False,
-        'SHOW_TOOLBAR_CALLBACK': custom_show_toolbar,
+        'SHOW_TOOLBAR_CALLBACK': 'feedknot.settings.custom_show_toolbar',
         #'EXTRA_SIGNALS': ['myproject.signals.MySignal'],
-        'HIDE_DJANGO_SQL': False,
     }
