@@ -9,6 +9,7 @@ class Feed(models.Model):
     box_id = models.IntegerField(u'ボックスID',max_length = 5)
 #     user_id = models.ForeignKey()
     user_id = models.IntegerField(u'ユーザID',max_length = 5)
+    feed_name = models.CharField(u'サイトタイトル',max_length = 100)
     rss_address = models.URLField(u'RSSアドレス',max_length = 255)
     last_take_date = models.DateTimeField(u'最終読込日時', auto_now_add=False, blank=False, null=False)
     feed_priority= models.IntegerField(u'優先度',max_length = 1)
@@ -30,14 +31,16 @@ class Feed(models.Model):
             except KeyError:
                 link = "about:blank"
 
-            #要相談 日本時間の設定方法、rdfの読み込み（published_parsed取得でエラー）
-            try:
-                dt = datetime.fromtimestamp(mktime(entry['published_parsed']) + 32400, tz)
-            except KeyError:
-                try:
-                    dt = datetime.fromtimestamp(mktime(entry['updated_parsed']) + 32400, tz)
-                except KeyError:
-                    continue
+            #暫定処理 updated_parsedが非推奨のためfeedparserをバージョンアップするとエラーとなる可能性がある
+            published_parsed = entry.get('published_parsed', '')
+
+            if published_parsed == '':
+                published_parsed = entry.get('updated_parsed', '')
+
+            if published_parsed == '':
+                continue
+
+            dt = datetime.fromtimestamp(mktime(published_parsed) + 32400, tz)
 
             if ltd < dt:
                 Article.objects.create(feed_id=self.id ,box_id=self.box_id ,user_id=self.user_id ,site_title=stitle,article_title=title,article_address=link,pub_date=dt)

@@ -7,6 +7,8 @@ import json
 from box.models import Box
 from feed.models import Article
 from feed.models import Feed
+from administration.models import LoginMaster
+import common.views
 
 @login_required
 def commonEdit(request):
@@ -75,18 +77,42 @@ def commonEdit(request):
 
 @login_required
 def searchFeed(request):
+    box_id = -1
+
+    # ユーザID取得
+    if not request.user.is_authenticated():
+        print('[searchFeed] ユーザが存在しません。')
+        return common.views.err(request)
+
+    try:
+        box_id = int(request.POST['box_id'])
+    except Exception:
+        box_id = -1
+
+    if box_id < 0:
+        try:
+            loginInfo = LoginMaster.objects.get(user=request.user)
+            box_id = loginInfo.default_box_id
+        except Exception:
+            box_id = -1
+
+    if box_id < 0:
+        print('[searchFeed] box_idが設定されていません。')
+        return common.views.err(request)
+
     return render(request,'feedknot/SearchFeed.html',{})
 
 # ボックス登録
 def add_box(request):
     box_name = ''
-    user_id = 1
+    user_id = -1
 
     # ユーザID取得
     if request.user.is_authenticated():
         user_id = request.user.id
     else:
-        user_id = 1
+        print('[add_box] ユーザが存在しません。')
+        return common.views.err(request)
 
     # リクエストパラメータ取得
     try:
@@ -118,21 +144,23 @@ def add_box(request):
 
 # ボックス削除
 def del_box(request):
-    box_id = 1
-    user_id = 1
+    box_id = -1
+    user_id = -1
 
     # ユーザID取得
     if request.user.is_authenticated():
         user_id = request.user.id
     else:
-        user_id = 1
+        print('[del_box] ユーザが存在しません。')
+        return common.views.err(request)
 
     # リクエストパラメータ取得
     try:
         if 'box_id' in request.POST and request.POST['box_id'].isdigit():
             box_id = int(request.POST['box_id'])
         else:
-            box_id = 1
+            print('[del_box] box_idが設定されていません。')
+            return common.views.err(request)
     except Exception:
         # リクエストパラメータの取得に失敗
         return HttpResponse(
