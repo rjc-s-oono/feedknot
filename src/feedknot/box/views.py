@@ -15,6 +15,19 @@ def commonEdit(request):
 
     user_id = request.user.id
 
+    try:
+        manage_kbn = int(request.POST['manage_kbn'])
+    except Exception:
+        manage_kbn = -1
+
+    print('manage_kbn')
+    print(manage_kbn)
+
+    if manage_kbn == 1:
+        add_box(request)
+    elif manage_kbn == 2:
+        del_box(request)
+
     print('user_id')
     print(user_id)
 
@@ -31,9 +44,8 @@ def commonEdit(request):
     param = {'user_id' : user_id,
          'article_list' : article_list,
          'box_list' : box_list}
-    param.update(csrf(request))
 
-    return render(request,'feedknot/CommonEdit.html',{})
+    return render(request,'feedknot/CommonEdit.html',param)
 
 #     print(user_id)
 #
@@ -87,20 +99,13 @@ def searchFeed(request):
     try:
         box_id = int(request.POST['box_id'])
     except Exception:
-        box_id = -1
-
-    if box_id < 0:
-        try:
-            loginInfo = LoginMaster.objects.get(user=request.user)
-            box_id = loginInfo.default_box_id
-        except Exception:
-            box_id = -1
+        return common.views.err(request)
 
     if box_id < 0:
         print('[searchFeed] box_idが設定されていません。')
         return common.views.err(request)
 
-    return render(request,'feedknot/SearchFeed.html',{})
+    return render(request,'feedknot/SearchFeed.html',{'box_id':box_id})
 
 # ボックス登録
 def add_box(request):
@@ -137,10 +142,11 @@ def add_box(request):
         return HttpResponse(json.dumps({'result': 'regist box faild.'}),
                             mimetype='application/json')
 
-    res = json.dumps({'result': 'success', 'box_name': box_name})
+    #res = json.dumps({'result': 'success', 'box_name': box_name})
     #res.update(csrf(request))
 
-    return HttpResponse(res, mimetype='application/json')
+    #return HttpResponse(res, mimetype='application/json')
+    return
 
 # ボックス削除
 def del_box(request):
@@ -171,7 +177,7 @@ def del_box(request):
 
     # ボックス削除 (ボックスに割り当てられているフィードなども削除)
     try:
-        Box.objects.filter(box_id=box_id, user_id=user_id).delete()
+        Box.objects.filter(id=box_id, user_id=user_id).delete()
         Feed.objects.filter(box_id=box_id, user_id=user_id).delete()
         Article.objects.filter(box_id=box_id, user_id=user_id).delete()
     except Exception:

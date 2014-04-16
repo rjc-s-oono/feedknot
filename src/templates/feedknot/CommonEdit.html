@@ -78,23 +78,33 @@
         {% comment %} == フィードメニュー  ========== {% endcomment %}
         <div data-role="content">
 
-            <form method="post" action="{% url 'commonEdit' %}" name="frm">
+            <form method='post' action='{% url 'commonEdit' %}' name='commonEditForm'>
+                 <input type='hidden' id='manage_kbn' name='manage_kbn' value=''/>
+                 <input type='hidden' id='box_id' name='box_id' value=''/>
+                 {% csrf_token %}
+            </form>
+            <form method='post' action='{% url 'feed_list' %}' name='feedListForm'>
+                 <input type='hidden' id='box_id' name='box_id' value=''/>
+                 {% csrf_token %}
             </form>
             <table cellspacing="0">
                 {% for box in box_list %}
                     <tr bgcolor="silver">
-                        <td rowspan="2" nowrap><input type="checkbox" id="box_default_{{box.box_id}}" ></td>
+                        <td rowspan="2" nowrap><input type="checkbox" id="box_default_{{box.id}}"/></td>
 
-                        <td align="left"><TEXTAREA id="box_name_{{box.box_id}}" ROWS="1" COLS="20" >{{box.box_name}}</TEXTAREA></td>
+                        <td align="left"><TEXTAREA id="box_name_{{box.id}}" ROWS="1" COLS="20" >{{box.box_name}}</TEXTAREA></td>
 
-                        <td id="box_edit_{{box.box_id}}" width="10%" nowrap><img src="/media/drawable/ic_edit.png" alt="edit" width="50" height="50"></td>
-                        <td id="box_delete_{{box.box_id}}" width="10%" nowrap><img src="/media/drawable/ic_delete.png" alt="delete" width="50" height="50" id="review"></td>
+                        <td id="box_edit_{{box.id}}" width="10%" nowrap><img src="/media/drawable/ic_edit.png" alt="edit" width="50" height="50"></td>
+                        <td id="box_delete_{{box.id}}" onclick="commonEditForm.manage_kbn.value='2';commonEditForm.box_id.value='{{box.id}}';commonEditForm.submit();" width="10%" nowrap><img src="/media/drawable/ic_delete.png" alt="delete" width="50" height="50" id="review"></td>
                     </tr>
                     <tr bgcolor="silver">
-                        <td id="box_review_{{box.box_id}}" align="right" width="100%" height="8%" border-bottom>★★★</td>
-                        <td colspan="2" align="right" ><a href="{% url 'searchFeed'%}">フィードを追加</a></td>
+                        <td id="box_review_{{box.id}}" align="right" width="100%" height="8%" border-bottom>★★★</td>
+                        <td colspan="2" align="right" ><a  href="#" onclick="feedListForm.box_id.value='{{box.id}}';feedListForm.submit();">フィード管理へ</a></td>
                     </tr>
                 {% endfor %}
+                    <tr>
+                        <td colspan="3" align="right" ><a href="#" onclick="commonEditForm.manage_kbn.value='1';commonEditForm.submit();">BOX追加</a></td>
+                    </tr>
             </table>
         </div>
         {% comment %} == ↑フィードメニュー  ========== {% endcomment %}

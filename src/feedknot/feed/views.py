@@ -161,8 +161,14 @@ def add_feed(request):
             return common.views.err(request)
 
         rssaddress = request.POST['url']
+        print('url')
+        print(rssaddress)
         title = request.POST['title']
+        print('title')
+        print(title)
         className = request.POST['className']
+        print('className')
+        print(className)
     except Exception:
         # リクエストパラメータの取得に失敗
         return HttpResponse(json.dumps({
@@ -178,7 +184,7 @@ def add_feed(request):
         # one_days_ago = datetime_util.get_days_ago(today, 1)
 
         # フィード登録
-        feed = Feed(box_id=box_id, user_id=user_id,name=title,
+        feed = Feed.objects.create(box_id=box_id, user_id=user_id,feed_name=title,
                     rss_address=rssaddress,feed_priority=3,last_take_date=today)
         feed.save()
     except Exception:
@@ -348,3 +354,42 @@ def change_box(request):
         return HttpResponse(json.dumps({'result': 'update feed(box_id) faild.'}), mimetype='application/json')
 
     return HttpResponse(json.dumps({'result': 'success', 'feed_id': feed_id}), mimetype='application/json')
+
+def feed_list(request):
+    user_id=request.user.id
+    box_id = -1
+
+    print('user_id')
+    print(user_id)
+
+    # リクエストのボックスID取得
+    try:
+        box_id = int(request.POST['box_id'])
+    except Exception:
+        return common.views.err(request)
+
+    print('box_id(request)')
+    print(box_id)
+
+    if box_id < 0:
+        print('[get_feeds] box_idが設定されていません。')
+        return common.views.err(request)
+
+    boxName = ""
+
+    try:
+        boxInfo = Box.objects.get(id=box_id)
+        boxName = boxInfo.box_name
+    except ObjectDoesNotExist:
+        return common.views.err(request)
+
+    feed_list = Feed.objects.filter(user_id=user_id,box_id=box_id).order_by('feed_priority', 'id')
+
+    param = {'user_id' : user_id,
+             'box_name' : boxName,
+             'box_id' : box_id,
+             'feed_list' : feed_list}
+
+    return render(request,
+                    'feedknot/feed.html',
+                    param)

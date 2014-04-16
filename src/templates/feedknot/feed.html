@@ -48,10 +48,14 @@
 
         {% comment %} == ↓フィード情報  ========== {% endcomment %}
         <div data-role="content">
+            <form method='post' action='{% url 'searchFeed' %}' name='searchFeedForm'>
+                 <input type='hidden' id='box_id' name='box_id' value='{{box_id}}'/>
+                 {% csrf_token %}
+            </form>
             <ul data-role="listview" data-divider-theme="e" data-inset="true" data-filter="true" id="feedUL">
             {% for feed in feed_list %}
                 <li data-theme="c" id="feedLI">
-                    <h1>{{feed.name}}</h1>
+                    <h1>{{feed.feed_name}}</h1>
                     <p>
                         FeedId={{feed.id}},
                         BoxId={{feed.box_id}},
@@ -61,6 +65,7 @@
                   </li>
             {% endfor %}
             </ul>
+            <a href="#" onclick="searchFeedForm.submit();">feed追加</a>
         </div>
         {% comment %} == ↑フィード情報  ========== {% endcomment %}
 
