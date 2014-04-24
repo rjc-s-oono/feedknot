@@ -150,7 +150,7 @@ def add_feed(request):
         user_id = request.user.id
     else:
         print('[add_feed] ユーザが存在しません。')
-        return common.views.err(request)
+        return HttpResponse(json.dumps({'result': 'user_id is not found.'}), mimetype='application/json')
 
     # リクエストパラメータ取得
     try:
@@ -158,17 +158,11 @@ def add_feed(request):
             box_id = int(request.POST['box_id'])
         else:
             print('[add_feed] box_idが設定されていません。')
-            return common.views.err(request)
+            return HttpResponse(json.dumps({'result': 'box_id is not found.'}), mimetype='application/json')
 
         rssaddress = request.POST['url']
-        print('url')
-        print(rssaddress)
         title = request.POST['title']
-        print('title')
-        print(title)
         className = request.POST['className']
-        print('className')
-        print(className)
     except Exception:
         # リクエストパラメータの取得に失敗
         return HttpResponse(json.dumps({
