@@ -81,6 +81,7 @@
             <form method='post' action='{% url 'commonEdit' %}' name='commonEditForm'>
                  <input type='hidden' id='manage_kbn' name='manage_kbn' value=''/>
                  <input type='hidden' id='box_id' name='box_id' value=''/>
+                 <input type='hidden' id='box_name' name='box_name' value= ''/>
                  {% csrf_token %}
             </form>
             <form method='post' action='{% url 'feed_list' %}' name='feedListForm'>
@@ -92,9 +93,9 @@
                     <tr bgcolor="silver">
                         <td rowspan="2" nowrap><input type="checkbox" id="box_default_{{box.id}}"/></td>
 
-                        <td align="left"><TEXTAREA id="box_name_{{box.id}}" ROWS="1" COLS="20" >{{box.box_name}}</TEXTAREA></td>
+                        <td align="left"><TEXTAREA id="box_name_{{box.id}}" name="box_name_{{box.id}}" ROWS="1" COLS="20" >{{box.box_name}}</TEXTAREA></td>
 
-                        <td id="box_edit_{{box.id}}" width="10%" nowrap><img src="/media/drawable/ic_edit.png" alt="edit" width="50" height="50"></td>
+                        <td id="box_edit_{{box.id}}" onclick="commonEditForm.manage_kbn.value='3';commonEditForm.box_id.value='{{box.id}}';commonEditForm.box_name.value=box_name_{{box.id}}.value;commonEditForm.submit();" width="10%" nowrap><img src="/media/drawable/ic_edit.png" alt="edit" width="50" height="50"></td>
                         <td id="box_delete_{{box.id}}" onclick="commonEditForm.manage_kbn.value='2';commonEditForm.box_id.value='{{box.id}}';commonEditForm.submit();" width="10%" nowrap><img src="/media/drawable/ic_delete.png" alt="delete" width="50" height="50" id="review"></td>
                     </tr>
                     <tr bgcolor="silver">

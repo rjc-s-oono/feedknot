@@ -52,6 +52,12 @@
                  <input type='hidden' id='box_id' name='box_id' value='{{box_id}}'/>
                  {% csrf_token %}
             </form>
+            <form method='post' action='{% url 'feed_list' %}' name='feedListForm'>
+                 <input type='hidden' id='manage_kbn' name='manage_kbn' value=''/>
+                 <input type='hidden' id='feed_id' name='feed_id' value=''/>
+                 <input type='hidden' id='box_id' name='box_id' value='{{box_id}}'/>
+                 {% csrf_token %}
+            </form>
             <ul data-role="listview" data-divider-theme="e" data-inset="true" data-filter="true" id="feedUL">
             {% for feed in feed_list %}
                 <li data-theme="c" id="feedLI">
@@ -61,7 +67,9 @@
                         BoxId={{feed.box_id}},
                         UserId={{feed.user_id}},
                         priority={{feed.feed_priority}}
+
                     </p>
+                    <a href="#" onclick="feedListForm.manage_kbn.value='1';feedListForm.feed_id.value='{{feed.id}}';feedListForm.submit();">feed削除</a>
                   </li>
             {% endfor %}
             </ul>

@@ -207,9 +207,9 @@ def del_feed(request):
     user_id = -1
     feed_id = -1
 
-    if not request.is_ajax():
+    #if not request.is_ajax():
         # Ajaxではない為エラー
-        return HttpResponse(json.dumps({'result': 'request is not ajax.'}), mimetype='application/json')
+        #return HttpResponse(json.dumps({'result': 'request is not ajax.'}), mimetype='application/json')
 
     # ユーザID取得
     if request.user.is_authenticated():
@@ -361,6 +361,15 @@ def feed_list(request):
 
     print('user_id')
     print(user_id)
+
+    try:
+        manage_kbn = int(request.POST['manage_kbn'])
+    except Exception:
+        manage_kbn = -1
+
+    #ボックス削除
+    if manage_kbn == 1:
+        del_feed(request)
 
     # リクエストのボックスID取得
     try:
