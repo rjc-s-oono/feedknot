@@ -2,142 +2,116 @@
 
 {% comment %} == ↓タイトル部分 ====================================== {% endcomment %}
 
-	{% block title %}&nbsp;|&nbsp;メイン{% endblock %}
+    {% block title %}&nbsp;|&nbsp;メイン{% endblock %}
 
 {% comment %} == ↑タイトル部分 ====================================== {% endcomment %}
 
 
 
 {% comment %} == ↓スタイルシート部分 ====================================== {% endcomment %}
-	{% block include_css %}
+    {% block include_css %}
 
-	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.1/jquery.mobile-1.2.1.min.css" />
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.1/jquery.mobile-1.2.1.min.css" />
 
-	{% endblock %}
+    {% endblock %}
 {% comment %} == ↑スタイルシート部分 ====================================== {% endcomment %}
 
 
 
 {% comment %} == ↓ジャバスクリプト部分 ====================================== {% endcomment %}
-	{% block include_js %}
+    {% block include_js %}
 
-	<script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
 
     <script type="text/javascript">
     <!--
     $( function() {
         $( '#box_arrow_1' ).click( function() {
-        	alert("a");
+            alert("a");
             $( "#feed_records_1" ) . slideToggle( 'normal' );
         } );
         $( '#box_target_1' ).click( function() {
-        	alert("box_target_1");
+            alert("box_target_1");
         } );
         $( '#box_edit_1' ).click( function() {
-       	 alert("box_edit_1");
-       	 $( "#box_name_1" ) .readonly = "false";
+            alert("box_edit_1");
+            $( "#box_name_1" ) .readonly = "false";
         } );
         $( '#box_delete_1' ).click( function() {
-        	alert("box_delete_1");
+            alert("box_delete_1");
         } );
         $( '#box_review_1' ).click( function() {
-        	alert("box_review_1");
+            alert("box_review_1");
         } );
         $( '#feed_remove_1_1' ).click( function() {
-        	alert("feed_remove_1_1");
+            alert("feed_remove_1_1");
         } );
         $( '#feed_delete_1_1' ).click( function() {
-        	alert("feed_delete_1_1");
+            alert("feed_delete_1_1");
         } );
         $( '#feed_review_1_1' ).click( function() {
-        	alert("feed_review_1_1");
+            alert("feed_review_1_1");
         } );
     } );
     // -->
     </script>
 
-	<script src="http://code.jquery.com/mobile/1.2.1/jquery.mobile-1.2.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.2.1/jquery.mobile-1.2.1.min.js"></script>
 
-	{% endblock %}
+    {% endblock %}
 {% comment %} == ↑ジャバスクリプト部分 ====================================== {% endcomment %}
 
 {% comment %} == ↓表示部分 ====================================== {% endcomment %}
 {% block content %}
 
-	<div id="commonEdit" data-role="page">
+    <div id="commonEdit" data-role="page">
 
-		{% comment %} == ヘッダ  ========== {% endcomment %}
-    	<div data-role="header" data-position="fixed" data-theme="e">
+        {% comment %} == ヘッダ  ========== {% endcomment %}
+        <div data-role="header" data-position="fixed" data-theme="e">
             <a href="/main/" data-prefetch="true" data-transition="slide" data-direction="reverse" data-iconpos="notext" data-icon="home" rel="external">ホーム</a>
             <H3>登録フィード</H3>
             <a href="/" data-prefetch="true" data-transition="slide" data-direction="reverse" data-iconpos="notext" data-icon="back" rel="external">戻る</a>
         </div>
-		{% comment %} == ↑ヘッダ  ========== {% endcomment %}
+        {% comment %} == ↑ヘッダ  ========== {% endcomment %}
 
 
-		{% comment %} == フィードメニュー  ========== {% endcomment %}
-		<div data-role="content">
+        {% comment %} == フィードメニュー  ========== {% endcomment %}
+        <div data-role="content">
 
-				<form method="post" action="{% url 'commonEdit' %}" name="frm">
-				</form>
+            <form method='post' action='{% url 'commonEdit' %}' name='commonEditForm'>
+                 <input type='hidden' id='manage_kbn' name='manage_kbn' value=''/>
+                 <input type='hidden' id='box_id' name='box_id' value=''/>
+                 <input type='hidden' id='box_name' name='box_name' value= ''/>
+                 {% csrf_token %}
+            </form>
+            <form method='post' action='{% url 'feed_list' %}' name='feedListForm'>
+                 <input type='hidden' id='box_id' name='box_id' value=''/>
+                 {% csrf_token %}
+            </form>
+            <table cellspacing="0">
+                {% for box in box_list %}
+                    <tr bgcolor="silver">
+                        <td rowspan="2" nowrap><input type="checkbox" id="box_default_{{box.id}}"/></td>
 
-あああ
-{% for box in box_list %}
-あああ
-{% endfor %}
+                        <td align="left"><TEXTAREA id="box_name_{{box.id}}" name="box_name_{{box.id}}" ROWS="1" COLS="20" >{{box.box_name}}</TEXTAREA></td>
 
-			<ul data-role="listview" data-divider-theme="e" data-inset="true" id="boxUL">
-				{% for box in box_list %}
-					<li data-theme="c" id="boxLI">
-						<table class="feed_menu" cellspacing="0">
-					        <div class="box_records_{box.box_id}">
-					            <tr width="100%" bgcolor="silver">
-						            <td id="box_arrow_{box.box_id}" rowspan="2" nowrap>　<img src="/media/drawable/ic_arrow_down.png" alt="box" width="30" height="30">　</td>
-					                <td colspan="2" id="" align="left"><span style="width: 10">&nbsp;</span><TEXTAREA id="box_name_{box.box_id}" ROWS="1" COLS="20" readonly>{box.box_name}</TEXTAREA></td>
-					                <td id="box_target_{box.box_id}" nowrap>　<img src="/media/drawable/ic_box_default.png" alt="box" width="50" height="50">　</td>
-					                <td id="box_edit_{box.box_id}" width="10%" nowrap><img src="/media/drawable/ic_edit.png" alt="edit" width="50" height="50"></td>
-					                <td id="box_delete_{box.box_id}" width="10%" nowrap><img src="/media/drawable/ic_delete.png" alt="delete" width="50" height="50" id="review"></td>
-					            </tr>
-					            <tr bgcolor="silver">
-					                <td id="box_review_{box.box_id}" colspan="2" align="right" width="100%" height="8%" border-bottom>★★★</td>
-					                <td colspan="3" align="right" ><a href="{% url 'searchFeed'%}">フィードを追加</a></td>
-					            </tr>
-					        </div>
-							<ul data-role="listview" data-divider-theme="e" data-inset="true" data-filter="true" id="feedUL">
-								{% for article_feed in article_feed_list %}
-									<li data-theme="c" id="feedLI">
-										<table class="feed_menu" cellspacing="0">
-								            <tr class="feed_record" id="feed_menu_{article_feed.feed_id}" style="border:1px solid black">
-								                <td rowspan="2" nowrap></td>
-								                <td nowrap>・</td>
-								                <td colspan="2" id="" align="left"><p id="feed_name_{box.box_id}_{article_feed.feed_id}">{article_feed.feed_title}</p></td>
-								                <td id="feed_remove_{box.box_id}_{article_feed.feed_id}" rowspan="2" nowrap><img src="/media/drawable/ic_box_move.png" alt="edit" width="50" height="50"></td>
-								                <td id="feed_delete_{box.box_id}_{article_feed.feed_id}" rowspan="2" nowrap><img src="/media/drawable/ic_delete.png" alt="delete" width="50" height="50"></td>
-								            </tr>
-								            <tr>
-								                <td>　</td>
-								                <td id="feed_review_{box.box_id}_{article_feed.feed_id}" align="right" width="100%" height="8%">★★★</td>
-								            </tr>
-									    </table>
-								  	</li>
-								{% endfor %}
-							</ul>
-					    </table>
-				  	</li>
-				{% endfor %}
-			</ul>
-		</div>
-		{% comment %} == ↑フィードメニュー  ========== {% endcomment %}
-
-
-		{% comment %} == フッタ  ========== {% endcomment %}
-        <div data-role="footer" data-theme="e">
-        <h3>
-        	<span class="rogo">
-				<a href="http://www.r-jc.jp/"><img src="/media/drawable/rogo.jpg"></a>
-			</span>
-        </h3>
+                        <td id="box_edit_{{box.id}}" onclick="commonEditForm.manage_kbn.value='3';commonEditForm.box_id.value='{{box.id}}';commonEditForm.box_name.value=box_name_{{box.id}}.value;commonEditForm.submit();" width="10%" nowrap><img src="/media/drawable/ic_edit.png" alt="edit" width="50" height="50"></td>
+                        <td id="box_delete_{{box.id}}" onclick="commonEditForm.manage_kbn.value='2';commonEditForm.box_id.value='{{box.id}}';commonEditForm.submit();" width="10%" nowrap><img src="/media/drawable/ic_delete.png" alt="delete" width="50" height="50" id="review"></td>
+                    </tr>
+                    <tr bgcolor="silver">
+                        <td id="box_review_{{box.id}}" align="right" width="100%" height="8%" border-bottom>★★★</td>
+                        <td colspan="2" align="right" ><a  href="#" onclick="feedListForm.box_id.value='{{box.id}}';feedListForm.submit();">フィード管理へ</a></td>
+                    </tr>
+                {% endfor %}
+                    <tr>
+                        <td colspan="3" align="right" ><a href="#" onclick="commonEditForm.manage_kbn.value='1';commonEditForm.submit();">BOX追加</a></td>
+                    </tr>
+            </table>
         </div>
+        {% comment %} == ↑フィードメニュー  ========== {% endcomment %}
+
+        {% comment %} == フッタ  ========== {% endcomment %}
+        {% include 'footer.html' %}
 
     </div>
 

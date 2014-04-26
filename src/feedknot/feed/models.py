@@ -26,16 +26,19 @@ class Feed(models.Model):
         ltd = self.last_take_date
         tz = ltd.tzinfo
         fdp = feedparser.parse(rssurl)
-        stitle = fdp.feed.title
+        try:
+            stitle = fdp.feed.title
+        except Exception:
+            return
+
         for entry in fdp['entries']:
-            try:
-                title = entry['title']
-            except KeyError:
+
+            title = entry.get('title', '')
+            if title == '':
                 title = "タイトルなし"
 
-            try:
-                link = entry['link']
-            except KeyError:
+            link = entry.get('link', '')
+            if link == '':
                 link = "about:blank"
 
             #暫定処理 updated_parsedが非推奨のためfeedparserをバージョンアップするとエラーとなる可能性がある

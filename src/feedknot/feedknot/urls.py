@@ -34,6 +34,7 @@ urlpatterns = patterns('',
 
     url(r'^commonEdit/$', 'box.views.commonEdit', name='commonEdit'),
     url(r'^feed_edit/$', 'feed.views.get_feeds', name='feed_edit'),
+    url(r'^feed_list/$', 'feed.views.feed_list', name='feed_list'),
     url(r'^searchFeed/$', 'box.views.searchFeed', name='searchFeed'),
 
     url(r'^add_feed/$', 'feed.views.add_feed', name='add_feed'),

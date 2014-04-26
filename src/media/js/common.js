@@ -62,9 +62,10 @@ function dispFeed(result) {
                 var url = result.entries[i].url;
 
                 var tag = "<li data-theme=\"c\" id=\"feedLI\" data-icon=\"plus\" class=\"feedLI" + i + "\">" +
-                          "<a onclick=\"addFeed('#link#', '#title#','feedLI" + i + "')\">#title#</a>" +
+                          "<a onclick=\"addFeed('#url#', '#title#','feedLI" + i + "')\">#title#</a>" +
                           "</li>";
-                tag = tag.replace("#link#", link);
+                //tag = tag.replace("#link#", link);
+                tag = tag.replace("#url#", url);
                 tag = tag.replace("#title#", title);
                 tag = tag.replace("#title#", title);
 
@@ -73,6 +74,7 @@ function dispFeed(result) {
                     .append(tag);
 
                 //alert(link);
+                //alert(url);
             }
             $(".feed_list_ul")
                 .listview().listview('refresh');
@@ -103,7 +105,7 @@ function addFeed(url, title, className) {
             //alert("data:" + data);
             //alert("result:" + data.result);
             //alert($("#csrfmiddlewaretoken").val());
-            if (data == null) {
+            if (data == null || undefined == data.title || undefined == data.result) {
                 alert("フィードの追加に失敗しました。ログインし直してください。");
             } else if ("success" == data.result) {
                 // 成功
