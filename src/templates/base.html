@@ -6,9 +6,11 @@
     <link rel="stylesheet" href="/media/css/style.css?{{ QUERY_STRING }}" type="text/css"  >
     <link rel="stylesheet" href="/media/css/jquery/jquery.mobile-1.2.1.min.css" />
     {% block include_css %}{% endblock %}
+    <script src="https://www.google.com/jsapi"></script>
     <script src="/media/js/jquery-1.11.0.min.js"></script>
     <script src="/media/js/jquery-migrate-1.2.1.min.js"></script>
     <script src="/media/js/jquery.mobile-1.2.1.min.js"></script>
+    <script src="/media/js/common.js"></script>
     <script src="/media/js/jquery.logging.js"></script>
     <script type="text/javascript">
     <!--
@@ -16,7 +18,6 @@
     //-->
     </script>
     {% block include_js %}{% endblock %}
-    {% block include_rear_js %}{% endblock %}
 </head>
 
 <body>

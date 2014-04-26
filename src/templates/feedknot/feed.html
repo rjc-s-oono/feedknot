@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% comment %} == ↓タイトル部分 ====================================== {% endcomment %}
-    {% block title %}&nbsp;|&nbsp;フィード検索{% endblock %}
+    {% block title %}&nbsp;|&nbsp;フィード{% endblock %}
 {% comment %} == ↑タイトル部分 ====================================== {% endcomment %}
 
 {% comment %} == ↓スタイルシート部分 ====================================== {% endcomment %}
@@ -27,7 +27,7 @@
             <a href="/main/" data-prefetch="true" data-transition="slide" data-direction="reverse" data-iconpos="notext" data-icon="home" rel="external">ホーム</a>
 
             {% comment %} タイトル {% comment %}
-            <h1 id="title">フィード検索</h1>
+            <h1 id="title">{{box_name}}</h1>
 
             {% comment %} 戻るボタン {% comment %}
             <a href="/commonEdit" data-prefetch="true" data-transition="slide" data-direction="reverse" data-iconpos="notext" data-icon="arrow-l" rel="external">戻る</a>
@@ -48,16 +48,32 @@
 
         {% comment %} == ↓フィード情報  ========== {% endcomment %}
         <div data-role="content">
-            <ul data-role="listview" data-divider-theme="e" data-inset="true"
-                data-filter="true" id="feedUL" class="feed_list_ul">
-            </ul>
-            <form id="feed_form" action="{% url 'add_feed' %}" method="POST">
-                <input type="hidden" id="url" name="url" value="" />
-                <input type="hidden" id="title" name="title" value="" />
-                <input type="hidden" id="className" name="className" value="" />
-                <input type="hidden" id="box_id" name="box_id" value="{{box_id}}" />
-                {% csrf_token %}
+            <form method='post' action='{% url 'searchFeed' %}' name='searchFeedForm'>
+                 <input type='hidden' id='box_id' name='box_id' value='{{box_id}}'/>
+                 {% csrf_token %}
             </form>
+            <form method='post' action='{% url 'feed_list' %}' name='feedListForm'>
+                 <input type='hidden' id='manage_kbn' name='manage_kbn' value=''/>
+                 <input type='hidden' id='feed_id' name='feed_id' value=''/>
+                 <input type='hidden' id='box_id' name='box_id' value='{{box_id}}'/>
+                 {% csrf_token %}
+            </form>
+            <ul data-role="listview" data-divider-theme="e" data-inset="true" data-filter="true" id="feedUL">
+            {% for feed in feed_list %}
+                <li data-theme="c" id="feedLI">
+                    <h1>{{feed.feed_name}}</h1>
+                    <p>
+                        FeedId={{feed.id}},
+                        BoxId={{feed.box_id}},
+                        UserId={{feed.user_id}},
+                        priority={{feed.feed_priority}}
+
+                    </p>
+                    <a href="#" onclick="feedListForm.manage_kbn.value='1';feedListForm.feed_id.value='{{feed.id}}';feedListForm.submit();">feed削除</a>
+                  </li>
+            {% endfor %}
+            </ul>
+            <a href="#" onclick="searchFeedForm.submit();">feed追加</a>
         </div>
         {% comment %} == ↑フィード情報  ========== {% endcomment %}
 
