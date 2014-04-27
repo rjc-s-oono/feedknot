@@ -14,6 +14,9 @@ class Feed(models.Model):
     rss_address = models.URLField(u'RSSアドレス', max_length = 255)
     last_take_date = models.DateTimeField(u'最終読込日時', auto_now_add=False, blank=False, null=False)
     feed_priority= models.IntegerField(u'優先度', max_length = 1)
+    create_date = models.DateTimeField(u'登録日時', auto_now_add=True)
+    updated_date = models.DateTimeField(u'更新日時', auto_now=True)
+    del_flg = models.BooleanField(u'削除フラグ', blank=False, default=False)
 
     class Meta:
         db_table = 'feedknot_feed'
@@ -68,6 +71,9 @@ class Article(models.Model):
     article_address = models.URLField(u'記事アドレス' , max_length=255)
     pub_date = models.DateTimeField(u'配信日', auto_now_add=False, blank=False, null=False)
     read_flg = models.BooleanField(u'既読フラグ', blank=False, default=False)
+    create_date = models.DateTimeField(u'登録日時', auto_now_add=True)
+    updated_date = models.DateTimeField(u'更新日時', auto_now=True)
+    del_flg = models.BooleanField(u'削除フラグ', blank=False, default=False)
 
     class Meta:
         db_table = 'feedknot_article'
