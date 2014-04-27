@@ -6,7 +6,7 @@ from django.shortcuts import render
 
 from administration.models import LoginMaster
 
-logger = logging.getLogger('to_file_app')
+logger = logging.getLogger('application')
 
 @login_required
 def index(request):
