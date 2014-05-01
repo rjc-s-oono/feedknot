@@ -10,6 +10,10 @@ from feed.models import Feed
 from administration.models import LoginMaster
 import common.views
 
+import logging
+
+logger = logging.getLogger('application')
+
 @login_required
 def commonEdit(request):
 
@@ -30,18 +34,11 @@ def commonEdit(request):
     elif manage_kbn == 3:
         edit_box_name(request)
 
-    print('user_id')
-    print(user_id)
-
     box_list = Box.objects.filter(user_id=user_id).order_by('box_priority')
-
-    print(box_list)
 
     article_list = ''
 #     for box in [box_list]:
 #         article_list[request.box.id] = Article.objects.filter(box_id=request.box.id)
-
-    print(article_list)
 
     param = {'user_id' : user_id,
          'article_list' : article_list,
@@ -49,7 +46,6 @@ def commonEdit(request):
 
     return render(request,'feedknot/CommonEdit.html',param)
 
-#     print(user_id)
 #
 #     try:
 #         box_id = int(request.POST['box_id'])
@@ -79,8 +75,6 @@ def commonEdit(request):
 #     article_list = Article.objects.filter(box_id=box_id).order_by('-pub_date', 'id')
 #     box_list = Box.objects.filter(user_id=user_id).order_by('box_priority')
 #
-#     print(box_list)
-#
 #     param = {'user_id' : user_id,
 #          'box_name' : boxName,
 #          'article_list' : article_list,
@@ -95,7 +89,7 @@ def searchFeed(request):
 
     # ユーザID取得
     if not request.user.is_authenticated():
-        print('[searchFeed] ユーザが存在しません。')
+        logger.error('[searchFeed] ユーザが存在しません。')
         return common.views.err(request)
 
     try:
@@ -104,7 +98,7 @@ def searchFeed(request):
         return common.views.err(request)
 
     if box_id < 0:
-        print('[searchFeed] box_idが設定されていません。')
+        logger.error('[searchFeed] box_idが設定されていません。')
         return common.views.err(request)
 
     return render(request,'feedknot/SearchFeed.html',{'box_id':box_id})
@@ -118,7 +112,7 @@ def add_box(request):
     if request.user.is_authenticated():
         user_id = request.user.id
     else:
-        print('[add_box] ユーザが存在しません。')
+        logger.error('[add_box] ユーザが存在しません。')
         return common.views.err(request)
 
     box_name = 'デフォルト'
@@ -147,7 +141,7 @@ def del_box(request):
     if request.user.is_authenticated():
         user_id = request.user.id
     else:
-        print('[del_box] ユーザが存在しません。')
+        logger.error('[del_box] ユーザが存在しません。')
         return common.views.err(request)
 
     # リクエストパラメータ取得
@@ -155,7 +149,7 @@ def del_box(request):
         if 'box_id' in request.POST and request.POST['box_id'].isdigit():
             box_id = int(request.POST['box_id'])
         else:
-            print('[del_box] box_idが設定されていません。')
+            logger.error('[del_box] box_idが設定されていません。')
             return common.views.err(request)
     except Exception:
         # リクエストパラメータの取得に失敗
@@ -189,7 +183,7 @@ def edit_box_name(request):
     if request.user.is_authenticated():
         user_id = request.user.id
     else:
-        print('[del_box] ユーザが存在しません。')
+        logger.error('[del_box] ユーザが存在しません。')
         return common.views.err(request)
 
     # リクエストパラメータ取得
@@ -197,7 +191,7 @@ def edit_box_name(request):
         if 'box_id' in request.POST and request.POST['box_id'].isdigit():
             box_id = int(request.POST['box_id'])
         else:
-            print('[del_box] box_idが設定されていません。')
+            logger.error('[del_box] box_idが設定されていません。')
             return common.views.err(request)
     except Exception:
         # リクエストパラメータの取得に失敗

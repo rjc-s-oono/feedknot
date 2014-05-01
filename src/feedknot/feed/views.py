@@ -18,14 +18,15 @@ import common.views
 # FIXME simplejsonを使用してください
 import json
 
+import logging
+
+logger = logging.getLogger('application')
+
 @login_required
 def main(request):
 
     user_id=request.user.id
     box_id = -1
-
-    print('user_id')
-    print(user_id)
 
     try:
         box_id = int(request.POST['box_id'])
@@ -81,17 +82,11 @@ def get_feeds(request):
     user_id=request.user.id
     box_id = -1
 
-    print('user_id')
-    print(user_id)
-
     # リクエストのボックスID取得
     try:
         box_id = int(request.POST['box_id'])
     except Exception:
         box_id = -1
-
-    print('box_id(request)')
-    print(box_id)
 
     defBoxExistFlg = True
     # デフォルトボックスID取得
@@ -103,11 +98,9 @@ def get_feeds(request):
             defBoxExistFlg = False
             box_id = -1
 
-    print('box_id(default)')
-    print(box_id)
 
     if box_id < 0:
-        print('[get_feeds] box_idが設定されていません。')
+        logger.error('[get_feeds] box_idが設定されていません。')
         return common.views.err(request)
 
     boxName = ""
@@ -149,7 +142,7 @@ def add_feed(request):
     if request.user.is_authenticated():
         user_id = request.user.id
     else:
-        print('[add_feed] ユーザが存在しません。')
+        logger.error('[add_feed] ユーザが存在しません。')
         return HttpResponse(json.dumps({'result': 'user_id is not found.'}), mimetype='application/json')
 
     # リクエストパラメータ取得
@@ -157,7 +150,7 @@ def add_feed(request):
         if 'box_id' in request.POST and request.POST['box_id'].isdigit():
             box_id = int(request.POST['box_id'])
         else:
-            print('[add_feed] box_idが設定されていません。')
+            logger.error('[add_feed] box_idが設定されていません。')
             return HttpResponse(json.dumps({'result': 'box_id is not found.'}), mimetype='application/json')
 
         rssaddress = request.POST['url']
@@ -209,7 +202,7 @@ def del_feed(request):
     if request.user.is_authenticated():
         user_id=request.user.id
     else:
-        print('[del_feed] ユーザが存在しません。')
+        logger.error('[del_feed] ユーザが存在しません。')
         return common.views.err(request)
 
     # リクエストパラメータ取得
@@ -217,13 +210,13 @@ def del_feed(request):
         if 'box_id' in request.POST and request.POST['box_id'].isdigit():
             box_id = int(request.POST['box_id'])
         else:
-            print('[del_feed] box_idが設定されていません。')
+            logger.error('[del_feed] box_idが設定されていません。')
             return common.views.err(request)
 
         if 'feed_id' in request.POST and request.POST['feed_id'].isdigit():
             feed_id = int(request.POST['feed_id'])
         else:
-            print('[del_feed] feed_idが存在しません。')
+            logger.error('[del_feed] feed_idが存在しません。')
             return common.views.err(request)
     except Exception:
         # リクエストパラメータの取得に失敗
@@ -258,7 +251,7 @@ def upd_article(request):
     if request.user.is_authenticated():
         user_id = request.user.id
     else:
-        print('[upd_article] ユーザが存在しません。')
+        logger.error('[upd_article] ユーザが存在しません。')
         return common.views.err(request)
 
     # リクエストパラメータ取得
@@ -266,19 +259,19 @@ def upd_article(request):
         if 'box_id' in request.POST and request.POST['box_id'].isdigit():
             box_id = int(request.POST['box_id'])
         else:
-            print('[upd_article] box_idが設定されていません。')
+            logger.error('[upd_article] box_idが設定されていません。')
             return common.views.err(request)
 
         if 'feed_id' in request.POST and request.POST['feed_id'].isdigit():
             feed_id = int(request.POST['feed_id'])
         else:
-            print('[upd_article] feed_idが存在しません。')
+            logger.error('[upd_article] feed_idが存在しません。')
             return common.views.err(request)
 
         if 'article_id' in request.POST and request.POST['article_id'].isdigit():
             article_id = int(request.POST['article_id'])
         else:
-            print('[upd_article] article_idが存在しません。')
+            logger.error('[upd_article] article_idが存在しません。')
             return common.views.err(request)
 
     except Exception:
@@ -314,7 +307,7 @@ def change_box(request):
     if request.user.is_authenticated():
         user_id = request.user.id
     else:
-        print('[change_box] ユーザが存在しません。')
+        logger.error('[change_box] ユーザが存在しません。')
         return common.views.err(request)
 
     # リクエストパラメータ取得
@@ -322,13 +315,13 @@ def change_box(request):
         if 'box_id' in request.POST and request.POST['box_id'].isdigit():
             box_id = int(request.POST['box_id'])
         else:
-            print('[change_box] box_idが設定されていません。')
+            logger.error('[change_box] box_idが設定されていません。')
             return common.views.err(request)
 
         if 'feed_id' in request.POST and request.POST['feed_id'].isdigit():
             feed_id = int(request.POST['feed_id'])
         else:
-            print('[change_box] feed_idが存在しません。')
+            logger.error('[change_box] feed_idが存在しません。')
             return common.views.err(request)
 
     except Exception:
@@ -353,9 +346,6 @@ def feed_list(request):
     user_id=request.user.id
     box_id = -1
 
-    print('user_id')
-    print(user_id)
-
     try:
         manage_kbn = int(request.POST['manage_kbn'])
     except Exception:
@@ -371,11 +361,8 @@ def feed_list(request):
     except Exception:
         return common.views.err(request)
 
-    print('box_id(request)')
-    print(box_id)
-
     if box_id < 0:
-        print('[get_feeds] box_idが設定されていません。')
+        logger.error('[get_feeds] box_idが設定されていません。')
         return common.views.err(request)
 
     boxName = ""
