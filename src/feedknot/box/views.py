@@ -33,6 +33,9 @@ def commonEdit(request):
     #ボックス名編集
     elif manage_kbn == 3:
         edit_box_name(request)
+    #優先度変更
+    elif manage_kbn == 4:
+        edit_box_priority(request)
 
     box_list = Box.objects.filter(user_id=user_id).order_by('box_priority')
 
@@ -205,6 +208,48 @@ def edit_box_name(request):
     try:
         box = Box.objects.get(id=box_id)
         box.box_name = request.POST['box_name']
+        box.save()
+    except Exception:
+        # ボックスの削除失敗
+        return HttpResponse(json.dumps({'result': 'delete box faild.'}),
+                            mimetype='application/json')
+
+    res = json.dumps({'result': 'success', 'box_id': box_id})
+    #res.update(csrf(request))
+
+    return HttpResponse(res, mimetype='application/json')
+
+# ボックス優先度変更
+def edit_box_priority(request):
+    box_id = -1
+    user_id = -1
+
+    # ユーザID取得
+    if request.user.is_authenticated():
+        user_id = request.user.id
+    else:
+        logger.error('[del_box] ユーザが存在しません。')
+        return common.views.err(request)
+
+    # リクエストパラメータ取得
+    try:
+        if 'box_id' in request.POST and request.POST['box_id'].isdigit():
+            box_id = int(request.POST['box_id'])
+        else:
+            logger.error('[del_box] box_idが設定されていません。')
+            return common.views.err(request)
+    except Exception:
+        # リクエストパラメータの取得に失敗
+        return HttpResponse(
+                json.dumps({
+                'result': 'get param faild.[box_id=' +
+                box_id + ',user_id=' + user_id + ']'}),
+                mimetype='application/json')
+
+    # ボックス削除 (ボックスに割り当てられているフィードなども削除)
+    try:
+        box = Box.objects.get(id=box_id)
+        box.box_priority = int(request.POST['box_priority'])
         box.save()
     except Exception:
         # ボックスの削除失敗
