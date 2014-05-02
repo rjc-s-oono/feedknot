@@ -16,3 +16,11 @@ class Box(models.Model):
         feed_info_list = Feed.objects.filter(box_id=self.id)
         for feed_info in feed_info_list:
             feed_info.readArticle()
+
+    def edit_box_name(self, box_name):
+        self.box_name = box_name
+        self.save()
+
+    def edit_box_priority(self, box_priority):
+        self.box_priority = box_priority
+        self.save()
