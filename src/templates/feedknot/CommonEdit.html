@@ -2,7 +2,7 @@
 
 {% comment %} == ↓タイトル部分 ====================================== {% endcomment %}
 
-    {% block title %}&nbsp;|&nbsp;メイン{% endblock %}
+    {% block title %}&nbsp;|&nbsp;管理{% endblock %}
 
 {% comment %} == ↑タイトル部分 ====================================== {% endcomment %}
 
@@ -82,6 +82,7 @@
                  <input type='hidden' id='manage_kbn' name='manage_kbn' value=''/>
                  <input type='hidden' id='box_id' name='box_id' value=''/>
                  <input type='hidden' id='box_name' name='box_name' value= ''/>
+                 <input type='hidden' id='box_priority' name='box_priority' value= ''/>
                  {% csrf_token %}
             </form>
             <form method='post' action='{% url 'feed_list' %}' name='feedListForm'>
@@ -99,8 +100,13 @@
                         <td id="box_delete_{{box.id}}" onclick="commonEditForm.manage_kbn.value='2';commonEditForm.box_id.value='{{box.id}}';commonEditForm.submit();" width="10%" nowrap><img src="/media/drawable/ic_delete.png" alt="delete" width="50" height="50" id="review"></td>
                     </tr>
                     <tr bgcolor="silver">
-                        <td id="box_review_{{box.id}}" align="right" width="100%" height="8%" border-bottom>★★★</td>
-                        <td colspan="2" align="right" ><a  href="#" onclick="feedListForm.box_id.value='{{box.id}}';feedListForm.submit();">フィード管理へ</a></td>
+                        <td id="box_review_{{box.id}}" align="right" width="100%" height="8%" border-bottom>
+                            <a href="#" onclick="commonEditForm.manage_kbn.value='4';commonEditForm.box_id.value='{{box.id}}';commonEditForm.box_priority.value='1';commonEditForm.submit();">優先度1</a>
+                            <a href="#" onclick="commonEditForm.manage_kbn.value='4';commonEditForm.box_id.value='{{box.id}}';commonEditForm.box_priority.value='2';commonEditForm.submit();">優先度2</a>
+                            <a href="#" onclick="commonEditForm.manage_kbn.value='4';commonEditForm.box_id.value='{{box.id}}';commonEditForm.box_priority.value='3';commonEditForm.submit();">優先度3</a>
+                            ★★★現優先度{{box.box_priority}}
+                        </td>
+                        <td colspan="2" align="right" ><a  href="#" onclick="feedListForm.box_id.value='{{box.id}}';feedListForm.submit();">フィード管理</a></td>
                     </tr>
                 {% endfor %}
                     <tr>

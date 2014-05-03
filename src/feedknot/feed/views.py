@@ -73,20 +73,11 @@ def main(request):
 @login_required
 def get_feeds(request):
 
-    user_id=request.user.id
-    box_id = -1
-
-    print('user_id')
-    print(user_id)
-
     # リクエストのボックスID取得
     try:
         box_id = int(request.POST['box_id'])
     except Exception:
         box_id = -1
-
-    print('box_id(request)')
-    print(box_id)
 
     defBoxExistFlg = True
     # デフォルトボックスID取得
@@ -99,11 +90,9 @@ def get_feeds(request):
             defBoxExistFlg = False
             box_id = -1
 
-    print('box_id(default)')
-    print(box_id)
 
     if box_id < 0:
-        print('[get_feeds] box_idが設定されていません。')
+        logger.error('[get_feeds] box_idが設定されていません。')
         return HttpResponseRedirect(reverse('common_error'))
 
     boxName = ""
@@ -119,14 +108,14 @@ def get_feeds(request):
     if (not defBoxExistFlg):
         boxName = "ボックスが登録されていません。"
 
-    feed_list = Feed.objects.filter(user=request.user,box_id=box_id).order_by('priority', 'id')
+    feed_list = Feed.objects.filter(user=request.user, box_id=box_id).order_by('priority', 'id')
 
     param = {'box_name' : boxName,
          'feed_list' : feed_list}
 
     return render(request,
-                    'feedknot/main.html',
-                    param)
+                  'feedknot/main.html',
+                  param)
 
 # フィード追加(ajax)
 @ajax_view(FormClass=AddFeedForm ,login_required=True)
@@ -178,13 +167,13 @@ def del_feed(request):
         if 'box_id' in request.POST and request.POST['box_id'].isdigit():
             box_id = int(request.POST['box_id'])
         else:
-            print('[del_feed] box_idが設定されていません。')
+            logger.error('[del_feed] box_idが設定されていません。')
             return HttpResponseRedirect(reverse('common_error'))
 
         if 'feed_id' in request.POST and request.POST['feed_id'].isdigit():
             feed_id = int(request.POST['feed_id'])
         else:
-            print('[del_feed] feed_idが存在しません。')
+            logger.error('[del_feed] feed_idが存在しません。')
             return HttpResponseRedirect(reverse('common_error'))
 
     except Exception:
@@ -214,19 +203,19 @@ def upd_article(request):
         if 'box_id' in request.POST and request.POST['box_id'].isdigit():
             box_id = int(request.POST['box_id'])
         else:
-            print('[upd_article] box_idが設定されていません。')
+            logger.error('[upd_article] box_idが設定されていません。')
             return HttpResponseRedirect(reverse('common_error'))
 
         if 'feed_id' in request.POST and request.POST['feed_id'].isdigit():
             feed_id = int(request.POST['feed_id'])
         else:
-            print('[upd_article] feed_idが存在しません。')
+            logger.error('[upd_article] feed_idが存在しません。')
             return HttpResponseRedirect(reverse('common_error'))
 
         if 'article_id' in request.POST and request.POST['article_id'].isdigit():
             article_id = int(request.POST['article_id'])
         else:
-            print('[upd_article] article_idが存在しません。')
+            logger.error('[upd_article] article_idが存在しません。')
             return HttpResponseRedirect(reverse('common_error'))
 
     except Exception:
@@ -259,13 +248,13 @@ def change_box(request):
         if 'box_id' in request.POST and request.POST['box_id'].isdigit():
             box_id = int(request.POST['box_id'])
         else:
-            print('[change_box] box_idが設定されていません。')
+            logger.error('[change_box] box_idが設定されていません。')
             return HttpResponseRedirect(reverse('common_error'))
 
         if 'feed_id' in request.POST and request.POST['feed_id'].isdigit():
             feed_id = int(request.POST['feed_id'])
         else:
-            print('[change_box] feed_idが存在しません。')
+            logger.error('[change_box] feed_idが存在しません。')
             return HttpResponseRedirect(reverse('common_error'))
 
     except Exception:
@@ -304,11 +293,8 @@ def feed_list(request):
     except Exception:
         return HttpResponseRedirect(reverse('common_error'))
 
-    print('box_id(request)')
-    print(box_id)
-
     if box_id < 0:
-        print('[get_feeds] box_idが設定されていません。')
+        logger.error('[get_feeds] box_idが設定されていません。')
         return HttpResponseRedirect(reverse('common_error'))
 
     try:
@@ -324,5 +310,5 @@ def feed_list(request):
              'feed_list' : feed_list}
 
     return render(request,
-                    'feedknot/feed.html',
-                    param)
+                  'feedknot/feed.html',
+                  param)
