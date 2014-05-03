@@ -4,6 +4,10 @@ from django.db import models
 from django.contrib.auth.models import User
 from box.models import Box
 
+from box.models import Box
+from feed.models import Article
+from feed.models import Feed
+
 class LoginMaster(models.Model):
     user = models.ForeignKey(User, verbose_name=u'ユーザ', db_column='user_id', related_name='loginmaster_user', unique=True)
     default_box = models.ForeignKey(Box, verbose_name=u'デフォルトボックスID', db_column='default_box_id', related_name='loginmaster_default_box_id', blank=True, null=True)
@@ -33,3 +37,8 @@ class LoginMaster(models.Model):
         self.updated_date = now
         self.del_flg = False
         self.save()
+
+    def del_box(self, box_id):
+        Article.objects.filter(box_id=box_id, user_id=self.id).delete()
+        Feed.objects.filter(box_id=box_id, user_id=self.id).delete()
+        Box.objects.filter(id=box_id, user_id=self.id).delete()

@@ -119,8 +119,7 @@ def edit_box_name(request):
     # ボックス削除 (ボックスに割り当てられているフィードなども削除)
     try:
         box = Box.objects.get(id=box_id, user=request.user)
-        box.box_name = request.POST['box_name']
-        box.save()
+        box.edit_box_name(request.POST['box_name'])
     except Exception:
         # ボックスの削除失敗
         return HttpResponseRedirect(reverse('common_error'))
@@ -144,7 +143,7 @@ def edit_box_priority(request):
 
     # ボックス削除 (ボックスに割り当てられているフィードなども削除)
     try:
-        box = Box.objects.get(id=box_id)
+        box = Box.objects.get(id=box_id, user=request.user)
         box.edit_box_priority(request.POST['box_priority']);
     except Exception:
         # ボックスの削除失敗
