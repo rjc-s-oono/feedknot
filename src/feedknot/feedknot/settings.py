@@ -118,6 +118,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'common.middleware.loggingMiddleware'
 )
 
 ROOT_URLCONF = 'feedknot.urls'
@@ -214,7 +215,7 @@ LOGGING = {
             'format': '[%(asctime)s] %(levelname)s %(message)s'
         },
         'simple': {
-            'format': '%(levelname)s %(message)s'
+            'format': '[%(levelname)s] %(message)s'
         },
     },
     'filters': {
@@ -231,6 +232,12 @@ LOGGING = {
             'level': LOG_LEVEL,
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
+        },
+        'to_file_common': {
+            'level': LOG_LEVEL,
+            'class': 'logging.FileHandler',
+            'filename': LOG_DIR_ROOT+'/log/app/app_'+datetime.now().strftime("%Y%m%d")+'.log',
+            'formatter': 'general'
         },
         'to_file_app': {
             'level': LOG_LEVEL,
@@ -268,9 +275,14 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
-        'django.db.backends': {
-            'handlers': ['console', 'to_file_app'],
-            'level': 'DEBUG',
+#         'django.db.backends': {
+#             'handlers': ['console', 'to_file_app'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+        'common_log': {
+            'handlers': ['to_file_common'],
+            'level': LOG_LEVEL,
             'propagate': True,
         },
         'application': {
