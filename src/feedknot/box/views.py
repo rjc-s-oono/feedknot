@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 
 from box.models import Box
-from administration.models import LoginMaster
+from feed.models import Feed, Article
 
 logger = logging.getLogger('application')
 
@@ -93,8 +93,12 @@ def del_box(request):
 
     # ボックス削除 (ボックスに割り当てられているフィードなども削除)
     try:
-        target_user = LoginMaster.objects.get(user=request.user)
-        target_user.del_box(box_id)
+        box = Box.objects.get(pk=box_id, user=request.user)
+        feed_list = box.feed_box.all()
+        article_list = box.article_box.all()
+        article_list.delete()
+        feed_list.delete()
+        box.delete()
     except Exception:
         # ボックスの削除失敗
         return HttpResponseRedirect(reverse('common_error'))
