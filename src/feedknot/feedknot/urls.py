@@ -33,15 +33,15 @@ urlpatterns = patterns('',
     url(r'^main/$', 'feed.views.main', name='main'),
 
     url(r'^commonEdit/$', 'box.views.commonEdit', name='commonEdit'),
+    url(r'^searchFeed/$', 'box.views.searchFeed', name='searchFeed'),
     url(r'^feed_edit/$', 'feed.views.get_feeds', name='feed_edit'),
     url(r'^feed_list/$', 'feed.views.feed_list', name='feed_list'),
-    url(r'^searchFeed/$', 'box.views.searchFeed', name='searchFeed'),
-
-    url(r'^add_feed/$', 'feed.views.add_feed', name='add_feed'),
-    url(r'^del_feed/$', 'feed.views.del_feed', name='del_feed'),
 
     url(r'^add_box/$', 'box.views.add_box', name='add_box'),
     url(r'^del_box/$', 'box.views.del_box', name='del_box'),
+
+    url(r'^add_feed/$', 'feed.views.add_feed', name='add_feed'),
+    url(r'^del_feed/$', 'feed.views.del_feed', name='del_feed'),
 
     url(r'^upd_article/$', 'feed.views.upd_article', name='upd_article'),
     url(r'^change_box/$', 'feed.views.change_box', name='change_box'),
