@@ -24,6 +24,16 @@ class Feed(models.Model):
     def __unicode__(self):
         return self.feed_name
 
+    def add_feed(self):
+
+        # 現在日時取得
+        now = datetime.now()
+
+        self.create_date = now
+        self.updated_date = now
+        self.del_flg = False
+        self.save()
+
     def readArticle(self):
         rssurl= self.rss_address
         ltd = self.last_take_date

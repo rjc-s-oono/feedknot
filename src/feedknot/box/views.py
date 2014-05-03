@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
+import logging
+
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.core.context_processors import csrf, request
 from django.http.response import HttpResponse
 import json
 from box.models import Box
@@ -10,42 +11,38 @@ from feed.models import Feed
 from administration.models import LoginMaster
 import common.views
 
+logger = logging.getLogger('application')
+
 @login_required
 def commonEdit(request):
 
-    user_id = request.user.id
+    user = request.user
+    logger.debug("user_id: %s" % (user.id))
 
-    try:
-        manage_kbn = int(request.POST['manage_kbn'])
-    except Exception:
-        manage_kbn = -1
+    if request.method == "POST":
+        try:
+            manage_kbn = int(request.POST['manage_kbn'])
+        except Exception:
+            manage_kbn = -1
 
-    #ボックス追加
-    if manage_kbn == 1:
-        add_box(request)
-    #ボックス削除
-    elif manage_kbn == 2:
-        del_box(request)
-    #ボックス名編集
-    elif manage_kbn == 3:
-        edit_box_name(request)
+        #ボックス追加
+        if manage_kbn == 1:
+            # XXX viewから他のview呼び出し禁止
+            add_box(request)
+        #ボックス削除
+        elif manage_kbn == 2:
+            # XXX viewから他のview呼び出し禁止
+            del_box(request)
+        #ボックス名編集
+        elif manage_kbn == 3:
+            # XXX viewから他のview呼び出し禁止
+            edit_box_name(request)
 
-    print('user_id')
-    print(user_id)
+    box_list = Box.objects.filter(user=user).order_by('box_priority')
 
-    box_list = Box.objects.filter(user_id=user_id).order_by('box_priority')
+    logger.debug(box_list)
 
-    print(box_list)
-
-    article_list = ''
-#     for box in [box_list]:
-#         article_list[request.box.id] = Article.objects.filter(box_id=request.box.id)
-
-    print(article_list)
-
-    param = {'user_id' : user_id,
-         'article_list' : article_list,
-         'box_list' : box_list}
+    param = {'box_list' : box_list}
 
     return render(request,'feedknot/CommonEdit.html',param)
 
@@ -93,11 +90,6 @@ def commonEdit(request):
 def searchFeed(request):
     box_id = -1
 
-    # ユーザID取得
-    if not request.user.is_authenticated():
-        print('[searchFeed] ユーザが存在しません。')
-        return common.views.err(request)
-
     try:
         box_id = int(request.POST['box_id'])
     except Exception:
@@ -110,22 +102,14 @@ def searchFeed(request):
     return render(request,'feedknot/SearchFeed.html',{'box_id':box_id})
 
 # ボックス登録
+@login_required
 def add_box(request):
-    box_name = ''
-    user_id = -1
-
-    # ユーザID取得
-    if request.user.is_authenticated():
-        user_id = request.user.id
-    else:
-        print('[add_box] ユーザが存在しません。')
-        return common.views.err(request)
 
     box_name = 'デフォルト'
 
     try:
         # フィード登録
-        box = Box(box_name=box_name, user_id=user_id)
+        box = Box(box_name=box_name, user=request.user)
         box.save()
     except Exception:
         # ボックスの登録失敗
@@ -139,16 +123,8 @@ def add_box(request):
     return
 
 # ボックス削除
+@login_required
 def del_box(request):
-    box_id = -1
-    user_id = -1
-
-    # ユーザID取得
-    if request.user.is_authenticated():
-        user_id = request.user.id
-    else:
-        print('[del_box] ユーザが存在しません。')
-        return common.views.err(request)
 
     # リクエストパラメータ取得
     try:
@@ -162,14 +138,14 @@ def del_box(request):
         return HttpResponse(
                 json.dumps({
                 'result': 'get param faild.[box_id=' +
-                box_id + ',user_id=' + user_id + ']'}),
+                box_id + ',user_id=' + request.user.id + ']'}),
                 mimetype='application/json')
 
     # ボックス削除 (ボックスに割り当てられているフィードなども削除)
     try:
-        Box.objects.filter(id=box_id, user_id=user_id).delete()
-        Feed.objects.filter(box_id=box_id, user_id=user_id).delete()
-        Article.objects.filter(box_id=box_id, user_id=user_id).delete()
+        Box.objects.filter(id=box_id, user=request.user).delete()
+        Feed.objects.filter(box_id=box_id, user=request.user).delete()
+        Article.objects.filter(box_id=box_id, user=request.user).delete()
     except Exception:
         # ボックスの削除失敗
         return HttpResponse(json.dumps({'result': 'delete box faild.'}),
@@ -181,16 +157,8 @@ def del_box(request):
     return HttpResponse(res, mimetype='application/json')
 
 # ボックス名変更
+@login_required
 def edit_box_name(request):
-    box_id = -1
-    user_id = -1
-
-    # ユーザID取得
-    if request.user.is_authenticated():
-        user_id = request.user.id
-    else:
-        print('[del_box] ユーザが存在しません。')
-        return common.views.err(request)
 
     # リクエストパラメータ取得
     try:
@@ -204,7 +172,7 @@ def edit_box_name(request):
         return HttpResponse(
                 json.dumps({
                 'result': 'get param faild.[box_id=' +
-                box_id + ',user_id=' + user_id + ']'}),
+                box_id + ',user_id=' + request.user.id + ']'}),
                 mimetype='application/json')
 
     # ボックス削除 (ボックスに割り当てられているフィードなども削除)

@@ -2,7 +2,6 @@
 import datetime
 from django.db import models
 from django.contrib.auth.models import User
-#from feed.models import Feed
 
 class Box(models.Model):
     user = models.ForeignKey(User, verbose_name=u'BOX所有者', db_column='user_id', related_name='box_owner')
@@ -28,7 +27,7 @@ class Box(models.Model):
         self.del_flg = False
         self.save()
 
-#    def readFeed(self):
-#        feed_info_list = Feed.objects.filter(box_id=self.id)
-#        for feed_info in feed_info_list:
-#            feed_info.readArticle()
+    def read_feed(self):
+        feed_info_list = self.feed_box.all()
+        for feed_info in feed_info_list:
+            feed_info.readArticle()
