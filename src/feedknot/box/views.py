@@ -22,20 +22,6 @@ def commonEdit(request):
     user = request.user
     logger.debug("user_id: %s" % (user.id))
 
-    if request.method == "POST":
-        try:
-            manage_kbn = int(request.POST['manage_kbn'])
-        except Exception:
-            manage_kbn = -1
-
-        #ボックス名編集
-        if manage_kbn == 3:
-            # XXX viewから他のview呼び出し禁止
-            edit_box_name(request)
-        #優先度変更
-        elif manage_kbn == 4:
-            edit_box_priority(request)
-
     box_list = Box.objects.filter(user=user, del_flg=False).order_by('box_priority')
     logger.debug(box_list)
 
