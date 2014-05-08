@@ -27,12 +27,15 @@ def main(request):
     logger.debug("user_id: %s" % (user.id))
 
     boxName = ""
-    defBoxExistFlg = True;
+    defBoxExistFlg = True
+    box_info = None
+    article_list = None
+
     if box_id:
         try:
-            boxInfo = Box.objects.get(id=box_id)
-            boxName = boxInfo.box_name
-            boxInfo.read_feed()
+            box_info = Box.objects.get(id=box_id)
+            boxName = box_info.box_name
+            box_info.read_feed()
         except Box.DoesNotExist:
             defBoxExistFlg = False
     else:
@@ -40,9 +43,12 @@ def main(request):
         try:
             loginInfo = LoginMaster.objects.get(user=user)
             default_box = loginInfo.default_box
-            boxInfo = Box.objects.get(id=default_box.id)
-            boxName = boxInfo.box_name
-            boxInfo.read_feed()
+            if default_box:
+                box_info = Box.objects.get(id=default_box.id)
+                boxName = box_info.box_name
+                box_info.read_feed()
+            else:
+                defBoxExistFlg = False
         except LoginMaster.DoesNotExist or Box.DoesNotExist:
             defBoxExistFlg = False
 
@@ -51,16 +57,17 @@ def main(request):
 
     if (not defBoxExistFlg):
         if box_list_len > 0:
-            boxInfo =  box_list[0]
-            boxName = boxInfo.box_name
-            box_id = boxInfo.id
-            boxInfo.read_feed()
+            box_info =  box_list[0]
+            boxName = box_info.box_name
+            box_id = box_info.id
+            box_info.read_feed()
         else:
             boxName = "ボックスが登録されていません。"
 
-    # XXX 正常系ではboxInfoを取得できるが、
+    # XXX 正常系ではbox_infoを取得できるが、
     #     取れないパターンがあるとエラーになるので関数内のリファクタが必要
-    article_list = Article.objects.filter(box=boxInfo).order_by('-pub_date', 'id')
+    if box_info != None:
+        article_list = Article.objects.filter(box=box_info).order_by('-pub_date', 'id')
 
     param = {'box_name' : boxName,
              'article_list' : article_list,
@@ -99,9 +106,9 @@ def get_feeds(request):
 
     if (not defBoxExistFlg):
         try:
-            boxInfo = Box.objects.get(id=box_id)
-            boxName = boxInfo.box_name
-            boxInfo.read_feed()
+            box_info = Box.objects.get(id=box_id)
+            boxName = box_info.box_name
+            box_info.read_feed()
         except Box.DoesNotExist:
             defBoxExistFlg = False
 
@@ -298,12 +305,12 @@ def feed_list(request):
         return HttpResponseRedirect(reverse('common_error'))
 
     try:
-        boxInfo = Box.objects.get(id=box_id)
-        boxName = boxInfo.box_name
+        box_info = Box.objects.get(id=box_id)
+        boxName = box_info.box_name
     except Box.DoesNotExist:
         return HttpResponseRedirect(reverse('common_error'))
 
-    feed_list = Feed.objects.filter(user=request.user,box=boxInfo).order_by('feed_priority', 'id')
+    feed_list = Feed.objects.filter(user=request.user,box=box_info).order_by('feed_priority', 'id')
 
     param = {'box_name' : boxName,
              'box_id' : box_id,
