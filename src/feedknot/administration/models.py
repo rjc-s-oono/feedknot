@@ -28,7 +28,7 @@ class LoginMaster(models.Model):
         box.add_box()
 
         self.user = request.user
-        self.default_box_id = box
+        self.default_box = box
         self.create_date = now
         self.updated_date = now
         self.del_flg = False

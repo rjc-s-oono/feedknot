@@ -3,6 +3,8 @@ import datetime
 from django.db import models
 from django.contrib.auth.models import User
 
+from django.core.urlresolvers import reverse
+
 class Box(models.Model):
     user = models.ForeignKey(User, verbose_name=u'BOX所有者', db_column='user_id', related_name='box_owner')
     box_name = models.CharField(u'ボックス名', max_length = 255)
@@ -17,8 +19,18 @@ class Box(models.Model):
     def __unicode__(self):
         return self.box_name
 
-    def add_box(self):
+    def as_json(self):
+        return dict(
+            id=self.id,
+            user=dict(
+                      id=self.user.id
+                      ),
+            box_name=self.box_name,
+            box_priority=self.box_priority,
+            feed_list_url=reverse('feed_list', args=[self.id]),
+            )
 
+    def add_box(self):
         # 現在日時取得
         now = datetime.datetime.now()
 
@@ -33,9 +45,17 @@ class Box(models.Model):
             feed_info.readArticle()
 
     def edit_box_name(self, box_name):
+        # 現在日時取得
+        now = datetime.datetime.now()
+
         self.box_name = box_name
+        self.updated_date = now
         self.save()
 
     def edit_box_priority(self, box_priority):
+        # 現在日時取得
+        now = datetime.datetime.now()
+
         self.box_priority = box_priority
+        self.updated_date = now
         self.save()

@@ -1,66 +1,89 @@
 {% extends "base.html" %}
 
-{% comment %} == ↓タイトル部分 ====================================== {% endcomment %}
-    {% block title %}&nbsp;|&nbsp;フィード{% endblock %}
-{% comment %} == ↑タイトル部分 ====================================== {% endcomment %}
+{# == ↓タイトル部分 ====================================== #}
+{% block title %}&nbsp;|&nbsp;フィード{% endblock %}
+{# == ↑タイトル部分 ====================================== #}
 
-{% comment %} == ↓スタイルシート部分 ====================================== {% endcomment %}
-    {% block include_css %}
+{# == ↓スタイルシート部分 ====================================== #}
+{% block include_css %}
+<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+{% endblock %}
+{# == ↑スタイルシート部分 ====================================== #}
 
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+{# == ↓ジャバスクリプト部分 ====================================== #}
+{% block include_js %}
+<script type="text/javascript">
+<!--
+    function deleteFedd(feed_id) {
+        if (!startLoadingEffect("Adding...")) {
+            return;
+        }
 
-    {% endblock %}
-{% comment %} == ↑スタイルシート部分 ====================================== {% endcomment %}
-{% comment %} == ↓ジャバスクリプト部分 ====================================== {% endcomment %}
-    {% block include_js %}
-    {% endblock %}
-{% comment %} == ↑ジャバスクリプト部分 ====================================== {% endcomment %}
+        var $deleteFeddForm = $('#feed-delete-form');
+        $('#feed_id').val(feed_id);
 
-{% comment %} == ↓表示部分 ====================================== {% endcomment %}
+        $.ajax({
+            type: 'POST',
+            url: $deleteFeddForm.attr('action'),
+            data: $deleteFeddForm.serialize(),
+            dataType: "json",
+            success: function(data, status) {
+                var template  = _.template($('#feed-list-template').text());
+                $("#feed-list").html(template(data)).listview('refresh');
+            },
+            error: function(XMLHttpRequest, statusText, errorThrown) {
+                var errorMsg="Javascript Error:"+XMLHttpRequest.status+" "+XMLHttpRequest.statusText+", "
+                errorMsg="error detail: "+errorThrown
+                logger.error(errorMsg);
+            },
+            complete: function() {
+                finishLoadingEffect();
+            }
+        });
+    }
+//-->
+</script>
+{% endblock %}
+{# == ↑ジャバスクリプト部分 ====================================== #}
+
+{# == ↓表示部分 ====================================== #}
 {% block content %}
     <div id="main"  data-role="page">
 
-        {% comment %} == タイトルバー ========== {% endcomment %}
+        {# == タイトルバー ========== #}
         <div data-role="header" data-position="fixed" data-theme="e">
-            {% comment %} ホームボタン {% comment %}
-            <a href="/main/" data-prefetch="true" data-transition="slide" data-direction="reverse" data-iconpos="notext" data-icon="home" rel="external">ホーム</a>
+            {# ホームボタン #}
+            <a href="{% url 'main' %}" data-iconpos="notext" data-icon="home" rel="external">ホーム</a>
 
-            {% comment %} タイトル {% comment %}
+            {# タイトル #}
             <h1 id="title">{{box_name}}</h1>
 
-            {% comment %} 戻るボタン {% comment %}
-            <a href="/commonEdit" data-prefetch="true" data-transition="slide" data-direction="reverse" data-iconpos="notext" data-icon="arrow-l" rel="external">戻る</a>
+            {# 戻るボタン #}
+            <a href="{% url 'common_edit' %}" data-iconpos="notext" data-icon="arrow-l" rel="external">戻る</a>
         </div> <!-- header -->
 
-        {% comment %} == ↓ポップアップ内容  ========== {% endcomment %}
+        {# == ↓ポップアップ内容  ========== #}
         <div data-role="popup" id="popupNotice">
             <div data-role="content" data-theme="d" class="ui-corner-bottom ui-content" id="popupMsg">
             </div>
         </div>
-        {% comment %} == ↑ポップアップ内容  ========== {% endcomment %}
+        {# == ↑ポップアップ内容  ========== #}
 
-        {% comment %} == ↓検索ボックス ========== {% endcomment %}
+        {# == ↓検索ボックス ========== #}
         <div class="search_frame" >
             <input type="search" name="search" id="searc-basic" value="" data-mini="true" class="search_box" placeholder="RSS検索ワードを入力してください。" onchange="searchFeed(this.value);" />
         </div>
-        {% comment %} == ↑検索ボックス ========== {% endcomment %}
+        {# == ↑検索ボックス ========== #}
 
-        {% comment %} == ↓フィード情報  ========== {% endcomment %}
+        {# == ↓フィード情報  ========== #}
         <div data-role="content">
-            <form method='post' action='{% url 'searchFeed' %}' name='searchFeedForm'>
-                 <input type='hidden' id='box_id' name='box_id' value='{{box_id}}'/>
+            <form id="feed-delete-form" method="post" action="{% url 'feed_delete' box_id %}">
+                 <input type="hidden" id="feed_id" name="feed_id" value="" />
                  {% csrf_token %}
             </form>
-            <form method='post' action='{% url 'feed_list' %}' name='feedListForm'>
-                 <input type='hidden' id='manage_kbn' name='manage_kbn' value=''/>
-                 <input type='hidden' id='feed_id' name='feed_id' value=''/>
-                 <input type='hidden' id='box_id' name='box_id' value='{{box_id}}'/>
-                 {% csrf_token %}
-            </form>
-            <ul data-role="listview" data-divider-theme="e" data-inset="true" data-filter="true" id="feedUL">
+            <ul id="feed-list" data-role="listview" data-divider-theme="e" data-inset="true" data-filter="true">
             {% for feed in feed_list %}
-                <li data-theme="c" id="feedLI">
+                <li data-theme="c">
                     <h1>{{feed.feed_name}}</h1>
                     <p>
                         FeedId={{feed.id}},
@@ -69,22 +92,31 @@
                         priority={{feed.feed_priority}}
 
                     </p>
-                    <a href="#" onclick="feedListForm.manage_kbn.value='1';feedListForm.feed_id.value='{{feed.id}}';feedListForm.submit();">feed削除</a>
-                  </li>
+                    <a href="#" onclick="deleteFedd({{feed.id}})">feed削除</a>
+                </li>
             {% endfor %}
             </ul>
-            <a href="#" onclick="searchFeedForm.submit();">feed追加</a>
+            <a href="{% url 'feed_search' box_id %}" rel="external">feed追加</a>
         </div>
-        {% comment %} == ↑フィード情報  ========== {% endcomment %}
+        {# == ↑フィード情報  ========== #}
 
-        {% comment %} == 会社ロゴ  ========== {% endcomment %}
-        <div data-role="footer" data-theme="e">
-        <h3>
-            <span class="rogo">
-                <a href="http://www.r-jc.jp/"><img src="/media/drawable/rogo.jpg"></a>
-            </span>
-        </h3>
-        </div> <!-- footer -->
+        {# == 会社ロゴ  ========== #}
+        {% include 'footer.html' %}
     </div> <!-- main -->
+
+    <script type="text/template" id="feed-list-template">
+        <% _.each(feed_list, function(feed) { %>
+            <li data-theme="c">
+                <h1><%= feed.feed_name %></h1>
+                <p>
+                    FeedId=<%= feed.id %>,
+                    BoxId=<%= feed.box.id %>,
+                    UserId=<%= feed.user.id %>,
+                    priority=<%= feed.feed_priority %>
+                </p>
+                <a href="#" onclick="deleteFedd(<%= feed.id %>)">feed削除</a>
+            </li>
+        <% }); %>
+    </script>
 {% endblock %}
-{% comment %} == ↑表示部分 ====================================== {% endcomment %}
+{# == ↑表示部分 ====================================== #}

@@ -1,13 +1,18 @@
 # -*- coding: utf-8 -*-
 import logging
 
-from django.shortcuts import render
-from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
+from django.utils import simplejson
+
+from common.decorators import ajax_view
 
 from box.models import Box
 from feed.models import Feed, Article
+
+from box.forms import EditBoxNameForm, EditBoxPriorityForm, DeleteBoxForm
 
 logger = logging.getLogger('application')
 
@@ -23,44 +28,20 @@ def commonEdit(request):
         except Exception:
             manage_kbn = -1
 
-        #ボックス追加
-        if manage_kbn == 1:
-            # XXX viewから他のview呼び出し禁止
-            add_box(request)
-        #ボックス削除
-        elif manage_kbn == 2:
-            # XXX viewから他のview呼び出し禁止
-            del_box(request)
         #ボックス名編集
-        elif manage_kbn == 3:
+        if manage_kbn == 3:
             # XXX viewから他のview呼び出し禁止
             edit_box_name(request)
         #優先度変更
         elif manage_kbn == 4:
             edit_box_priority(request)
 
-    box_list = Box.objects.filter(user=user).order_by('box_priority')
+    box_list = Box.objects.filter(user=user, del_flg=False).order_by('box_priority')
     logger.debug(box_list)
 
     return render(request,
                   'feedknot/CommonEdit.html',
                   {'box_list' : box_list})
-
-@login_required
-def searchFeed(request):
-
-    try:
-        box_id = int(request.POST['box_id'])
-    except Exception:
-        return HttpResponseRedirect(reverse('common_error'))
-
-    if box_id < 0:
-        logger.error('[searchFeed] box_idが設定されていません。')
-        return HttpResponseRedirect(reverse('common_error'))
-
-    return render(request,
-                  'feedknot/SearchFeed.html',
-                  {'box_id':box_id})
 
 # ボックス登録
 @login_required
@@ -68,28 +49,79 @@ def add_box(request):
 
     try:
         # フィード登録
-        box = Box(box_name="新規ボックス", user=request.user)
-        box.save()
+        box = Box(
+            box_name="新規ボックス",
+            user=request.user,
+        )
+        box.add_box()
     except Exception:
         # ボックスの登録失敗
         return HttpResponseRedirect(reverse('common_error'))
 
-    return
+    return HttpResponseRedirect(reverse('common_edit'))
+
+# ボックス名変更
+@ajax_view(FormClass=EditBoxNameForm ,login_required=True)
+def edit_box_name(request):
+
+    edit_box_form = EditBoxNameForm(request.POST)
+    edit_box_form.is_valid()
+
+    box_id = edit_box_form.cleaned_data['box_id']
+    box_name = edit_box_form.cleaned_data['box_name']
+
+    try:
+        box = Box.objects.get(id=box_id, user=request.user, del_flg=False)
+        box.edit_box_name(box_name)
+
+        result = {'result': 'success'}
+    except Box.DoesNotExist:
+        result = {'result': 'error',
+                  'message': 'Box does not exist.[box_id=' + str(box_id) + ']'}
+    except Exception:
+        # ボックスの更新失敗
+        result = {'result': 'error',
+                  'message': 'update box name faild.[box_id=' + str(box_id) + ']'}
+
+    logger.debug(result)
+    return HttpResponse(simplejson.dumps(result, ensure_ascii=False), mimetype='application/json')
+
+# ボックス優先度変更
+@ajax_view(FormClass=EditBoxPriorityForm ,login_required=True)
+def edit_box_priority(request):
+
+    edit_box_form = EditBoxPriorityForm(request.POST)
+    edit_box_form.is_valid()
+
+    box_id = edit_box_form.cleaned_data['box_id']
+    box_priority = edit_box_form.cleaned_data['box_priority']
+
+    try:
+        box = Box.objects.get(id=box_id, user=request.user)
+        box.edit_box_priority(box_priority);
+
+        box_list = Box.objects.filter(user=request.user, del_flg=False).order_by('box_priority')
+
+        result = {'result': 'success', 'box_list': [box.as_json() for box in box_list]}
+    except Box.DoesNotExist:
+        result = {'result': 'error',
+                  'message': 'Box does not exist.[box_id=' + str(box_id) + ']'}
+    except Exception:
+        # ボックスの更新失敗
+        result = {'result': 'error',
+                  'message': 'update box priority faild.[box_id=' + str(box_id) + ']'}
+
+    logger.debug(result)
+    return HttpResponse(simplejson.dumps(result, ensure_ascii=False), mimetype='application/json')
 
 # ボックス削除
-@login_required
+@ajax_view(FormClass=DeleteBoxForm ,login_required=True)
 def del_box(request):
 
-    # リクエストパラメータ取得
-    try:
-        if 'box_id' in request.POST and request.POST['box_id'].isdigit():
-            box_id = int(request.POST['box_id'])
-        else:
-            logger.error('[del_box] box_idが設定されていません。')
-            return HttpResponseRedirect(reverse('common_error'))
-    except Exception:
-        # リクエストパラメータの取得に失敗
-        return HttpResponseRedirect(reverse('common_error'))
+    delete_box_form = DeleteBoxForm(request.POST)
+    delete_box_form.is_valid()
+
+    box_id = delete_box_form.cleaned_data['box_id']
 
     # ボックス削除 (ボックスに割り当てられているフィードなども削除)
     try:
@@ -99,58 +131,17 @@ def del_box(request):
         article_list.delete()
         feed_list.delete()
         box.delete()
+
+        box_list = Box.objects.filter(user=request.user, del_flg=False).order_by('box_priority')
+
+        result = {'result': 'success', 'box_list': [box.as_json() for box in box_list]}
+    except Box.DoesNotExist:
+        result = {'result': 'error',
+                  'message': 'Box does not exist.[box_id=' + str(box_id) + ']'}
     except Exception:
         # ボックスの削除失敗
-        return HttpResponseRedirect(reverse('common_error'))
+        result = {'result': 'error',
+                  'message': 'delete box faild.[box_id=' + str(box_id) + ']'}
 
-    return
-
-# ボックス名変更
-@login_required
-def edit_box_name(request):
-
-    # リクエストパラメータ取得
-    try:
-        if 'box_id' in request.POST and request.POST['box_id'].isdigit():
-            box_id = int(request.POST['box_id'])
-        else:
-            logger.error('[del_box] box_idが設定されていません。')
-            return HttpResponseRedirect(reverse('common_error'))
-    except Exception:
-        # リクエストパラメータの取得に失敗
-        return HttpResponseRedirect(reverse('common_error'))
-
-    # ボックス削除 (ボックスに割り当てられているフィードなども削除)
-    try:
-        box = Box.objects.get(id=box_id, user=request.user)
-        box.edit_box_name(request.POST['box_name'])
-    except Exception:
-        # ボックスの削除失敗
-        return HttpResponseRedirect(reverse('common_error'))
-
-    return
-
-# ボックス優先度変更
-@login_required
-def edit_box_priority(request):
-
-    # リクエストパラメータ取得
-    try:
-        if 'box_id' in request.POST and request.POST['box_id'].isdigit():
-            box_id = int(request.POST['box_id'])
-        else:
-            logger.error('[del_box] box_idが設定されていません。')
-            return HttpResponseRedirect(reverse('common_error'))
-    except Exception:
-        # リクエストパラメータの取得に失敗
-        return HttpResponseRedirect(reverse('common_error'))
-
-    # ボックス削除 (ボックスに割り当てられているフィードなども削除)
-    try:
-        box = Box.objects.get(id=box_id, user=request.user)
-        box.edit_box_priority(request.POST['box_priority']);
-    except Exception:
-        # ボックスの削除失敗
-        return HttpResponseRedirect(reverse('common_error'))
-
-    return
+    logger.debug(result)
+    return HttpResponse(simplejson.dumps(result, ensure_ascii=False), mimetype='application/json')

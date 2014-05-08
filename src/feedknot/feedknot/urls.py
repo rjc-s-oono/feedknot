@@ -24,27 +24,25 @@ urlpatterns = patterns('',
     #url(r'^delete/(?P<sample_id>\d+)/$', 'sample.views.delete', name='delete'),
 
     url(r'^$', 'administration.views.index', name='index'),
-    #url(r'^oAuth/$', 'administration.views.oAuth', name='oAuth'),
-    #url(r'^login/$', 'administration.views.login', name='login'),
-    #url(r'^logout/$', 'administration.views.logout', name='logout'),
-    url(r'^accounts/logout/$', 'django.contrib.auth.views.logout',{'next_page': '/'}),
     url(r'^accounts/', include('allauth.urls')),
+    url(r'^accounts/logout/$', 'django.contrib.auth.views.logout',{'next_page': '/'}),
 
     url(r'^main/$', 'feed.views.main', name='main'),
+    url(r'^main/(?P<box_id>\d+)/$', 'feed.views.main_select_box', name='main_select_box'),
+    url(r'^feed/article/mark_read/$', 'feed.views.upd_article', name='article_mark_read'),
 
-    url(r'^commonEdit/$', 'box.views.commonEdit', name='commonEdit'),
-    url(r'^searchFeed/$', 'box.views.searchFeed', name='searchFeed'),
-    url(r'^feed_edit/$', 'feed.views.get_feeds', name='feed_edit'),
-    url(r'^feed_list/$', 'feed.views.feed_list', name='feed_list'),
+    url(r'^common_edit/$', 'box.views.commonEdit', name='common_edit'),
+    url(r'^box/add/$', 'box.views.add_box', name='box_add'),
+    url(r'^box/edit/name/$', 'box.views.edit_box_name', name='box_edit_name'),
+    url(r'^box/edit/priority/$', 'box.views.edit_box_priority', name='box_edit_priority'),
+    url(r'^box/delete/$', 'box.views.del_box', name='box_delete'),
 
-    url(r'^add_box/$', 'box.views.add_box', name='add_box'),
-    url(r'^del_box/$', 'box.views.del_box', name='del_box'),
-
-    url(r'^add_feed/$', 'feed.views.add_feed', name='add_feed'),
-    url(r'^del_feed/$', 'feed.views.del_feed', name='del_feed'),
-
-    url(r'^upd_article/$', 'feed.views.upd_article', name='upd_article'),
-    url(r'^change_box/$', 'feed.views.change_box', name='change_box'),
+    url(r'^box/(?P<box_id>\d+)/feed/list/$', 'feed.views.feed_list', name='feed_list'),
+    url(r'^box/(?P<box_id>\d+)/feed/search/$', 'feed.views.searchFeed', name='feed_search'),
+    url(r'^box/(?P<box_id>\d+)/feed/add/$', 'feed.views.add_feed', name='feed_add'),
+    url(r'^box/(?P<box_id>\d+)/feed/edit/$', 'feed.views.get_feeds', name='feed_edit'),
+    url(r'^box/(?P<box_id>\d+)/feed/change_box/$', 'feed.views.change_box', name='feed_change_box'),
+    url(r'^box/(?P<box_id>\d+)/feed/delete/$', 'feed.views.del_feed', name='feed_delete'),
 
     url(r'^error/$', 'common.views.err', name='common_error'),
 

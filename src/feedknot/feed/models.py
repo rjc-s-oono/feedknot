@@ -24,8 +24,22 @@ class Feed(models.Model):
     def __unicode__(self):
         return self.feed_name
 
-    def add_feed(self):
+    def as_json(self):
+        return dict(
+            id=self.id,
+            box=dict(
+                     id=self.box.id
+                     ),
+            user=dict(
+                      id=self.user.id
+                      ),
+            feed_name=self.feed_name,
+            rss_address=self.rss_address,
+            last_take_date=self.last_take_date.strftime("%Y/%m/%d %H:%M:%S"),
+            feed_priority=self.feed_priority,
+            )
 
+    def add_feed(self):
         # 現在日時取得
         now = datetime.now()
 
@@ -90,3 +104,31 @@ class Article(models.Model):
 
     def __unicode__(self):
         return "%s - %s" % (self.site_title, self.article_title)
+
+    def as_json(self):
+        return dict(
+            id=self.id,
+            feed=dict(
+                      id=self.feed.id
+                      ),
+            box=dict(
+                     id=self.box.id
+                     ),
+            user=dict(
+                      id=self.user.id
+                      ),
+            site_title=self.site_title,
+            article_title=self.article_title,
+            article_address=self.article_address,
+            pub_date=self.pub_date.strftime("%Y/%m/%d %H:%M:%S"),
+            read_flg=self.read_flg,
+            )
+
+    def mark_read_article(self):
+
+        # 現在日時取得
+        now = datetime.now()
+
+        self.read_flg = True
+        self.updated_date = now
+        self.save()

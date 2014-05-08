@@ -1,67 +1,50 @@
 {% extends "base.html" %}
 
-{% comment %} == ↓タイトル部分 ====================================== {% endcomment %}
-	{% block title %}&nbsp;|&nbsp;ログイン{% endblock %}
-{% comment %} == ↑タイトル部分 ====================================== {% endcomment %}
+{# == ↓タイトル部分 ====================================== #}
+{% block title %}&nbsp;|&nbsp;ログイン{% endblock %}
+{# == ↑タイトル部分 ====================================== #}
 
-{% comment %} == ↓スタイルシート部分 ====================================== {% endcomment %}
-	{% block include_css %}
+{# == ↓スタイルシート部分 ====================================== #}
+{% block include_css %}
+{% endblock %}
+{# == ↑スタイルシート部分 ====================================== #}
 
+{% block include_js %}
+<script type="text/javascript">
+<!--
 $(document).bind("mobileinit", function(){
     $.mobile.ajaxLinksEnabled = false; // Ajax を使用したページ遷移を無効にする
     $.mobile.ajaxFormsEnabled = false; // Ajax を使用したフォーム遷移を無効にする
 });
-
-
-	{% endblock %}
-{% comment %} == ↑スタイルシート部分 ====================================== {% endcomment %}
+//-->
+</script>
+{% endblock %}
 
 {% block content %}
-
-{% block include_js %}
-{% endblock %}
-
-
 <div id="auth"  data-role="page">
 
+    <div data-role="header" data-position="fixed" data-theme="e">
+        <a href="{% url 'main' %}" data-iconpos="notext" data-icon="gear" rel="external">ログイン画面</a>
+        <h1 id="siteName">feedknot</h1>
+    </div>
 
-    	<div data-role="header" data-position="fixed" data-theme="e">
-            <a href="{% url 'main' %}" data-prefetch="true" data-transition="slide" data-direction="reverse" data-iconpos="notext" data-icon="gear" rel="external">ログイン画面</a>
-            <h1 id="siteName">feedknot</h1>
-        </div>
+    <div data-role="content">
+        {% load socialaccount %}
 
+        <form class="login_form">
+            {% if not user.is_authenticated and socialaccount.providers %}
+                <div class="socialaccount_ballot">
+                    <div>
+                        {% for provider in socialaccount.providers %}
+                             <input type="button" value="{{provider.name}}アカウントでログイン" onclick="location.href='{% provider_login_url provider.id %}'" data-role="button" data-icon="arrow-r" data-theme="e" data-iconpos="right" data-transition="slide" />
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </form>
+    </div>
 
-		<div data-role="content">
-			{% load account %}
-			{% load socialaccount %}
-			{% load url from future %}
-
-	        <form class="login_form">
-	            {% if not user.is_authenticated %}
-	                {% if socialaccount.providers %}
-	                    <div class="socialaccount_ballot">
-	                        <div>
-	                            {% for provider in socialaccount.providers %}
-	                             	<input type="button" value="{{provider.name}}アカウントでログイン" onclick="location.href='{% provider_login_url provider.id %}'"  data-role="button" data-icon="arrow-r" data-theme="e" data-iconpos="right" data-transition="slide"/>
-	                            {% endfor %}
-	                        </div>
-	                    </div>
-	                {% endif %}
-	            {% endif %}
-	        </form>
-		</div>
-
-
-		{% comment %} == 会社ロゴ  ========== {% endcomment %}
-        <div data-role="footer" data-theme="e">
-        <h3>
-        	<span class="rogo">
-				<a href="http://www.r-jc.jp/"><img src="/media/drawable/rogo.jpg"></a>
-			</span>
-        </h3>
-        </div>
-
+    {# == 会社ロゴ  ========== #}
+    {% include 'footer.html' %}
 </div>
 {% endblock %}
-    </body>
-</html>

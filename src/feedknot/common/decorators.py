@@ -17,7 +17,7 @@ _400_ERROR_MSG = _ERROR_MSG % _400_ERROR
 _403_ERROR_MSG = _ERROR_MSG % _403_ERROR
 _405_ERROR_MSG = _ERROR_MSG % _405_ERROR
 
-def ajax_view(FormClass=None, method='POST', login_required=False, ajax_required=True, json_form_errors=False):
+def ajax_view(FormClass=None, method='POST', login_required=False, ajax_required=True, json_form_errors=True):
     def decorator(view_func):
         def _ajax_view(request, *args, **kwargs):
             request_url = request.build_absolute_uri()
@@ -39,12 +39,12 @@ def ajax_view(FormClass=None, method='POST', login_required=False, ajax_required
             if FormClass:
                 f = FormClass(getattr(request, method))
                 if not f.is_valid():
-                    errors = dict((k, [unicode(x) for x in v]) for k,v in f.errors.items())
+                    errors = dict((k, [str(x) for x in v]) for k,v in f.errors.items())
                     logger.error(_400_ERROR + (': Request url [%s]' % request_url))
-                    logger.error(_400_ERROR + ': Invalid form ' + errors)
+                    logger.error(_400_ERROR + ': Invalid form ' + simplejson.dumps(errors))
 
                     if json_form_errors:
-                        return HttpResponse(simplejson.dumps({'error': 'form', 'errors': errors}), 'application/json')
+                        return HttpResponse(simplejson.dumps({'result': 'error', 'errors': errors}), 'application/json')
                     else:
                         return HttpResponseBadRequest(mark_safe(_400_ERROR_MSG % ('Invalid form<br />' + f.errors.as_ul())))
                 request.form = f
