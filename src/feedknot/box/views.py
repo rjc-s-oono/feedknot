@@ -1,157 +1,133 @@
 # -*- coding: utf-8 -*-
-from django.shortcuts import render
+import logging
+
 from django.contrib.auth.decorators import login_required
-from django.core.context_processors import csrf, request
-from django.http.response import HttpResponse
-import json
+from django.shortcuts import render
+from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse
+from django.utils import simplejson
+
+from common.decorators import ajax_view
+
 from box.models import Box
-from feed.models import Article
-from feed.models import Feed
+from feed.models import Feed, Article
+
+from box.forms import EditBoxNameForm, EditBoxPriorityForm, DeleteBoxForm
+
+logger = logging.getLogger('application')
 
 @login_required
 def commonEdit(request):
 
-    user_id = request.user.id
+    user = request.user
+    logger.debug("user_id: %s" % (user.id))
 
-    print('user_id')
-    print(user_id)
+    box_list = Box.objects.filter(user=user, del_flg=False).order_by('box_priority')
+    logger.debug(box_list)
 
-    box_list = Box.objects.filter(user_id=user_id).order_by('box_priority')
-
-    print(box_list)
-
-    article_list = ''
-#     for box in [box_list]:
-#         article_list[request.box.id] = Article.objects.filter(box_id=request.box.id)
-
-    print(article_list)
-
-    param = {'user_id' : user_id,
-         'article_list' : article_list,
-         'box_list' : box_list}
-    param.update(csrf(request))
-
-    return render(request,'feedknot/CommonEdit.html',{})
-
-#     print(user_id)
-#
-#     try:
-#         box_id = int(request.POST['box_id'])
-#     except Exception:
-#         box_id = -1
-#
-#     boxName = ""
-#     if box_id > 0:
-#         try:
-#             boxInfo = Box.objects.get(id=box_id)
-#             boxName = boxInfo.box_name
-#             boxInfo.readFeed()
-#         except ObjectDoesNotExist:
-#             boxName = "ボックスが登録されていません。"
-#     else:
-#         try:
-#             loginInfo = LoginMaster.objects.get(user=request.user)
-#
-#
-#             box_id = loginInfo.default_box_id
-#             boxInfo = Box.objects.get(id=box_id)
-#             boxName = boxInfo.box_name
-#             boxInfo.readFeed()
-#         except ObjectDoesNotExist:
-#             boxName = "ボックスが登録されていません。"
-#
-#     article_list = Article.objects.filter(box_id=box_id).order_by('-pub_date', 'id')
-#     box_list = Box.objects.filter(user_id=user_id).order_by('box_priority')
-#
-#     print(box_list)
-#
-#     param = {'user_id' : user_id,
-#          'box_name' : boxName,
-#          'article_list' : article_list,
-#          'box_list' : box_list}
-#     param.update(csrf(request))
-#
-#     return render_to_response('feedknot/CommonEdit.html',{})
-
-@login_required
-def searchFeed(request):
-    return render(request,'feedknot/SearchFeed.html',{})
+    return render(request,
+                  'feedknot/CommonEdit.html',
+                  {'box_list' : box_list})
 
 # ボックス登録
+@login_required
 def add_box(request):
-    box_name = ''
-    user_id = 1
-
-    # ユーザID取得
-    if request.user.is_authenticated():
-        user_id = request.user.id
-    else:
-        user_id = 1
-
-    # リクエストパラメータ取得
-    try:
-        if 'box_name' in request.POST:
-            box_name = request.POST['box_name']
-        else:
-            box_name = 'デフォルト'
-    except Exception:
-        # リクエストパラメータの取得に失敗
-        return HttpResponse(
-                json.dumps({
-                'result': 'get param faild.[box_name=' +
-                box_name + ',user_id=' + user_id + ']'}),
-                mimetype='application/json')
 
     try:
         # フィード登録
-        box = Box(box_name=box_name, user_id=user_id)
-        box.save()
+        box = Box(
+            box_name="新規ボックス",
+            user=request.user,
+        )
+        box.add_box()
     except Exception:
         # ボックスの登録失敗
-        return HttpResponse(json.dumps({'result': 'regist box faild.'}),
-                            mimetype='application/json')
+        return HttpResponseRedirect(reverse('common_error'))
 
-    res = json.dumps({'result': 'success', 'box_name': box_name})
-    #res.update(csrf(request))
+    return HttpResponseRedirect(reverse('common_edit'))
 
-    return HttpResponse(res, mimetype='application/json')
+# ボックス名変更
+@ajax_view(FormClass=EditBoxNameForm ,login_required=True)
+def edit_box_name(request):
+
+    edit_box_form = EditBoxNameForm(request.POST)
+    edit_box_form.is_valid()
+
+    box_id = edit_box_form.cleaned_data['box_id']
+    box_name = edit_box_form.cleaned_data['box_name']
+
+    try:
+        box = Box.objects.get(id=box_id, user=request.user, del_flg=False)
+        box.edit_box_name(box_name)
+
+        result = {'result': 'success'}
+    except Box.DoesNotExist:
+        result = {'result': 'error',
+                  'message': 'Box does not exist.[box_id=' + str(box_id) + ']'}
+    except Exception:
+        # ボックスの更新失敗
+        result = {'result': 'error',
+                  'message': 'update box name faild.[box_id=' + str(box_id) + ']'}
+
+    logger.debug(result)
+    return HttpResponse(simplejson.dumps(result, ensure_ascii=False), mimetype='application/json')
+
+# ボックス優先度変更
+@ajax_view(FormClass=EditBoxPriorityForm ,login_required=True)
+def edit_box_priority(request):
+
+    edit_box_form = EditBoxPriorityForm(request.POST)
+    edit_box_form.is_valid()
+
+    box_id = edit_box_form.cleaned_data['box_id']
+    box_priority = edit_box_form.cleaned_data['box_priority']
+
+    try:
+        box = Box.objects.get(id=box_id, user=request.user)
+        box.edit_box_priority(box_priority);
+
+        box_list = Box.objects.filter(user=request.user, del_flg=False).order_by('box_priority')
+
+        result = {'result': 'success', 'box_list': [box.as_json() for box in box_list]}
+    except Box.DoesNotExist:
+        result = {'result': 'error',
+                  'message': 'Box does not exist.[box_id=' + str(box_id) + ']'}
+    except Exception:
+        # ボックスの更新失敗
+        result = {'result': 'error',
+                  'message': 'update box priority faild.[box_id=' + str(box_id) + ']'}
+
+    logger.debug(result)
+    return HttpResponse(simplejson.dumps(result, ensure_ascii=False), mimetype='application/json')
 
 # ボックス削除
+@ajax_view(FormClass=DeleteBoxForm ,login_required=True)
 def del_box(request):
-    box_id = 1
-    user_id = 1
 
-    # ユーザID取得
-    if request.user.is_authenticated():
-        user_id = request.user.id
-    else:
-        user_id = 1
+    delete_box_form = DeleteBoxForm(request.POST)
+    delete_box_form.is_valid()
 
-    # リクエストパラメータ取得
-    try:
-        if 'box_id' in request.POST and request.POST['box_id'].isdigit():
-            box_id = int(request.POST['box_id'])
-        else:
-            box_id = 1
-    except Exception:
-        # リクエストパラメータの取得に失敗
-        return HttpResponse(
-                json.dumps({
-                'result': 'get param faild.[box_id=' +
-                box_id + ',user_id=' + user_id + ']'}),
-                mimetype='application/json')
+    box_id = delete_box_form.cleaned_data['box_id']
 
     # ボックス削除 (ボックスに割り当てられているフィードなども削除)
     try:
-        Box.objects.filter(box_id=box_id, user_id=user_id).delete()
-        Feed.objects.filter(box_id=box_id, user_id=user_id).delete()
-        Article.objects.filter(box_id=box_id, user_id=user_id).delete()
+        box = Box.objects.get(pk=box_id, user=request.user)
+        feed_list = box.feed_box.all()
+        article_list = box.article_box.all()
+        article_list.delete()
+        feed_list.delete()
+        box.delete()
+
+        box_list = Box.objects.filter(user=request.user, del_flg=False).order_by('box_priority')
+
+        result = {'result': 'success', 'box_list': [box.as_json() for box in box_list]}
+    except Box.DoesNotExist:
+        result = {'result': 'error',
+                  'message': 'Box does not exist.[box_id=' + str(box_id) + ']'}
     except Exception:
         # ボックスの削除失敗
-        return HttpResponse(json.dumps({'result': 'delete box faild.'}),
-                            mimetype='application/json')
+        result = {'result': 'error',
+                  'message': 'delete box faild.[box_id=' + str(box_id) + ']'}
 
-    res = json.dumps({'result': 'success', 'box_id': box_id})
-    #res.update(csrf(request))
-
-    return HttpResponse(res, mimetype='application/json')
+    logger.debug(result)
+    return HttpResponse(simplejson.dumps(result, ensure_ascii=False), mimetype='application/json')

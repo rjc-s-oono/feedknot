@@ -2,20 +2,20 @@
 import logging
 
 from django.contrib.auth.decorators import login_required
-from django.template import RequestContext
 from django.shortcuts import render
 
 from administration.models import LoginMaster
 
+logger = logging.getLogger('application')
+
 @login_required
 def index(request):
     try:
-        userInfo = LoginMaster.objects.get(user=request.user)
+        LoginMaster.objects.get(user=request.user)
     except LoginMaster.DoesNotExist:
-        userInfo = LoginMaster.objects.create(user=request.user, default_box_id=-1)
-
-    userName = userInfo.user.username
+        logger.info("Call set_default_box")
+        loginMaster = LoginMaster()
+        loginMaster.set_default_box(request)
 
     return render(request,
-                  'feedknot/Mypage.html',
-                  {'login_flg':'1','user_name':userName})
+                  'feedknot/Mypage.html')

@@ -1,147 +1,144 @@
 {% extends "base.html" %}
 
-{% comment %} == ↓タイトル部分 ====================================== {% endcomment %}
+{# == ↓タイトル部分 ====================================== #}
+{% block title %}&nbsp;|&nbsp;管理{% endblock %}
+{# == ↑タイトル部分 ====================================== #}
 
-	{% block title %}&nbsp;|&nbsp;メイン{% endblock %}
+{# == ↓スタイルシート部分 ====================================== #}
+{% block include_css %}
+{% endblock %}
+{# == ↑スタイルシート部分 ====================================== #}
 
-{% comment %} == ↑タイトル部分 ====================================== {% endcomment %}
+{# == ↓ジャバスクリプト部分 ====================================== #}
+{% block include_js %}
+{% endblock %}
+{# == ↑ジャバスクリプト部分 ====================================== #}
 
-
-
-{% comment %} == ↓スタイルシート部分 ====================================== {% endcomment %}
-	{% block include_css %}
-
-	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.1/jquery.mobile-1.2.1.min.css" />
-
-	{% endblock %}
-{% comment %} == ↑スタイルシート部分 ====================================== {% endcomment %}
-
-
-
-{% comment %} == ↓ジャバスクリプト部分 ====================================== {% endcomment %}
-	{% block include_js %}
-
-	<script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
-
-    <script type="text/javascript">
-    <!--
-    $( function() {
-        $( '#box_arrow_1' ).click( function() {
-        	alert("a");
-            $( "#feed_records_1" ) . slideToggle( 'normal' );
-        } );
-        $( '#box_target_1' ).click( function() {
-        	alert("box_target_1");
-        } );
-        $( '#box_edit_1' ).click( function() {
-       	 alert("box_edit_1");
-       	 $( "#box_name_1" ) .readonly = "false";
-        } );
-        $( '#box_delete_1' ).click( function() {
-        	alert("box_delete_1");
-        } );
-        $( '#box_review_1' ).click( function() {
-        	alert("box_review_1");
-        } );
-        $( '#feed_remove_1_1' ).click( function() {
-        	alert("feed_remove_1_1");
-        } );
-        $( '#feed_delete_1_1' ).click( function() {
-        	alert("feed_delete_1_1");
-        } );
-        $( '#feed_review_1_1' ).click( function() {
-        	alert("feed_review_1_1");
-        } );
-    } );
-    // -->
-    </script>
-
-	<script src="http://code.jquery.com/mobile/1.2.1/jquery.mobile-1.2.1.min.js"></script>
-
-	{% endblock %}
-{% comment %} == ↑ジャバスクリプト部分 ====================================== {% endcomment %}
-
-{% comment %} == ↓表示部分 ====================================== {% endcomment %}
+{# == ↓表示部分 ====================================== #}
 {% block content %}
 
-	<div id="commonEdit" data-role="page">
+    <div id="commonEdit" data-role="page">
 
-		{% comment %} == ヘッダ  ========== {% endcomment %}
-    	<div data-role="header" data-position="fixed" data-theme="e">
-            <a href="/main/" data-prefetch="true" data-transition="slide" data-direction="reverse" data-iconpos="notext" data-icon="home" rel="external">ホーム</a>
+        {# jquery mobileによって非同期で読み込まれるので[data-role="page"]内に記述する #}
+        <script src="/media/js/box.js?{{ QUERY_STRING }}"></script>
+        <script type="text/javascript">
+        <!--
+            $(function(){
+                $('#box-list').on('click', '.box-info .edit-button', function(){
+                    var box_id = $(this).attr('data-box-id');
+                    var box_name = $('#box_name_'+box_id).val();
+                    editBoxName(box_id, box_name);
+                });
+
+                $('#box-list').on('click', '.box-info .delete-button', function(){
+                    var box_id = $(this).attr('data-box-id');
+                    deleteBox(box_id);
+                });
+
+                $('#box-list').on('click', '.box-under-info .priority-icon', function(){
+                    var box_id = $(this).parents('td.box-priority').attr('data-box-id');
+                    var box_priority = $(this).attr('data-box-priority');
+                    editBoxPriority(box_id, box_priority);
+                });
+            });
+        //-->
+        </script>
+
+        {# == ヘッダ  ========== #}
+        <div data-role="header" data-position="fixed" data-theme="e">
+            <a href="{% url 'main' %}" data-iconpos="notext" data-icon="home" rel="external">ホーム</a>
             <H3>登録フィード</H3>
-            <a href="/" data-prefetch="true" data-transition="slide" data-direction="reverse" data-iconpos="notext" data-icon="back" rel="external">戻る</a>
+            <a href="{% url 'index' %}" data-prefetch="false" data-transition="slide" data-direction="reverse" data-iconpos="notext" data-icon="back">戻る</a>
         </div>
-		{% comment %} == ↑ヘッダ  ========== {% endcomment %}
+        {# == ↑ヘッダ  ========== #}
 
+        {# == フィードメニュー  ========== #}
+        <div data-role="content">
 
-		{% comment %} == フィードメニュー  ========== {% endcomment %}
-		<div data-role="content">
+            <form id="box-edit-name-from" method="post" action="{% url 'box_edit_name' %}" name="box-edit-name-from">
+                 <input type="hidden" id="edit_name_box_id" name="box_id" value="" />
+                 <input type="hidden" id="box_name" name="box_name" value="" />
+                 {% csrf_token %}
+            </form>
+            <form id="box-edit-priority-from" method="post" action="{% url 'box_edit_priority' %}" name="box-edit-priority-from">
+                 <input type="hidden" id="edit_priority_box_id" name="box_id" value="" />
+                 <input type="hidden" id="box_priority" name="box_priority" value="" />
+                 {% csrf_token %}
+            </form>
+            <form id="box-delete-form" method="post" action="{% url 'box_delete' %}" name="box-delete-form">
+                 <input type="hidden" id="delete_box_id" name="box_id" value="" />
+                 {% csrf_token %}
+            </form>
 
-				<form method="post" action="{% url 'commonEdit' %}" name="frm">
-				</form>
+            <table id="box-list" cellspacing="0">
+                {% for box in box_list %}
+                    <tr class="box-info" bgcolor="silver">
+                        <td rowspan="2" nowrap>
+                            <input type="checkbox" id="box_default_{{box.id}}" class="box_default" />
+                        </td>
 
-あああ
-{% for box in box_list %}
-あああ
-{% endfor %}
+                        <td align="left">
+                            <textarea id="box_name_{{box.id}}" class="box_name" name="box_name" ROWS="1" COLS="20" >{{box.box_name}}</textarea>
+                        </td>
 
-			<ul data-role="listview" data-divider-theme="e" data-inset="true" id="boxUL">
-				{% for box in box_list %}
-					<li data-theme="c" id="boxLI">
-						<table class="feed_menu" cellspacing="0">
-					        <div class="box_records_{box.box_id}">
-					            <tr width="100%" bgcolor="silver">
-						            <td id="box_arrow_{box.box_id}" rowspan="2" nowrap>　<img src="/media/drawable/ic_arrow_down.png" alt="box" width="30" height="30">　</td>
-					                <td colspan="2" id="" align="left"><span style="width: 10">&nbsp;</span><TEXTAREA id="box_name_{box.box_id}" ROWS="1" COLS="20" readonly>{box.box_name}</TEXTAREA></td>
-					                <td id="box_target_{box.box_id}" nowrap>　<img src="/media/drawable/ic_box_default.png" alt="box" width="50" height="50">　</td>
-					                <td id="box_edit_{box.box_id}" width="10%" nowrap><img src="/media/drawable/ic_edit.png" alt="edit" width="50" height="50"></td>
-					                <td id="box_delete_{box.box_id}" width="10%" nowrap><img src="/media/drawable/ic_delete.png" alt="delete" width="50" height="50" id="review"></td>
-					            </tr>
-					            <tr bgcolor="silver">
-					                <td id="box_review_{box.box_id}" colspan="2" align="right" width="100%" height="8%" border-bottom>★★★</td>
-					                <td colspan="3" align="right" ><a href="{% url 'searchFeed'%}">フィードを追加</a></td>
-					            </tr>
-					        </div>
-							<ul data-role="listview" data-divider-theme="e" data-inset="true" data-filter="true" id="feedUL">
-								{% for article_feed in article_feed_list %}
-									<li data-theme="c" id="feedLI">
-										<table class="feed_menu" cellspacing="0">
-								            <tr class="feed_record" id="feed_menu_{article_feed.feed_id}" style="border:1px solid black">
-								                <td rowspan="2" nowrap></td>
-								                <td nowrap>・</td>
-								                <td colspan="2" id="" align="left"><p id="feed_name_{box.box_id}_{article_feed.feed_id}">{article_feed.feed_title}</p></td>
-								                <td id="feed_remove_{box.box_id}_{article_feed.feed_id}" rowspan="2" nowrap><img src="/media/drawable/ic_box_move.png" alt="edit" width="50" height="50"></td>
-								                <td id="feed_delete_{box.box_id}_{article_feed.feed_id}" rowspan="2" nowrap><img src="/media/drawable/ic_delete.png" alt="delete" width="50" height="50"></td>
-								            </tr>
-								            <tr>
-								                <td>　</td>
-								                <td id="feed_review_{box.box_id}_{article_feed.feed_id}" align="right" width="100%" height="8%">★★★</td>
-								            </tr>
-									    </table>
-								  	</li>
-								{% endfor %}
-							</ul>
-					    </table>
-				  	</li>
-				{% endfor %}
-			</ul>
-		</div>
-		{% comment %} == ↑フィードメニュー  ========== {% endcomment %}
-
-
-		{% comment %} == フッタ  ========== {% endcomment %}
-        <div data-role="footer" data-theme="e">
-        <h3>
-        	<span class="rogo">
-				<a href="http://www.r-jc.jp/"><img src="/media/drawable/rogo.jpg"></a>
-			</span>
-        </h3>
+                        <td width="10%" nowrap>
+                            <img class="edit-button" data-box-id="{{box.id}}" src="/media/drawable/ic_edit.png?{{ QUERY_STRING }}" alt="edit" width="50" height="50">
+                        </td>
+                        <td width="10%" nowrap>
+                            <img class="delete-button" data-box-id="{{box.id}}" src="/media/drawable/ic_delete.png?{{ QUERY_STRING }}" alt="delete" width="50" height="50">
+                        </td>
+                    </tr>
+                    <tr class="box-under-info" bgcolor="silver">
+                        <td class="box-priority" data-box-id="{{box.id}}" align="right" width="100%" height="8%" border-bottom>
+                            <span class="priority-icon" data-box-priority="1">{% if box.box_priority >= 1 %}★{% else %}☆{% endif %}</span><!--
+                            --><span class="priority-icon" data-box-priority="2">{% if box.box_priority >= 2 %}★{% else %}☆{% endif %}</span><!--
+                            --><span class="priority-icon" data-box-priority="3">{% if box.box_priority == 3 %}★{% else %}☆{% endif %}</span><!--
+                            -->現優先度{{box.box_priority}}
+                        </td>
+                        <td colspan="2" align="right" ><a href="{% url 'feed_list' box.id %}" rel="external">フィード管理</a></td>
+                    </tr>
+                {% endfor %}
+                    <tr>
+                        <td colspan="3" align="right" ><a href="{% url 'box_add' %}" rel="external">BOX追加</a></td>
+                    </tr>
+            </table>
         </div>
+        {# == ↑フィードメニュー  ========== #}
 
+        {# == フッタ  ========== #}
+        {% include 'footer.html' %}
+
+        <script type="text/template" id="box-list-template">
+            <% _.each(box_list, function(box) { %>
+                <tr class="box-info" bgcolor="silver">
+                    <td rowspan="2" nowrap>
+                        <input type="checkbox" id="box_default_<%= box.id %>" class="box_default" />
+                    </td>
+                    <td align="left">
+                        <textarea id="box_name_<%= box.id %>" class="box_name" name="box_name" ROWS="1" COLS="20" ><%= box.box_name %></textarea>
+                    </td>
+                    <td width="10%" nowrap>
+                        <img class="edit-button" data-box-id="<%= box.id %>" src="/media/drawable/ic_edit.png?{{ QUERY_STRING }}" alt="edit" width="50" height="50">
+                    </td>
+                    <td width="10%" nowrap>
+                        <img class="delete-button" data-box-id="<%= box.id %>" src="/media/drawable/ic_delete.png?{{ QUERY_STRING }}" alt="delete" width="50" height="50">
+                    </td>
+                </tr>
+                <tr class="box-under-info" bgcolor="silver">
+                    <td class="box-priority" data-box-id="<%= box.id %>"  align="right" width="100%" height="8%" border-bottom>
+                        <span class="priority-icon" data-box-priority="1"><% if(box.box_priority >= 1) { %>★<% } else { %>☆<% } %></span><!--
+                        --><span class="priority-icon" data-box-priority="2"><% if(box.box_priority >= 2) { %>★<% } else { %>☆<% } %></span><!--
+                        --><span class="priority-icon" data-box-priority="3"><% if(box.box_priority == 3) { %>★<% } else { %>☆<% } %></span><!--
+                        -->現優先度<%= box.box_priority %>
+                    </td>
+                    <td colspan="2" align="right" ><a href="<%= box.feed_list_url %>" rel="external">フィード管理</a></td>
+                </tr>
+            <% }); %>
+            <tr>
+                <td colspan="3" align="right" ><a href="{% url 'box_add' %}" rel="external">BOX追加</a></td>
+            </tr>
+        </script>
     </div>
 
 {% endblock %}
-{% comment %} == ↑表示部分 ====================================== {% endcomment %}
-
-
+{# == ↑表示部分 ====================================== #}

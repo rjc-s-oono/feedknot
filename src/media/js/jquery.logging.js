@@ -69,11 +69,15 @@
         return this;
     };
     LoggerClass.prototype.debug = function(message) {
-        logTransfer('DEBUG', message, this.params);
+        if (this.params.debug) {
+            logTransfer('DEBUG', message, this.params);
+        }
         return this;
     };
     LoggerClass.prototype.trace = function(message) {
-        logTransfer('TRACE', message, this.params);
+        if (this.params.debug) {
+            logTransfer('TRACE', message, this.params);
+        }
         return this;
     };
 

@@ -1,100 +1,74 @@
 {% extends "base.html" %}
 
+{# == ↓タイトル部分 ====================================== #}
+{% block title %}&nbsp;|&nbsp;管理{% endblock %}
+{# == ↑タイトル部分 ====================================== #}
 
-{% comment %} == ↓タイトル部分 ====================================== {% endcomment %}
-	{% block title %}&nbsp;|&nbsp;管理{% endblock %}
-{% comment %} == ↑タイトル部分 ====================================== {% endcomment %}
-
-{% comment %} == ↓スタイルシート部分 ====================================== {% endcomment %}
-	{% block include_css %}
-
-	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.1/jquery.mobile-1.2.1.min.css" />
-
+{# == ↓スタイルシート部分 ====================================== #}
+{% block include_css %}
 <style type="text/css">
-<!--
-    暫定後でファイルにして分ける ←なんだっけ？
--->
-a[name="hed_icon"] {
-  height: 100px;
-}
-
+    <!--暫定後でファイルにして分ける ←なんだっけ？-->
+    a[name="hed_icon"] {
+      height: 100px;
+    }
 </style>
+{% endblock %}
+{# == ↑スタイルシート部分 ====================================== #}
 
+{# == ↓ジャバスクリプト部分 ====================================== #}
+{% block include_js %}
+<script type="text/javascript">
+<!--
+    // viewport設定変更
+    $(document).bind("mobileinit", function(){
+        $.mobile.metaViewportContent = "width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no";
+    })
 
-	{% endblock %}
-{% comment %} == ↑スタイルシート部分 ====================================== {% endcomment %}
+    //ログイン状況をチェックしページを表示する。
+    function changeDisplay() {
+        getLoginInfo();
+        if (!isLogin || isLogin != 1) {
+            document.getElementById("user_title").innerHTML="ログイン選択";
+            document.getElementById("btn_1").innerHTML=btnHeader+"Googleアカウント"+btnFooterOAuth;
+            document.getElementById("btn_2").innerHTML=btnHeader+"Twitterアカウント" +btnFooterOAuth;
+            document.getElementById("btn_3").innerHTML=btnHeader+"Facebookアカウント" +btnFooterOAuth;
+        } else {
+            document.getElementById("user_title").innerHTML=userName;
+            document.getElementById("btn_1").innerHTML=btnHeader+"フィードを管理"+btnFooterCommonEdit;
+            document.getElementById("btn_2").innerHTML=btnHeader+"ログアウト"+btnFooterMyPage;
+        }
+    }
+//-->
+</script>
+{% endblock %}
+{# == ↑ジャバスクリプト部分 ====================================== #}
 
-
-
-{% comment %} == ↓ジャバスクリプト部分 ====================================== {% endcomment %}
-	{% block include_js %}
-<script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
-
-		<script type="text/javascript">
-
-			// viewport設定変更
-			$(document).bind("mobileinit", function(){
-				$.mobile.metaViewportContent = "width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no";
-			})
-
-			//ログイン状況をチェックしページを表示する。
-	        function changeDisplay() {
-	            getLoginInfo();
-	            if (!isLogin || isLogin != 1) {
-	                document.getElementById("user_title").innerHTML="ログイン選択";
-	                document.getElementById("btn_1").innerHTML=btnHeader+"Googleアカウント"+btnFooterOAuth;
-	                document.getElementById("btn_2").innerHTML=btnHeader+"Twitterアカウント" +btnFooterOAuth;
-	                document.getElementById("btn_3").innerHTML=btnHeader+"Facebookアカウント" +btnFooterOAuth;
-	            } else {
-	                document.getElementById("user_title").innerHTML=userName;
-	                document.getElementById("btn_1").innerHTML=btnHeader+"フィードを管理"+btnFooterCommonEdit;
-	                document.getElementById("btn_2").innerHTML=btnHeader+"ログアウト"+btnFooterMyPage;
-	            }
-	        }
-
-		</script>
-
-	{% endblock %}
-
-<script src="http://code.jquery.com/mobile/1.2.1/jquery.mobile-1.2.1.min.js"></script>
-
-{% comment %} == ↑ジャバスクリプト部分 ====================================== {% endcomment %}
-
-
-{% comment %} == ↓表示部分 ====================================== {% endcomment %}
+{# == ↓表示部分 ====================================== #}
 {% block content %}
-	<div id="manage"  data-role="page">
+    <div id="manage"  data-role="page">
 
-		{% comment %} == ヘッダー部分  ========== {% endcomment %}
-    	<div data-role="header" data-position="fixed" data-theme="e">
-            <a href="{% url 'main' %}" data-prefetch="true" data-transition="slide" data-direction="reverse" data-iconpos="notext" data-icon="gear" rel="external">メイン画面</a>
-            <h1 id="user_name">{{user_name}}</h1>
+        {# == ヘッダー部分  ========== #}
+        <div data-role="header" data-position="fixed" data-theme="e">
+            <a href="{% url 'main' %}" data-iconpos="notext" data-icon="gear" rel="external">メイン画面</a>
+            <h1 id="user_name">{{user.username}}</h1>
             <span class="header_icon">
-	            <a class="ui-btn-right">
-		            <img src="/media/drawable/ic_user.png" alt="user_icon" style="max-width:40px;max-height:40px;top:0;left:0;">
-		        </a>
-			</span>
+                <a class="ui-btn-right">
+                    <img src="/media/drawable/ic_user.png?{{ QUERY_STRING }}" alt="user_icon" style="max-width:40px;max-height:40px;top:0;left:0;">
+                </a>
+            </span>
 
         </div>
 
-		{% comment %} == メニュー選択  ========== {% endcomment %}
-		<div data-role="content">
-			{% comment %} 各ページ遷移ボタン {% endcomment %}
-			<a href="{% url 'commonEdit'%}" data-role="button" data-icon="arrow-r" data-theme="e" data-iconpos="right" data-transition="slide">フィードを管理</a>
-			<a href="{% url 'account_logout' %}" data-role="button" data-icon="arrow-r" data-theme="e" data-iconpos="right" data-transition="fade">ログアウト</a>
+        {# == メニュー選択  ========== #}
+        <div data-role="content">
+            {# 各ページ遷移ボタン #}
+            <a href="{% url 'common_edit'%}" data-role="button" data-icon="arrow-r" data-theme="e" data-iconpos="right" data-transition="slide">フィードを管理</a>
+            <a href="{% url 'account_logout' %}" data-role="button" data-icon="arrow-r" data-theme="e" data-iconpos="right" data-transition="fade">ログアウト</a>
 
-		</div>
-
-
-		{% comment %} == 会社ロゴ  ========== {% endcomment %}
-        <div data-role="footer" data-theme="e">
-        <h3>
-        	<span class="rogo">
-				<a href="http://www.r-jc.jp/"><img src="/media/drawable/rogo.jpg"></a>
-			</span>
-        </h3>
         </div>
 
+        {# == 会社ロゴ  ========== #}
+        {% include 'footer.html' %}
     </div>
 {% endblock %}
-{% comment %} == ↑表示部分 ====================================== {% endcomment %}
+{# == ↑表示部分 ====================================== #}

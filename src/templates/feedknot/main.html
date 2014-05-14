@@ -1,122 +1,89 @@
 {% extends "base.html" %}
 
-{% comment %} == ↓タイトル部分 ====================================== {% endcomment %}
-    {% block title %}&nbsp;|&nbsp;メイン{% endblock %}
-{% comment %} == ↑タイトル部分 ====================================== {% endcomment %}
+{# == ↓タイトル部分 ====================================== #}
+{% block title %}&nbsp;|&nbsp;メイン{% endblock %}
+{# == ↑タイトル部分 ====================================== #}
 
-{% comment %} == ↓スタイルシート部分 ====================================== {% endcomment %}
-    {% block include_css %}
+{# == ↓スタイルシート部分 ====================================== #}
+{% block include_css %}
+{% endblock %}
+{# == ↑スタイルシート部分 ====================================== #}
 
+{# == ↓ジャバスクリプト部分 ====================================== #}
+{% block include_js %}
+<script type="text/javascript">
+<!--
+    // 年・月を変わるごとに表示
+    var curYear$ = 0;
+    var curMonth$ = 0;
+    $(document).ready(function() {
+        $("#feedUL").children("li").each(function() {
+            var year = $(this).find("#pub_year").val();
+            var month = $(this).find("#pub_month").val();
+            if (curYear$ != year || curMonth$ != month) {
+                $(this).before("<li data-role='list-divider'>" + year + "/" + month + "</li>");
+                curYear$ = year;
+                curMonth$ = month;
+            }
+        });
+        logger.debug("debug message.");
+    });
 
-
-    {% endblock %}
-{% comment %} == ↑スタイルシート部分 ====================================== {% endcomment %}
-
-
-
-{% comment %} == ↓ジャバスクリプト部分 ====================================== {% endcomment %}
-    {% block include_js %}
-
-        <script type="text/javascript">
-            // 年・月を変わるごとに表示
-            var curYear$ = 0;
-            var curMonth$ = 0;
-            $(document).ready(function() {
-                $("#feedUL").children("li").each(function() {
-                    var year = $(this).find("#pub_year").val();
-                    var month = $(this).find("#pub_month").val();
-                    if (curYear$ != year || curMonth$ != month) {
-                        $(this).before("<li data-role='list-divider'>" + year + "/" + month + "</li>");
-                        curYear$ = year;
-                        curMonth$ = month;
-                    }
-                });
-                logger.debug("debug message.");
-            });
-
+    $(function (){
+        $(document).on('pagecreate', '#main', function(){
             //タップ
-            $('#main').live('pagecreate',function(){
-                $('#boxName').live('tap',doAction);
-                $('#boxName').live('taphold',doAction2);
-            });
-
-            function doAction(){
-                $("#popupMenu").popup("open")
-            }
-            function doAction2(){
-                alert("を長押ししたぞ！");
-            }
-
-
+            $(document).on('tap', '#boxName', doAction);
+            $(document).on('taphold', '#boxName', doAction2);
             // スワイプした時の動作（swipeleftでpage2viewの関数を呼び出す）
-             $('#main').live('pagecreate',function(){
-                 $('#view').live('swiperight',page2view);
-             });
+            $(document).on('swiperight', '#view', page2view);
+        });
+    });
 
+    function doAction(){
+        $("#popupMenu").popup("open")
+    }
+    function doAction2(){
+        alert("を長押ししたぞ！");
+    }
 
-            // #page2へ進む
-             function page2view(){
-                //$.mobile.changePage('./Mypage.html',{transition:"slide"});
-                $.mobile.showPageLoadingMsg();
-                location.href="./Mypage.html";
-             }
+    // #page2へ進む
+     function page2view(){
+        //$.mobile.changePage('./Mypage.html',{transition:"slide"});
+        $.mobile.showPageLoadingMsg();
+        location.href="{% url 'index' %}";
+     }
+//-->
+</script>
+{% endblock %}
+{# == ↑ジャバスクリプト部分 ====================================== #}
 
-
-
-
-
-
-
-        </script>
-
-
-
-
-    {% endblock %}
-{% comment %} == ↑ジャバスクリプト部分 ====================================== {% endcomment %}
-
-
-
-{% comment %} == ↓表示部分 ====================================== {% endcomment %}
+{# == ↓表示部分 ====================================== #}
 {% block content %}
     <div id="main"  data-role="page">
 
-        {% comment %} == ボックス選択  ========== {% endcomment %}
+        {# == ボックス選択  ========== #}
         <div data-role="header" data-position="fixed" data-theme="e">
-            <a href="/" data-prefetch="true" data-transition="slide" data-direction="reverse" data-iconpos="notext" data-icon="gear" rel="external">管理画面</a>
+            <a href="{% url 'index' %}" data-iconpos="notext" data-icon="gear" rel="external">管理画面</a>
             <h1 id="boxName">{{box_name}}</h1>
 
-            {% comment %} == ↓ポップアップ内容  ========== {% endcomment %}
+            {# == ↓ポップアップ内容  ========== #}
             <div data-role="popup" id="popupMenu">
-                <form method="post" action="{% url 'main' %}" name="frm">
-                    <input type="hidden" name="box_id" value="">
-                    {% csrf_token %}
-                </form>
               <a href="#" data-rel="back" data-role="button" data-theme="c" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
               <ul data-role="listview" data-inset="true" style="min-width:210px;" data-theme="c">
                 <li data-role="divider" data-theme="e">ナビゲーションメニュー</li>
                 {% for box in box_list %}
-                    <li><a href="#" onclick="frm.box_id.value = '{{box.id}}';document.frm.submit();">{{box.box_name}}</a></li>
+                    <li><a href="{% url 'main_select_box' box.id %}" data-ajax="false">{{box.box_name}}</a></li>
                 {% endfor %}
               </ul>
-              <ul data-role="listview" data-inset="true" style="min-width:210px;" data-theme="c">
-                <li data-role="divider" data-theme="e">ナビゲーションメニュー</li>
-                <li><a href="#">メニュー項目１</a></li>
-              </ul>
-
             </div>
-            {% comment %} == ↑ポップアップ内容  ========== {% endcomment %}
-
-
+            {# == ↑ポップアップ内容  ========== #}
         </div>
 
-
-
-        {% comment %} == フィード情報  ========== {% endcomment %}
+        {# == フィード情報  ========== #}
         <div data-role="content">
             <ul data-role="listview" data-divider-theme="e" data-inset="true" data-filter="true" id="feedUL">
             {% for article in article_list %}
-                <li data-theme="c" id="feedLI">
+                <li data-theme="c">
                     <a target="_blank" href="{{article.article_address}}">
                         <p class="ui-li-aside">{{article.pub_date}}</p>
                         <h1>{{article.site_title}}</h1>
@@ -131,27 +98,15 @@
                     </a>
                     <input type="hidden" id="pub_year" value="{{article.pub_date.year}}" />
                     <input type="hidden" id="pub_month" value="{{article.pub_date.month}}" />
-                  </li>
+                </li>
             {% endfor %}
             </ul>
         </div>
 
-
-        {% comment %} == 会社ロゴ  ========== {% endcomment %}
-        <div data-role="footer" data-theme="e">
-        <h3>
-            <span class="rogo">
-                <a href="http://www.r-jc.jp/"><img src="/media/drawable/rogo.jpg"></a>
-            </span>
-        </h3>
-        </div>
-
+        {# == 会社ロゴ  ========== #}
+        {% include 'footer.html' %}
     </div>
-
-
-
-
 {% endblock %}
-{% comment %} == ↑表示部分 ====================================== {% endcomment %}
+{# == ↑表示部分 ====================================== #}
 
 

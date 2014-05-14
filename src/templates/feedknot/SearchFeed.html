@@ -1,74 +1,66 @@
 {% extends "base.html" %}
 
-{% comment %} == ↓タイトル部分 ====================================== {% endcomment %}
-    {% block title %}&nbsp;|&nbsp;フィード検索{% endblock %}
-{% comment %} == ↑タイトル部分 ====================================== {% endcomment %}
+{# == ↓タイトル部分 ====================================== #}
+{% block title %}&nbsp;|&nbsp;フィード検索{% endblock %}
+{# == ↑タイトル部分 ====================================== #}
 
-{% comment %} == ↓スタイルシート部分 ====================================== {% endcomment %}
-    {% block include_css %}
+{# == ↓スタイルシート部分 ====================================== #}
+{% block include_css %}
+<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+{% endblock %}
+{# == ↑スタイルシート部分 ====================================== #}
 
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+{# == ↓ジャバスクリプト部分 ====================================== #}
+{% block include_js %}
+<script src="/media/js/feed.js?{{ QUERY_STRING }}"></script>
+{% endblock %}
+{# == ↑ジャバスクリプト部分 ====================================== #}
 
-    {% endblock %}
-{% comment %} == ↑スタイルシート部分 ====================================== {% endcomment %}
-{% comment %} == ↓ジャバスクリプト部分 ====================================== {% endcomment %}
-    {% block include_js %}
-    {% endblock %}
-{% comment %} == ↑ジャバスクリプト部分 ====================================== {% endcomment %}
-
-{% comment %} == ↓表示部分 ====================================== {% endcomment %}
+{# == ↓表示部分 ====================================== #}
 {% block content %}
     <div id="main"  data-role="page">
 
-        {% comment %} == タイトルバー ========== {% endcomment %}
+        {# == タイトルバー ========== #}
         <div data-role="header" data-position="fixed" data-theme="e">
-            {% comment %} ホームボタン {% comment %}
-            <a href="/main/" data-prefetch="true" data-transition="slide" data-direction="reverse" data-iconpos="notext" data-icon="home" rel="external">ホーム</a>
+            {# ホームボタン #}
+            <a href="{% url 'main' %}" data-iconpos="notext" data-icon="home" rel="external">ホーム</a>
 
-            {% comment %} タイトル {% comment %}
+            {# タイトル #}
             <h1 id="title">フィード検索</h1>
 
-            {% comment %} 戻るボタン {% comment %}
-            <a href="/commonEdit" data-prefetch="true" data-transition="slide" data-direction="reverse" data-iconpos="notext" data-icon="arrow-l" rel="external">戻る</a>
+            {# 戻るボタン #}
+            <a href="{% url 'feed_list' box_id %}" data-iconpos="notext" data-icon="arrow-l" rel="external">戻る</a>
         </div> <!-- header -->
 
-        {% comment %} == ↓ポップアップ内容  ========== {% endcomment %}
+        {# == ↓ポップアップ内容  ========== #}
         <div data-role="popup" id="popupNotice">
             <div data-role="content" data-theme="d" class="ui-corner-bottom ui-content" id="popupMsg">
             </div>
         </div>
-        {% comment %} == ↑ポップアップ内容  ========== {% endcomment %}
+        {# == ↑ポップアップ内容  ========== #}
 
-        {% comment %} == ↓検索ボックス ========== {% endcomment %}
+        {# == ↓検索ボックス ========== #}
         <div class="search_frame" >
             <input type="search" name="search" id="searc-basic" value="" data-mini="true" class="search_box" placeholder="RSS検索ワードを入力してください。" onchange="searchFeed(this.value);" />
         </div>
-        {% comment %} == ↑検索ボックス ========== {% endcomment %}
+        {# == ↑検索ボックス ========== #}
 
-        {% comment %} == ↓フィード情報  ========== {% endcomment %}
+        {# == ↓フィード情報  ========== #}
         <div data-role="content">
             <ul data-role="listview" data-divider-theme="e" data-inset="true"
                 data-filter="true" id="feedUL" class="feed_list_ul">
             </ul>
-            <form id="feed_form" action="{% url 'add_feed' %}" method="POST">
+            <form id="feed_form" action="{% url 'feed_add' box_id %}" method="POST">
                 <input type="hidden" id="url" name="url" value="" />
                 <input type="hidden" id="title" name="title" value="" />
                 <input type="hidden" id="className" name="className" value="" />
-                <input type="hidden" id="box_id" name="box_id" value="{{box_id}}" />
                 {% csrf_token %}
             </form>
         </div>
-        {% comment %} == ↑フィード情報  ========== {% endcomment %}
+        {# == ↑フィード情報  ========== #}
 
-        {% comment %} == 会社ロゴ  ========== {% endcomment %}
-        <div data-role="footer" data-theme="e">
-        <h3>
-            <span class="rogo">
-                <a href="http://www.r-jc.jp/"><img src="/media/drawable/rogo.jpg"></a>
-            </span>
-        </h3>
-        </div> <!-- footer -->
+        {# == 会社ロゴ  ========== #}
+        {% include 'footer.html' %}
     </div> <!-- main -->
 {% endblock %}
-{% comment %} == ↑表示部分 ====================================== {% endcomment %}
+{# == ↑表示部分 ====================================== #}

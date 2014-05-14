@@ -7,104 +7,69 @@ function dialog(dialogName){
     $("<a href='" + dialogName + "' data-rel='dialog'></a>").click().remove();
 }
 
-// フィード検索開始 (Google findFeeds)
-function searchFeed(searchTxt) {
-    //alert("検索値：" + searchTxt);
-    $.mobile.loading( 'hide', {});
-    $.mobile.loading( 'show', {
-        text: 'Loading...',
-        textVisible: true,
-        theme: 'z',
-        html: ""
-    });
-    google.feeds.findFeeds(searchTxt, dispFeed);
-}
+//+ くるくる関連 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
-// 検索結果 (Google findFeeds)
-function dispFeed(result) {
-    //alert("dispFeed: start");
-    if (!result.error){
-        // エラーが発生していない場合の処理
-        if (0 < result.entries.length) {
-            $(".feed_list_ul").empty();
-
-            for (var i = 0; i < result.entries.length; i++) {
-                var title = result.entries[i].title;
-                var link = result.entries[i].link;
-                var contentSnippet = result.entries[i].contentSnippet;
-                var url = result.entries[i].url;
-
-                var tag = "<li data-theme=\"c\" id=\"feedLI\" data-icon=\"plus\" class=\"feedLI" + i + "\">" +
-                          "<a onclick=\"addFeed('#link#', '#title#','feedLI" + i + "')\">#title#</a>" +
-                          "</li>";
-                tag = tag.replace("#link#", link);
-                tag = tag.replace("#title#", title);
-                tag = tag.replace("#title#", title);
-
-                $(".feed_list_ul")
-                    .attr("data-role","listview")
-                    .append(tag);
-
-                //alert(link);
-            }
-            $(".feed_list_ul")
-                .listview().listview('refresh');
-            $.mobile.loading( 'hide', {});
-        }
-    }
-}
-
+// くるくる中 判定フラグ
 var isWaiting = false;
-// タッチしたフィードをDBに追加
-function addFeed(url, title, className) {
+
+// くるくる開始
+function startLoadingEffect(msg) {
     if (isWaiting) {
         alert("通信中です。しばらくお待ちください。");
-        return;
+        return false;
     }
     isWaiting = true;
     $.mobile.loading( 'show', {
-        text: 'Adding...',
+        text: msg,
         textVisible: true,
         theme: 'z',
         html: ""
     });
+    return true;
+}
 
-    $("form#feed_form #url").val(url);
-    $("form#feed_form #title").val(title);
-    $("form#feed_form #className").val(className);
-    //alert("send feed." + $("form#feed_form #title").val());
+// くるくる終了
+function finishLoadingEffect() {
+    isWaiting = false;
+    $.mobile.loading( 'hide', {});
+}
 
-    // フィードを追加
+//+ くるくる関連終了 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+
+//+ ボックス追加関連 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+
+// ボックスを追加
+function addBox(formName) {
+    if ( ! startLoadingEffect("Adding...")) {
+        return;
+    }
     $.ajax({
         type: "POST",
-        url: $("form#feed_form").attr("action"),
-        data: $("form#feed_form").serialize(),
+        url: $(formName).attr("action"),
+        data: $(formName).serialize(),    // フォームをシリアライズ化して送信
         dataType: "json",
         success: function(data, status, xhr) {
-            isWaiting = false;
-            //alert("status:" + status);
-            //alert("data:" + data);
-            //alert("result:" + data.result);
-            //alert($("#csrfmiddlewaretoken").val());
             if (data == null) {
-                alert("フィードの追加に失敗しました。ログインし直してください。");
+                alert("ボックスの追加に失敗しました。ログインし直してください。");
             } else if ("success" == data.result) {
                 // 成功
-                //alert("フィード【" + data.title + "】の追加が完了しました。");
-                $("#popupNotice #popupMsg").html("フィード【" + data.title + "】の追加が完了しました。");
-                $("." + data.className).hide();
-                $(".feed_list_ul").listview().listview('refresh');
+                $("#popupNotice #popupMsg").html("ボックス【" + data.boxName + "】の追加が完了しました。");
+
+                // TODO ★ ここにボックス追加後の処理を書く
+
                 $("#popupNotice").popup("open");
             } else {
                 // 失敗
-                alert("フィード【" + data.title + "】の追加に失敗しました。暫くしてから再度お試しください。");
+                alert("ボックス【" + data.boxName + "】の追加に失敗しました。暫くしてから再度お試しください。");
             }
-            $.mobile.loading( 'hide', {});
+            finishLoadingEffect();
         },
         error: function() {
-            isWaiting = false;
+            finishLoadingEffect();
             alert("失敗！");
         }
     });
 
 }
+
+//+ ボックス追加関連終了 ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
