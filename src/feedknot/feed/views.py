@@ -29,25 +29,25 @@ def main(request):
 
     try:
         logger.info("get default box id." )
-        loginInfo = LoginMaster.objects.get(user=user)
-        default_box = loginInfo.default_box
-        boxInfo = Box.objects.get(pk=default_box.id)
-        boxName = boxInfo.box_name
-        boxInfo.read_feed()
+        login_info = LoginMaster.objects.get(user=user)
+        default_box = login_info.default_box
+        box_info = Box.objects.get(pk=default_box.id)
+        box_name = box_info.box_name
+        box_info.read_feed()
 
-        article_list = Article.objects.filter(box=boxInfo).order_by('-pub_date', 'id')
+        article_list = Article.objects.filter(box=box_info, user=user, del_flg=False).order_by('-pub_date', 'id')
     except LoginMaster.DoesNotExist or Box.DoesNotExist:
         if len(box_list) > 0:
-            boxInfo =  box_list[0]
-            boxName = boxInfo.box_name
-            boxInfo.read_feed()
+            box_info =  box_list[0]
+            box_name = box_info.box_name
+            box_info.read_feed()
 
-            article_list = Article.objects.filter(box=boxInfo).order_by('-pub_date', 'id')
+            article_list = Article.objects.filter(box=box_info, user=user, del_flg=False).order_by('-pub_date', 'id')
         else:
-            boxName = "ボックスが登録されていません。"
+            box_name = "ボックスが登録されていません。"
             article_list = []
 
-    param = {'box_name' : boxName,
+    param = {'box_name' : box_name,
              'box_list' : box_list,
              'article_list' : article_list}
 
@@ -62,17 +62,17 @@ def main_select_box(request, box_id):
     logger.debug("user_id: %s" % (user.id))
 
     try:
-        boxInfo = Box.objects.get(pk=box_id, user=user, del_flg=False)
-        boxName = boxInfo.box_name
-        boxInfo.read_feed()
+        box_info = Box.objects.get(pk=box_id, user=user, del_flg=False)
+        box_name = box_info.box_name
+        box_info.read_feed()
     except Box.DoesNotExist:
         raise Http404
 
-    box_list = Box.objects.filter(user=user).order_by('box_priority')
+    box_list = Box.objects.filter(user=user, del_flg=False).order_by('box_priority')
 
-    article_list = Article.objects.filter(box=boxInfo, user=user, del_flg=False).order_by('-pub_date', 'pk')
+    article_list = Article.objects.filter(box=box_info, user=user, del_flg=False).order_by('-pub_date', 'pk')
 
-    param = {'box_name' : boxName,
+    param = {'box_name' : box_name,
              'article_list' : article_list,
              'box_list' : box_list}
 
@@ -86,15 +86,15 @@ def feed_list(request, box_id):
 
     # ボックス取得
     try:
-        boxInfo = Box.objects.get(id=box_id, user=request.user, del_flg=False)
-        boxName = boxInfo.box_name
+        box_info = Box.objects.get(id=box_id, user=request.user, del_flg=False)
+        box_name = box_info.box_name
     except Box.DoesNotExist:
         logger.error('[feed_list] box_idが不正です。')
         raise Http404
 
-    feed_list = Feed.objects.filter(user=request.user,box=boxInfo, del_flg=False).order_by('feed_priority', 'id')
+    feed_list = Feed.objects.filter(box=box_info, user=request.user, del_flg=False).order_by('feed_priority', 'id')
 
-    param = {'box_name' : boxName,
+    param = {'box_name' : box_name,
              'box_id' : box_id,
              'feed_list' : feed_list}
 
@@ -163,8 +163,8 @@ def get_feeds(request, box_id):
     # デフォルトボックスID取得
     if box_id < 0:
         try:
-            loginInfo = LoginMaster.objects.get(user=request.user)
-            default_box = loginInfo.default_box
+            login_info = LoginMaster.objects.get(user=request.user, del_flg=False)
+            default_box = login_info.default_box
             box_id = default_box.id
         except LoginMaster.DoesNotExist:
             defBoxExistFlg = False
@@ -178,18 +178,18 @@ def get_feeds(request, box_id):
 
     if (not defBoxExistFlg):
         try:
-            boxInfo = Box.objects.get(id=box_id)
-            boxName = boxInfo.box_name
-            boxInfo.read_feed()
+            box_info = Box.objects.get(id=box_id, del_flg=False)
+            box_name = box_info.box_name
+            box_info.read_feed()
         except Box.DoesNotExist:
             defBoxExistFlg = False
 
     if (not defBoxExistFlg):
-        boxName = "ボックスが登録されていません。"
+        box_name = "ボックスが登録されていません。"
 
-    feed_list = Feed.objects.filter(user=request.user, box_id=box_id).order_by('priority', 'id')
+    feed_list = Feed.objects.filter(box=box_info, user=request.user, del_flg=False).order_by('priority', 'id')
 
-    param = {'box_name' : boxName,
+    param = {'box_name' : box_name,
          'feed_list' : feed_list}
 
     return render(request,
@@ -218,7 +218,7 @@ def change_box(request, box_id):
 
     # フィード更新
     try:
-        feed = Feed.objects.filter(id=feed_id, user=request.user)
+        feed = Feed.objects.filter(id=feed_id, user=request.user, del_flg=False)
         feed.box_id = box_id
         feed.save()
         # XXX 記事もbox_idを持っているので、データ不整合が発生する
