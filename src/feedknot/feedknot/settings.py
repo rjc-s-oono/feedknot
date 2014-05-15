@@ -1,6 +1,13 @@
 # -*- coding: utf-8 -*-
 # Django settings for feedknot project.
 import os
+
+try:
+    import pymysql
+    pymysql.install_as_MySQLdb()
+except ImportError:
+    pass
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 DEBUG = False
@@ -337,3 +344,4 @@ if DEBUG:
         'SHOW_TOOLBAR_CALLBACK': 'feedknot.settings.custom_show_toolbar',
         #'EXTRA_SIGNALS': ['myproject.signals.MySignal'],
     }
+    DEBUG_TOOLBAR_PATCH_SETTINGS = False

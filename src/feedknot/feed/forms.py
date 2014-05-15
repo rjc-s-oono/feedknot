@@ -13,6 +13,4 @@ class DeleteFeedForm(forms.Form):
 
 class MarkReadArticleForm(forms.Form):
 
-    box_id = forms.IntegerField(min_value=1, max_value=99999999999)
-    feed_id = forms.IntegerField(min_value=1, max_value=99999999999)
     article_id = forms.IntegerField(min_value=1, max_value=99999999999)
