@@ -264,28 +264,17 @@ def upd_article(request):
     mark_read_article_form = MarkReadArticleForm(request.POST)
     mark_read_article_form.is_valid()
 
-    box_id = mark_read_article_form.cleaned_data['box_id']
-    feed_id = mark_read_article_form.cleaned_data['feed_id']
     article_id = mark_read_article_form.cleaned_data['article_id']
 
     # 記事更新
     try:
-        box = Box.objects.get(id=box_id, user=request.user, del_flg=False)
-        feed = Feed.objects.get(id=feed_id, box=box, user=request.user, del_flg=False)
-
-        article = Article.objects.get(id=article_id, box=box, feed=feed, useu=request.user, del_flg=False)
+        article = Article.objects.get(id=article_id, user=request.user, del_flg=False)
         article.mark_read_article()
 
         result = {'result': 'success'}
-    except Box.DoesNotExist:
-        result = {'result': 'error',
-                  'message': 'Box does not exist.[box_id=' + str(box_id) + ']'}
-    except Feed.DoesNotExist:
-        result = {'result': 'error',
-                  'message': 'Feed does not exist.[feed_id=' + str(feed_id) + ', box_id=' + str(box_id) +']'}
     except Article.DoesNotExist:
         result = {'result': 'error',
-                  'message': 'Article does not exist.[article_id=' + str(article_id) + ', feed_id=' + str(feed_id) + ', box_id=' + str(box_id) +']'}
+                  'message': 'Article does not exist.[article_id=' + str(article_id) + ']'}
     except Exception:
         # 記事更新失敗
         result = {'result': 'error',

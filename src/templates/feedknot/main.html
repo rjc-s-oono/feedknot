@@ -52,6 +52,48 @@
         $.mobile.showPageLoadingMsg();
         location.href="{% url 'index' %}";
      }
+
+
+    //選択したフィードを既読にする
+    function readingCheck(article_id) {
+
+        if (!startLoadingEffect("Adding...")) {
+            return;
+        }
+
+        var $updateFeddForm = $('#feed-update-form');
+        $('#article_id').val(article_id);
+
+        $.ajax({
+            type: 'POST',
+            url: $updateFeddForm.attr('action'),
+            data: $updateFeddForm.serialize(),
+            dataType: "json",
+            success: function(data, status) {
+
+                //var template  = _.template($('#feed-list-template').text());
+                //$("#feed-list").html(template(data)).listview('refresh');
+
+                //既読マークの消込
+                var wkObj = "#img_new_" + article_id;
+                $(wkObj).remove();
+                $("feedUL").listview().listview('refresh');
+
+            },
+            error: function(XMLHttpRequest, statusText, errorThrown) {
+
+                var errorMsg="Javascript Error:"+XMLHttpRequest.status+" "+XMLHttpRequest.statusText+", "
+                errorMsg="error detail: "+errorThrown
+                logger.error(errorMsg);
+            },
+            complete: function() {
+                finishLoadingEffect();
+            }
+        });
+    }
+
+
+
 //-->
 </script>
 {% endblock %}
@@ -81,13 +123,26 @@
 
         {# == フィード情報  ========== #}
         <div data-role="content">
+
+            <!-- 既読チェック用 -->
+            <form id="feed-update-form" method="post" action="{% url 'article_mark_read' %}">
+                 <input type="hidden" id="article_id" name="article_id" value="" />
+                 {% csrf_token %}
+            </form>
+
             <ul data-role="listview" data-divider-theme="e" data-inset="true" data-filter="true" id="feedUL">
             {% for article in article_list %}
                 <li data-theme="c">
-                    <a target="_blank" href="{{article.article_address}}">
+                    <a target="_blank" href="{{article.article_address}}" onclick="readingCheck({{article.id}})">
+                        <div class="ui-grid-b">
+                        {% if not article.read_flg %}
+                            <div class="ui-block-a"><img src="/media/drawable/new022_12.gif" style="max-width:32px;max-height:16px;" id="img_new_{{article.id}}"></div>
+                        {% endif %}
+                        </div><!-- /grid-a -->
                         <p class="ui-li-aside">{{article.pub_date}}</p>
                         <h1>{{article.site_title}}</h1>
                         <h2>{{article.article_title}}</h2>
+<!-- 以下デバック用
                         <p>
                             ArticleId={{article.id}},
                             FeedId={{article.feed_id}},
@@ -95,6 +150,7 @@
                             UserId={{article.user_id}},
                             readFlag={{article.read_flg}}
                         </p>
+-->
                     </a>
                     <input type="hidden" id="pub_year" value="{{article.pub_date.year}}" />
                     <input type="hidden" id="pub_month" value="{{article.pub_date.month}}" />
@@ -106,6 +162,7 @@
         {# == 会社ロゴ  ========== #}
         {% include 'footer.html' %}
     </div>
+
 {% endblock %}
 {# == ↑表示部分 ====================================== #}
 
