@@ -1,4 +1,32 @@
 
+function editDefaultBox(box_id) {
+    if (!startLoadingEffect("Adding...")) {
+        return;
+    }
+
+    var $boxEditDefaultFrom = $('#box-edit-default-from');
+    $('#default_box_id').val(box_id);
+
+    $.ajax({
+
+        type: 'POST',
+        url: $boxEditDefaultFrom.attr('action'),
+        data: $boxEditDefaultFrom.serialize(),
+        dataType: "json",
+        success: function(data, status) {
+            logger.debug(data);
+        },
+        error: function(XMLHttpRequest, statusText, errorThrown) {
+            var errorMsg="Javascript Error:"+XMLHttpRequest.status+" "+XMLHttpRequest.statusText+", "
+            errorMsg="error detail: "+errorThrown
+            logger.error(errorMsg);
+        },
+        complete: function() {
+            finishLoadingEffect();
+        }
+    });
+}
+
 function editBoxName(box_id, box_name) {
     if (!startLoadingEffect("Adding...")) {
         return;

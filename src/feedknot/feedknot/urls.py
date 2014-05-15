@@ -31,6 +31,7 @@ urlpatterns = patterns('',
     url(r'^main/(?P<box_id>\d+)/$', 'feed.views.main_select_box', name='main_select_box'),
     url(r'^feed/article/mark_read/$', 'feed.views.upd_article', name='article_mark_read'),
 
+    url(r'^box/default_change/$', 'administration.views.edit_default_box', name='box_edit_default'),
     url(r'^common_edit/$', 'box.views.commonEdit', name='common_edit'),
     url(r'^box/add/$', 'box.views.add_box', name='box_add'),
     url(r'^box/edit/name/$', 'box.views.edit_box_name', name='box_edit_name'),

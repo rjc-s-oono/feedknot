@@ -12,6 +12,8 @@ from common.decorators import ajax_view
 from box.models import Box
 from feed.models import Feed, Article
 
+from administration.models import LoginMaster
+
 from box.forms import EditBoxNameForm, EditBoxPriorityForm, DeleteBoxForm
 
 logger = logging.getLogger('application')
@@ -22,12 +24,17 @@ def commonEdit(request):
     user = request.user
     logger.debug("user_id: %s" % (user.id))
 
+    login_info = LoginMaster.objects.get(user=user)
+    default_box_id = login_info.default_box.id
+
     box_list = Box.objects.filter(user=user, del_flg=False).order_by('box_priority')
     logger.debug(box_list)
 
     return render(request,
                   'feedknot/CommonEdit.html',
-                  {'box_list' : box_list})
+                  {'box_list' : box_list,
+                   'default_box_id' : default_box_id
+                   })
 
 # ボックス登録
 @login_required

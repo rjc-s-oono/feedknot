@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 from django import forms
 
+class EditDefaultBoxForm(forms.Form):
+
+    box_id = forms.IntegerField(min_value=1, max_value=99999999999)
+
 class EditBoxNameForm(forms.Form):
 
     box_id = forms.IntegerField(min_value=1, max_value=99999999999)

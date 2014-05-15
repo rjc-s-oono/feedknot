@@ -24,6 +24,11 @@
         <script type="text/javascript">
         <!--
             $(function(){
+                $('#box-list').on('click', '.box-info .box_default', function(){
+                    var box_id = $(this).attr('data-box-id');
+                    editDefaultBox(box_id);
+                });
+
                 $('#box-list').on('click', '.box-info .edit-button', function(){
                     var box_id = $(this).attr('data-box-id');
                     var box_name = $('#box_name_'+box_id).val();
@@ -55,6 +60,10 @@
         {# == フィードメニュー  ========== #}
         <div data-role="content">
 
+            <form id="box-edit-default-from" method="post" action="{% url 'box_edit_default' %}" name="box-edit-default-from">
+                 <input type="hidden" id="default_box_id" name="box_id" value="" />
+                 {% csrf_token %}
+            </form>
             <form id="box-edit-name-from" method="post" action="{% url 'box_edit_name' %}" name="box-edit-name-from">
                  <input type="hidden" id="edit_name_box_id" name="box_id" value="" />
                  <input type="hidden" id="box_name" name="box_name" value="" />
@@ -70,73 +79,84 @@
                  {% csrf_token %}
             </form>
 
-            <table id="box-list" cellspacing="0">
+            <table id="box-list" cellspacing="0" width="100%">
                 {% for box in box_list %}
                     <tr class="box-info" bgcolor="silver">
-                        <td rowspan="2" nowrap>
-                            <input type="checkbox" id="box_default_{{box.id}}" class="box_default" />
+                        <td width="80%" nowrap>
+                            <div style="display: table-cell; vertical-align: middle;" >
+                                {% if box.id == default_box_id %}
+                                    <input type="radio" data-box-id="{{box.id}}" name="box_default" class="box_default" style="margin-left: -20px; -webkit-transform: scale(2); transform: scale(2); " checked="true"/>
+                                {% else %}
+                                    <input type="radio" data-box-id="{{box.id}}" name="box_default" class="box_default" style="margin-left: -20px; -webkit-transform: scale(2); transform: scale(2); " checked="false"/>
+                                {% endif %}
+                            </div>
+                            <div style="display: table-cell; vertical-align: middle;" id="box_edit">
+                                <textarea id="box_name_{{box.id}}" class="box_name" name="box_name" ROWS="1" style="margin-left: 20px; ">{{ box.box_name }}</textarea>
+                            </div>
                         </td>
-
-                        <td align="left">
-                            <textarea id="box_name_{{box.id}}" class="box_name" name="box_name" ROWS="1" COLS="20" >{{box.box_name}}</textarea>
-                        </td>
-
                         <td width="10%" nowrap>
-                            <img class="edit-button" data-box-id="{{box.id}}" src="/media/drawable/ic_edit.png?{{ QUERY_STRING }}" alt="edit" width="50" height="50">
+                            <img class="edit-button" style="margin-left:10px;" data-box-id="{{box.id}}" src="/media/drawable/ic_edit.png?{{ QUERY_STRING }}" alt="edit" width="50" height="50">
                         </td>
                         <td width="10%" nowrap>
-                            <img class="delete-button" data-box-id="{{box.id}}" src="/media/drawable/ic_delete.png?{{ QUERY_STRING }}" alt="delete" width="50" height="50">
+                            <img class="delete-button" style="margin-left:10px;" data-box-id="{{box.id}}" src="/media/drawable/ic_delete.png?{{ QUERY_STRING }}" alt="delete" width="50" height="50">
                         </td>
                     </tr>
                     <tr class="box-under-info" bgcolor="silver">
                         <td class="box-priority" data-box-id="{{box.id}}" align="right" width="100%" height="8%" border-bottom>
-                            <span class="priority-icon" data-box-priority="1">{% if box.box_priority >= 1 %}★{% else %}☆{% endif %}</span><!--
-                            --><span class="priority-icon" data-box-priority="2">{% if box.box_priority >= 2 %}★{% else %}☆{% endif %}</span><!--
-                            --><span class="priority-icon" data-box-priority="3">{% if box.box_priority == 3 %}★{% else %}☆{% endif %}</span><!--
+                            <span class="priority-icon" data-box-priority="3">{% if box.box_priority <= 3 %}★{% else %}☆{% endif %}</span><!--
+                            --><span class="priority-icon" data-box-priority="2">{% if box.box_priority <= 2 %}★{% else %}☆{% endif %}</span><!--
+                            --><span class="priority-icon" data-box-priority="1">{% if box.box_priority == 1 %}★{% else %}☆{% endif %}</span><!--
                             -->現優先度{{box.box_priority}}
                         </td>
-                        <td colspan="2" align="right" ><a href="{% url 'feed_list' box.id %}" rel="external">フィード管理</a></td>
+                        <td colspan="2"align="right" ><a href="{% url 'feed_list' box.id %}" rel="external">フィード管理</a></td>
                     </tr>
+                    <tr><td colspan="3"><hr></td></tr>
                 {% endfor %}
-                    <tr>
-                        <td colspan="3" align="right" ><a href="{% url 'box_add' %}" rel="external">BOX追加</a></td>
-                    </tr>
             </table>
+            <br />
+            </ br>
+            <div Align="right">
+                <a style="right:20px;" href="{% url 'box_add' %}" rel="external">BOX追加</a>
+            </div>
         </div>
         {# == ↑フィードメニュー  ========== #}
 
         {# == フッタ  ========== #}
         {% include 'footer.html' %}
-
         <script type="text/template" id="box-list-template">
             <% _.each(box_list, function(box) { %>
                 <tr class="box-info" bgcolor="silver">
-                    <td rowspan="2" nowrap>
-                        <input type="checkbox" id="box_default_<%= box.id %>" class="box_default" />
-                    </td>
-                    <td align="left">
-                        <textarea id="box_name_<%= box.id %>" class="box_name" name="box_name" ROWS="1" COLS="20" ><%= box.box_name %></textarea>
+                    <td width="80%" nowrap>
+                        <% if (box.id == default_box_id) { %>
+                            <input type="radio" data-box-id="<%= box.id %>" name="box_default" class="box_default" style="margin-left: -20px; -webkit-transform: scale(2); transform: scale(2); " checked="true"/>
+                        <% } else { %>
+                            <input type="radio" data-box-id="<%= box.id %>" name="box_default" class="box_default" style="margin-left: -20px; -webkit-transform: scale(2); transform: scale(2); " checked="false"/>
+                        <% } %>
+                        <div style="display: table-cell; vertical-align: middle;" id="box_edit">
+                            <textarea id="box_name_<%= box.id %>" class="box_name" name="box_name" ROWS="1" style="margin-left: 20px; "><%= box.box_name %></textarea>
+                        </div>
                     </td>
                     <td width="10%" nowrap>
-                        <img class="edit-button" data-box-id="<%= box.id %>" src="/media/drawable/ic_edit.png?{{ QUERY_STRING }}" alt="edit" width="50" height="50">
+                        <img class="edit-button" style="margin-left:10px;" data-box-id="<%= box.id %>" src="/media/drawable/ic_edit.png?{{ QUERY_STRING }}" alt="edit" width="50" height="50">
                     </td>
                     <td width="10%" nowrap>
-                        <img class="delete-button" data-box-id="<%= box.id %>" src="/media/drawable/ic_delete.png?{{ QUERY_STRING }}" alt="delete" width="50" height="50">
+                        <img class="delete-button" style="margin-left:10px;" data-box-id="<%= box.id %>" src="/media/drawable/ic_delete.png?{{ QUERY_STRING }}" alt="delete" width="50" height="50">
                     </td>
                 </tr>
                 <tr class="box-under-info" bgcolor="silver">
-                    <td class="box-priority" data-box-id="<%= box.id %>"  align="right" width="100%" height="8%" border-bottom>
-                        <span class="priority-icon" data-box-priority="1"><% if(box.box_priority >= 1) { %>★<% } else { %>☆<% } %></span><!--
-                        --><span class="priority-icon" data-box-priority="2"><% if(box.box_priority >= 2) { %>★<% } else { %>☆<% } %></span><!--
-                        --><span class="priority-icon" data-box-priority="3"><% if(box.box_priority == 3) { %>★<% } else { %>☆<% } %></span><!--
+                    <td class="box-priority" data-box-id="<%= box.id %>" align="right" width="100%" height="8%" border-bottom>
+                        <span class="priority-icon" data-box-priority="3"><% if (box.box_priority <= 3) { %>★<% } else { %>☆<% } %></span><!--
+                        --><span class="priority-icon" data-box-priority="2"><% if (box.box_priority <= 2) { %>★<% } else { %>☆<% } %></span><!--
+                        --><span class="priority-icon" data-box-priority="1"><% if (box.box_priority == 1) { %>★<% } else { %>☆<% } %></span><!--
                         -->現優先度<%= box.box_priority %>
                     </td>
-                    <td colspan="2" align="right" ><a href="<%= box.feed_list_url %>" rel="external">フィード管理</a></td>
+                    <td colspan="2"align="right" ><a href="<%= box.feed_list_url %>" rel="external">フィード管理</a></td>
                 </tr>
+                <tr><td colspan="3"><hr></td></tr>
             <% }); %>
-            <tr>
-                <td colspan="3" align="right" ><a href="{% url 'box_add' %}" rel="external">BOX追加</a></td>
-            </tr>
+            <div Align="right">
+                <a style="right:20px;" href="{% url 'box_add' %}" rel="external">BOX追加</a>
+            </div>
         </script>
     </div>
 

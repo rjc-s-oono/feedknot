@@ -33,3 +33,7 @@ class LoginMaster(models.Model):
         self.updated_date = now
         self.del_flg = False
         self.save()
+
+    def edit_default_box(self, request):
+        self.save()
+
