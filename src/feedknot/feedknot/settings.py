@@ -337,3 +337,4 @@ if DEBUG:
         'SHOW_TOOLBAR_CALLBACK': 'feedknot.settings.custom_show_toolbar',
         #'EXTRA_SIGNALS': ['myproject.signals.MySignal'],
     }
+    DEBUG_TOOLBAR_PATCH_SETTINGS = False
