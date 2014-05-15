@@ -9,3 +9,7 @@ __pycache__
 
 local_settings.py
 feedknot.db
+
+# vim temporary files
+*.swp
+*.swo
