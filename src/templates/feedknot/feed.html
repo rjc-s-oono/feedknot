@@ -6,7 +6,23 @@
 
 {# == ↓スタイルシート部分 ====================================== #}
 {% block include_css %}
-<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<style type="text/css">
+.ui-li-feed{
+    height: 2em;
+}
+.ui-grid-feed .ui-block-a{
+    width: 60%;
+    align-vertical: middle;
+}
+.ui-grid-feed .ui-block-b{
+    width: 150px;
+    align-vertical: middle;
+}
+.ui-grid-feed .ui-block-c{
+    width: 50px;
+    align-vertical: middle;
+}
+</style>
 {% endblock %}
 {# == ↑スタイルシート部分 ====================================== #}
 
@@ -14,22 +30,23 @@
 {% block include_js %}
 <script type="text/javascript">
 <!--
-    function deleteFedd(feed_id) {
+    function deleteFeed(feed_id) {
         if (!startLoadingEffect("Adding...")) {
             return;
         }
 
-        var $deleteFeddForm = $('#feed-delete-form');
+        var $deleteFeedForm = $('#feed-delete-form');
         $('#feed_id').val(feed_id);
 
         $.ajax({
             type: 'POST',
-            url: $deleteFeddForm.attr('action'),
-            data: $deleteFeddForm.serialize(),
+            url: $deleteFeedForm.attr('action'),
+            data: $deleteFeedForm.serialize(),
             dataType: "json",
             success: function(data, status) {
                 var template  = _.template($('#feed-list-template').text());
                 $("#feed-list").html(template(data)).listview('refresh');
+                $(".ui-grid-feed").trigger("create");
             },
             error: function(XMLHttpRequest, statusText, errorThrown) {
                 var errorMsg="Javascript Error:"+XMLHttpRequest.status+" "+XMLHttpRequest.statusText+", "
@@ -40,6 +57,28 @@
                 finishLoadingEffect();
             }
         });
+    }
+
+    /*
+    * プライオリティ変更
+    */
+    function changePriority(id, priority) {
+        var priorityList = {{feed_priority}};
+
+        for (var i in priorityList) {
+            var p = priorityList[i];
+
+            var pCss = "c";    // off
+            if (priority <= p) {
+                pCss = "e";    // on
+            }
+            $("#feedPriority" + id + "-" + p)
+//            .button({theme: pCss})
+            .attr("data-theme", pCss);
+//            .trigger( "create" );
+//            alert("p:" + p + ",theme:" + pCss);
+        }
+        $(".feedPriorityGroup").trigger("create");
     }
 //-->
 </script>
@@ -59,7 +98,7 @@
             <h1 id="title">{{box_name}}</h1>
 
             {# 戻るボタン #}
-            <a href="{% url 'common_edit' %}" data-iconpos="notext" data-icon="arrow-l" rel="external">戻る</a>
+            <a href="{% url 'common_edit' %}" data-iconpos="notext" data-icon="back" rel="external">戻る</a>
         </div> <!-- header -->
 
         {# == ↓ポップアップ内容  ========== #}
@@ -69,12 +108,6 @@
         </div>
         {# == ↑ポップアップ内容  ========== #}
 
-        {# == ↓検索ボックス ========== #}
-        <div class="search_frame" >
-            <input type="search" name="search" id="searc-basic" value="" data-mini="true" class="search_box" placeholder="RSS検索ワードを入力してください。" onchange="searchFeed(this.value);" />
-        </div>
-        {# == ↑検索ボックス ========== #}
-
         {# == ↓フィード情報  ========== #}
         <div data-role="content">
             <form id="feed-delete-form" method="post" action="{% url 'feed_delete' box_id %}">
@@ -83,20 +116,40 @@
             </form>
             <ul id="feed-list" data-role="listview" data-divider-theme="e" data-inset="true" data-filter="true">
             {% for feed in feed_list %}
-                <li data-theme="c">
-                    <h1>{{feed.feed_name}}</h1>
-                    <p>
-                        FeedId={{feed.id}},
-                        BoxId={{feed.box_id}},
-                        UserId={{feed.user_id}},
-                        priority={{feed.feed_priority}}
-
-                    </p>
-                    <a href="#" onclick="deleteFedd({{feed.id}})">feed削除</a>
+                <li data-theme="c" class="ui-li-feed">
+                    <div width="100%">
+                    <div class="ui-grid-feed">
+                        <div class="ui-block-a">
+                            {{feed.feed_name|striptags}}
+                        </div>
+                        <div class="ui-block-b feedPriorityGroup" data-role="controlgroup"
+                             data-type="horizontal" data-mini="true" align="right">
+                            {% for priority in feed_priority %}
+                                {% if priority >= feed.feed_priority %}
+                                    <a href="#" data-role="button" data-icon="star" data-iconpos="notext"
+                                       data-theme="e" id="feedPriority{{feed.id}}-{{priority}}"
+                                       onclick="changePriority({{feed.id}}, {{priority}})">{{ priority }}</a>
+                                {% else %}
+                                    <a href="#" data-role="button" data-icon="star" data-iconpos="notext"
+                                       onclick="changePriority({{feed.id}}, {{priority}})"
+                                       id="feedPriority{{feed.id}}-{{priority}}">{{ priority }}</a>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="ui-block-c" align="right">
+                            <a href="#" data-role="button" data-inline="true" rel="external"
+                               data-icon="delete" data-theme="e" data-mini="true" class="deleteButton"
+                               onclick="deleteFeed({{feed.id}})">削除</a>
+                        </div>
+                    </div>
+                    </div>
                 </li>
             {% endfor %}
             </ul>
-            <a href="{% url 'feed_search' box_id %}" rel="external">feed追加</a>
+            <div align="right">
+            <a href="{% url 'feed_search' box_id %}" data-role="button" data-inline="true"
+               data-icon="add" data-theme="e" rel="external">フィードを追加</a>
+            </div>
         </div>
         {# == ↑フィード情報  ========== #}
 
@@ -106,16 +159,35 @@
 
     <script type="text/template" id="feed-list-template">
         <% _.each(feed_list, function(feed) { %>
-            <li data-theme="c">
-                <h1><%= feed.feed_name %></h1>
-                <p>
-                    FeedId=<%= feed.id %>,
-                    BoxId=<%= feed.box.id %>,
-                    UserId=<%= feed.user.id %>,
-                    priority=<%= feed.feed_priority %>
-                </p>
-                <a href="#" onclick="deleteFedd(<%= feed.id %>)">feed削除</a>
-            </li>
+                <li data-theme="c" class="ui-li-feed">
+                    <div width="100%">
+                    <div class="ui-grid-feed">
+                        <div class="ui-block-a">
+                            <%= feed.feed_name %>
+                        </div>
+                        <div class="ui-block-b feedPriorityGroup" data-role="controlgroup"
+                             data-type="horizontal" data-mini="true" align="right">
+                            <% for (var i in feed_priority) {
+                                var priority = feed_priority[i];%>
+                                <% if (priority >= feed.feed_priority) { %>
+                                    <a href="#" data-role="button" data-icon="star" data-iconpos="notext"
+                                       data-theme="e" id="feedPriority<%=feed.id%>-<%=priority%>"
+                                       onclick="changePriority(<%=feed.id%>, <%=priority%>)"><%= priority %></a>
+                                <% } else { %>
+                                    <a href="#" data-role="button" data-icon="star" data-iconpos="notext"
+                                       onclick="changePriority(<%=feed.id%>, <%=priority%>)"
+                                       id="feedPriority<%=feed.id%>-<%=priority%>"><%= priority %></a>
+                                <% } %>
+                            <% } %>
+                        </div>
+                        <div class="ui-block-c" align="right">
+                            <a href="#" data-role="button" data-inline="true"
+                               data-icon="delete" data-theme="e" data-mini="true"
+                               onclick="deleteFeed(<%= feed.id %>)">削除</a>
+                        </div>
+                    </div>
+                    </div>
+                </li>
         <% }); %>
     </script>
 {% endblock %}

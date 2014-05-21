@@ -96,7 +96,8 @@ def feed_list(request, box_id):
 
     param = {'box_name' : box_name,
              'box_id' : box_id,
-             'feed_list' : feed_list}
+             'feed_list' : feed_list,
+             'feed_priority': [3, 2, 1]}
 
     return render(request,
                   'feedknot/feed.html',
@@ -245,7 +246,7 @@ def del_feed(request, box_id):
 
         feed_list = Feed.objects.filter(box=box, user=request.user, del_flg=False)
 
-        result = {'result': 'success', 'feed_list': [feed.as_json() for feed in feed_list]}
+        result = {'result': 'success', 'feed_list': [feed.as_json() for feed in feed_list], 'feed_priority': [3, 2, 1]}
     except Box.DoesNotExist:
         result = {'result': 'error',
                   'message': 'Box does not exist.[box_id=' + str(box_id) + ']'}
