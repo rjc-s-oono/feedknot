@@ -85,9 +85,9 @@
                         <td width="80%" nowrap>
                             <div style="display: table-cell; vertical-align: middle;" >
                                 {% if box.id == default_box_id %}
-                                    <input type="radio" data-box-id="{{box.id}}" name="box_default" class="box_default" style="margin-left: -20px; -webkit-transform: scale(2); transform: scale(2); " checked="true"/>
+                                    <input type="radio" data-box-id="{{box.id}}" name="box_default" class="box_default" style="margin-left: -20px; -webkit-transform: scale(2); transform: scale(2); " checked/>
                                 {% else %}
-                                    <input type="radio" data-box-id="{{box.id}}" name="box_default" class="box_default" style="margin-left: -20px; -webkit-transform: scale(2); transform: scale(2); " checked="false"/>
+                                    <input type="radio" data-box-id="{{box.id}}" name="box_default" class="box_default" style="margin-left: -20px; -webkit-transform: scale(2); transform: scale(2); "/>
                                 {% endif %}
                             </div>
                             <div style="display: table-cell; vertical-align: middle;" id="box_edit">
@@ -128,9 +128,9 @@
                 <tr class="box-info" bgcolor="silver">
                     <td width="80%" nowrap>
                         <% if (box.id == default_box_id) { %>
-                            <input type="radio" data-box-id="<%= box.id %>" name="box_default" class="box_default" style="margin-left: -20px; -webkit-transform: scale(2); transform: scale(2); " checked="true"/>
+                            <input type="radio" data-box-id="<%= box.id %>" name="box_default" class="box_default" style="margin-left: -20px; -webkit-transform: scale(2); transform: scale(2); " checked/>
                         <% } else { %>
-                            <input type="radio" data-box-id="<%= box.id %>" name="box_default" class="box_default" style="margin-left: -20px; -webkit-transform: scale(2); transform: scale(2); " checked="false"/>
+                            <input type="radio" data-box-id="<%= box.id %>" name="box_default" class="box_default" style="margin-left: -20px; -webkit-transform: scale(2); transform: scale(2); "/>
                         <% } %>
                         <div style="display: table-cell; vertical-align: middle;" id="box_edit">
                             <textarea id="box_name_<%= box.id %>" class="box_name" name="box_name" ROWS="1" style="margin-left: 20px; "><%= box.box_name %></textarea>

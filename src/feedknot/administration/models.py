@@ -15,7 +15,7 @@ class LoginMaster(models.Model):
         db_table = 'feedknot_login_master'
 
     def __unicode__(self):
-        return "%s - %s" % (self.user.username, self.default_box_id)
+        return "%s - %s" % (self.user.username, self.default_box)
 
     def set_default_box(self, request):
 
@@ -34,6 +34,8 @@ class LoginMaster(models.Model):
         self.del_flg = False
         self.save()
 
-    def edit_default_box(self, request):
+    def edit_default_box(self, user, box_id):
+        box = Box.objects.get(id=box_id, user=user)
+        self.default_box = box
         self.save()
 

@@ -35,7 +35,7 @@ def edit_default_box(request):
     box_id = edit_default_box_form.cleaned_data['box_id']
     try:
         loginMaster = LoginMaster.objects.get(user=request.user)
-        loginMaster.edit_default_box(box_id)
+        loginMaster.edit_default_box(request.user,box_id)
         result = {'result': 'success'}
     except LoginMaster.DoesNotExist:
         result = {'result': 'error'}
