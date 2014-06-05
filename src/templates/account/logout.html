@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{# == ↓タイトル部分 ====================================== #}
+{% block title %}&nbsp;|&nbsp;ログアウト{% endblock %}
+{# == ↑タイトル部分 ====================================== #}
+
+{# == ↓スタイルシート部分 ====================================== #}
+{% block include_css %}
+{% endblock %}
+{# == ↑スタイルシート部分 ====================================== #}
+
+{% block include_js %}
+<script type="text/javascript">
+<!--
+$(document).bind("mobileinit", function(){
+    $.mobile.ajaxLinksEnabled = false; // Ajax を使用したページ遷移を無効にする
+    $.mobile.ajaxFormsEnabled = false; // Ajax を使用したフォーム遷移を無効にする
+});
+//-->
+</script>
+{% endblock %}
+
+{% block content %}
+<div id="auth"  data-role="page">
+
+    <div data-role="header" data-position="fixed" data-theme="e">
+        <a href="{% url 'main' %}" data-iconpos="notext" data-icon="gear" rel="external">ログアウト画面</a>
+        <h1 id="siteName">feedknot</h1>
+    </div>
+
+    <div data-role="content">
+
+        <form method="post" action="/accounts/logout/">
+            {% csrf_token %}
+            <input type="submit" value="ログアウト" data-role="button" data-icon="arrow-r" data-theme="e" data-iconpos="right" data-transition="slide" />
+        </form>
+    </div>
+
+    {# == 会社ロゴ  ========== #}
+    {% include 'footer.html' %}
+</div>
+{% endblock %}
