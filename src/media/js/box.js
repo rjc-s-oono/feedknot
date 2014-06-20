@@ -113,6 +113,10 @@ function deleteBox(box_id) {
             if (data.result == "success") {
                 var template  = _.template($('#box-list-template').text());
                 $("#box-list").html(template(data)).trigger('create');
+            } else if (data.result == "warn") {
+                $("#popupNotice #popupMsg").html("デフォルト設定されているため削除できません");
+                $("#popupNotice").popup("open");
+                logger.warn(data.message);
             } else {
                 logger.error(data.message);
             }

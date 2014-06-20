@@ -6,6 +6,12 @@
 
 {# == ↓スタイルシート部分 ====================================== #}
 {% block include_css %}
+<style type="text/css">
+#popupMsg {
+    color: red;
+    font-weight: bolder;
+}
+</style>
 {% endblock %}
 {# == ↑スタイルシート部分 ====================================== #}
 
@@ -56,6 +62,13 @@
             <a href="{% url 'index' %}" data-prefetch="false" data-transition="slide" data-direction="reverse" data-iconpos="notext" data-icon="back">戻る</a>
         </div>
         {# == ↑ヘッダ  ========== #}
+
+        {# == ↓ポップアップ内容  ========== #}
+        <div data-role="popup" id="popupNotice">
+            <div data-role="content" data-theme="d" class="ui-corner-bottom ui-content" id="popupMsg">
+            </div>
+        </div>
+        {# == ↑ポップアップ内容  ========== #}
 
         {# == フィードメニュー  ========== #}
         <div data-role="content">

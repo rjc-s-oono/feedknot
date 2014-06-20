@@ -125,22 +125,26 @@ def del_box(request):
 
     # ボックス削除 (ボックスに割り当てられているフィードなども削除)
     try:
-        box = Box.objects.get(pk=box_id, user=request.user)
-        feed_list = box.feed_box.all()
-        article_list = box.article_box.all()
-        article_list.delete()
-        feed_list.delete()
-        box.delete()
-
         login_info = LoginMaster.objects.get(user=request.user)
         default_box_id = login_info.default_box.id
 
-        box_list = Box.objects.filter(user=request.user, del_flg=False).order_by('box_priority')
+        if default_box_id != box_id:
+            box = Box.objects.get(pk=box_id, user=request.user)
+            feed_list = box.feed_box.all()
+            article_list = box.article_box.all()
+            article_list.delete()
+            feed_list.delete()
+            box.delete()
 
-        result = {'result': 'success',
-                  'default_box_id' : default_box_id,
-                  'box_list': [box.as_json() for box in box_list],
-                  'box_priority_array': [3, 2, 1]}
+            box_list = Box.objects.filter(user=request.user, del_flg=False).order_by('box_priority')
+
+            result = {'result': 'success',
+                      'default_box_id' : default_box_id,
+                      'box_list': [box.as_json() for box in box_list],
+                      'box_priority_array': [3, 2, 1]}
+        else:
+            result = {'result': 'warn',
+                      'message': 'Box is default box.[box_id=' + str(box_id) + ']'}
     except Box.DoesNotExist:
         result = {'result': 'error',
                   'message': 'Box does not exist.[box_id=' + str(box_id) + ']'}
