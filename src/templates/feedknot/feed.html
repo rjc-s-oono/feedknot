@@ -59,28 +59,6 @@
             }
         });
     }
-
-    /*
-    * プライオリティ変更
-    */
-    function changePriority(id, priority) {
-        var priorityList = {{feed_priority}};
-
-        for (var i in priorityList) {
-            var p = priorityList[i];
-
-            var pCss = "c";    // off
-            if (priority <= p) {
-                pCss = "e";    // on
-            }
-            $("#feedPriority" + id + "-" + p)
-//            .button({theme: pCss})
-            .attr("data-theme", pCss);
-//            .trigger( "create" );
-//            alert("p:" + p + ",theme:" + pCss);
-        }
-        $(".feedPriorityGroup").trigger("create");
-    }
 //-->
 </script>
 {% endblock %}
@@ -123,20 +101,6 @@
                         <div class="ui-block-a">
                             {{feed.feed_name|striptags}}
                         </div>
-                        <div class="ui-block-b feedPriorityGroup" data-role="controlgroup"
-                             data-type="horizontal" data-mini="true" align="right">
-                            {% for priority in feed_priority %}
-                                {% if priority >= feed.feed_priority %}
-                                    <a href="#" data-role="button" data-icon="star" data-iconpos="notext"
-                                       data-theme="e" id="feedPriority{{feed.id}}-{{priority}}"
-                                       onclick="changePriority({{feed.id}}, {{priority}})">{{ priority }}</a>
-                                {% else %}
-                                    <a href="#" data-role="button" data-icon="star" data-iconpos="notext"
-                                       onclick="changePriority({{feed.id}}, {{priority}})"
-                                       id="feedPriority{{feed.id}}-{{priority}}">{{ priority }}</a>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
                         <div class="ui-block-c">
                             <a href="#" data-role="button" data-inline="true" rel="external"
                                data-icon="delete" data-theme="e" data-mini="true" class="deleteButton"
@@ -165,21 +129,6 @@
                     <div class="ui-grid-feed">
                         <div class="ui-block-a">
                             <%= feed.feed_name %>
-                        </div>
-                        <div class="ui-block-b feedPriorityGroup" data-role="controlgroup"
-                             data-type="horizontal" data-mini="true" align="right">
-                            <% for (var i in feed_priority) {
-                                var priority = feed_priority[i];%>
-                                <% if (priority >= feed.feed_priority) { %>
-                                    <a href="#" data-role="button" data-icon="star" data-iconpos="notext"
-                                       data-theme="e" id="feedPriority<%=feed.id%>-<%=priority%>"
-                                       onclick="changePriority(<%=feed.id%>, <%=priority%>)"><%= priority %></a>
-                                <% } else { %>
-                                    <a href="#" data-role="button" data-icon="star" data-iconpos="notext"
-                                       onclick="changePriority(<%=feed.id%>, <%=priority%>)"
-                                       id="feedPriority<%=feed.id%>-<%=priority%>"><%= priority %></a>
-                                <% } %>
-                            <% } %>
                         </div>
                         <div class="ui-block-c" align="right">
                             <a href="#" data-role="button" data-inline="true"
