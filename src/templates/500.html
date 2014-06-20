@@ -3,12 +3,19 @@
 {% block title %}&nbsp;|&nbsp;500 Internal Server Error.{% endblock %}
 
 {% block content %}
-    <div id="page-500"  data-role="page">
-        <h2>ページが表示できません</h2>
-        <div>
-            <div class="error-messages">
-                サーバで予期せぬエラーが発生しました。<br />
-                しばらくおいてから再度アクセス頂くか、サイト管理者までご連絡下さい。<br />
+    <div id="page-500" data-role="page">
+        <div data-role="header" data-position="fixed" data-theme="e">
+            <a href="{% url 'main' %}" data-iconpos="notext" data-icon="gear" rel="external">ログイン画面</a>
+            <h1 id="siteName">feedknot</h1>
+        </div>
+
+        <div data-role="content">
+            <h2>ページが表示できません</h2>
+            <div>
+                <div class="error-messages">
+                    サーバで予期せぬエラーが発生しました。<br />
+                    しばらくおいてから再度アクセス頂くか、サイト管理者までご連絡下さい。<br />
+                </div>
             </div>
         </div>
 

@@ -21,8 +21,8 @@ function editDefaultBox(box_id) {
             }
         },
         error: function(XMLHttpRequest, statusText, errorThrown) {
-            var errorMsg="Javascript Error:"+XMLHttpRequest.status+" "+XMLHttpRequest.statusText+", "
-            errorMsg="error detail: "+errorThrown
+            var errorMsg="Javascript Error:"+XMLHttpRequest.status+" "+XMLHttpRequest.statusText+", ";
+            errorMsg=errorMsg+"error detail: "+errorThrown;
             logger.error(errorMsg);
         },
         complete: function() {
@@ -53,8 +53,8 @@ function editBoxName(box_id, box_name) {
             }
         },
         error: function(XMLHttpRequest, statusText, errorThrown) {
-            var errorMsg="Javascript Error:"+XMLHttpRequest.status+" "+XMLHttpRequest.statusText+", "
-            errorMsg="error detail: "+errorThrown
+            var errorMsg="Javascript Error:"+XMLHttpRequest.status+" "+XMLHttpRequest.statusText+", ";
+            errorMsg=errorMsg+"error detail: "+errorThrown;
             logger.error(errorMsg);
         },
         complete: function() {
@@ -86,8 +86,8 @@ function editBoxPriority(box_id, box_priority) {
             }
         },
         error: function(XMLHttpRequest, statusText, errorThrown) {
-            var errorMsg="Javascript Error:"+XMLHttpRequest.status+" "+XMLHttpRequest.statusText+", "
-            errorMsg="error detail: "+errorThrown
+            var errorMsg="Javascript Error:"+XMLHttpRequest.status+" "+XMLHttpRequest.statusText+", ";
+            errorMsg=errorMsg+"error detail: "+errorThrown;
             logger.error(errorMsg);
         },
         complete: function() {
@@ -122,8 +122,8 @@ function deleteBox(box_id) {
             }
         },
         error: function(XMLHttpRequest, statusText, errorThrown) {
-            var errorMsg="Javascript Error:"+XMLHttpRequest.status+" "+XMLHttpRequest.statusText+", "
-            errorMsg="error detail: "+errorThrown
+            var errorMsg="Javascript Error:"+XMLHttpRequest.status+" "+XMLHttpRequest.statusText+", ";
+            errorMsg=errorMsg+"error detail: "+errorThrown;
             logger.error(errorMsg);
         },
         complete: function() {

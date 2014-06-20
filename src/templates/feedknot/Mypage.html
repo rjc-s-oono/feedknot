@@ -22,22 +22,7 @@
     // viewport設定変更
     $(document).bind("mobileinit", function(){
         $.mobile.metaViewportContent = "width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no";
-    })
-
-    //ログイン状況をチェックしページを表示する。
-    function changeDisplay() {
-        getLoginInfo();
-        if (!isLogin || isLogin != 1) {
-            document.getElementById("user_title").innerHTML="ログイン選択";
-            document.getElementById("btn_1").innerHTML=btnHeader+"Googleアカウント"+btnFooterOAuth;
-            document.getElementById("btn_2").innerHTML=btnHeader+"Twitterアカウント" +btnFooterOAuth;
-            document.getElementById("btn_3").innerHTML=btnHeader+"Facebookアカウント" +btnFooterOAuth;
-        } else {
-            document.getElementById("user_title").innerHTML=userName;
-            document.getElementById("btn_1").innerHTML=btnHeader+"フィードを管理"+btnFooterCommonEdit;
-            document.getElementById("btn_2").innerHTML=btnHeader+"ログアウト"+btnFooterMyPage;
-        }
-    }
+    });
 //-->
 </script>
 {% endblock %}

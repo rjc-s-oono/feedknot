@@ -200,6 +200,8 @@ QUERY_STRING = "201403231620"
 LOG_LEVEL = 'INFO'
 LOG_DIR_ROOT = os.path.realpath(os.path.join(BASE_DIR, '../../../'))
 
+ALLOWED_HOSTS = ["tech.r-jc.jp"]
+
 try:
     from feedknot.local_settings import *
 except ImportError:
