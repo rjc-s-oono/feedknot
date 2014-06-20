@@ -26,6 +26,18 @@
             $(function(){
                 $('#box-list').on('click', '.box-info .box_default', function(){
                     var box_id = $(this).attr('data-box-id');
+                    var box_list = $("#box-list");
+                    for (var box in box_list) {
+
+                    alert("b");
+                 //       if (box_id == box.id) {
+alert(box_id + ":default");
+                            //document.getElementById("default_target_" + box_id).src = "/media/drawable/ic_box_default.png";
+                  //      } else if (box_id == default_box_id) {
+alert(box_id + ":not_default");
+                            //document.getElementById("default_target_" + box_id).src = "/media/drawable/ic_box.png";
+                  //      }
+                    }
                     editDefaultBox(box_id);
                 });
 
@@ -43,6 +55,7 @@
                 $('#box-list').on('click', '.box-under-info .priority-icon', function(){
                     var box_id = $(this).parents('td.box-priority').attr('data-box-id');
                     var box_priority = $(this).attr('data-box-priority');
+                    alert(box_id + ":" + box_priority);
                     editBoxPriority(box_id, box_priority);
                 });
             });
@@ -81,42 +94,48 @@
 
             <table id="box-list" cellspacing="0" width="100%">
                 {% for box in box_list %}
-                    <tr class="box-info" bgcolor="silver">
-                        <td width="80%" nowrap>
-                            <div style="display: table-cell; vertical-align: middle;" >
-                                {% if box.id == default_box_id %}
-                                    <input type="radio" data-box-id="{{box.id}}" name="box_default" class="box_default" style="margin-left: -20px; -webkit-transform: scale(2); transform: scale(2); " checked/>
-                                {% else %}
-                                    <input type="radio" data-box-id="{{box.id}}" name="box_default" class="box_default" style="margin-left: -20px; -webkit-transform: scale(2); transform: scale(2); "/>
-                                {% endif %}
-                            </div>
-                            <div style="display: table-cell; vertical-align: middle;" id="box_edit">
-                                <textarea id="box_name_{{box.id}}" class="box_name" name="box_name" ROWS="1" style="margin-left: 20px; ">{{ box.box_name }}</textarea>
-                            </div>
+                    <tr class="box-info" bgcolor="silver" valign="middle">
+                        <td width="2%" nowrap >
+                            {% if box.id == default_box_id %}
+                                <img data-box-id="{{box.id}}" src="/media/drawable/ic_box_default.png" width="50" height="50" name="box_default" class="box_default" style="display:inline; vertical-align:middle; " />
+                            {% else %}
+                                <img data-box-id="{{box.id}}" src="/media/drawable/ic_box.png" width="50" height="50" name="box_default" class="box_default" style="display:inline; vertical-align:middle; " />
+                            {% endif %}
                         </td>
-                        <td width="10%" nowrap>
-                            <img class="edit-button" style="margin-left:10px;" data-box-id="{{box.id}}" src="/media/drawable/ic_edit.png?{{ QUERY_STRING }}" alt="edit" width="50" height="50">
+                        <td nowrap>
+                            <textarea id="box_name_{{box.id}}" class="box_name" name="box_name" ROWS="1" style="margin-left:10px; display:inline; vertical-align:middle; ">{{ box.box_name }}</textarea>
                         </td>
-                        <td width="10%" nowrap>
-                            <img class="delete-button" style="margin-left:10px;" data-box-id="{{box.id}}" src="/media/drawable/ic_delete.png?{{ QUERY_STRING }}" alt="delete" width="50" height="50">
+                        <td width="2%" nowrap >
+                            <img class="edit-button" style="margin-left:20px; display:inline; vertical-align:middle; " data-box-id="{{box.id}}" src="/media/drawable/ic_edit.png?{{ QUERY_STRING }}" alt="edit" width="50" height="50">
+                        </td>x
+                        <td width="2%" nowrap >
+                            <img class="delete-button" style="margin-left:10px; display:inline; vertical-align:middle; " data-box-id="{{box.id}}" src="/media/drawable/ic_delete.png?{{ QUERY_STRING }}" alt="delete" width="50" height="50">
                         </td>
                     </tr>
                     <tr class="box-under-info" bgcolor="silver">
-                        <td class="box-priority" data-box-id="{{box.id}}" align="right" width="100%" height="8%" border-bottom>
-                            <span class="priority-icon" data-box-priority="3">{% if box.box_priority <= 3 %}★{% else %}☆{% endif %}</span><!--
-                            --><span class="priority-icon" data-box-priority="2">{% if box.box_priority <= 2 %}★{% else %}☆{% endif %}</span><!--
-                            --><span class="priority-icon" data-box-priority="1">{% if box.box_priority == 1 %}★{% else %}☆{% endif %}</span><!--
-                            -->現優先度{{box.box_priority}}
+                        <td colspan="2" class="box-priority" data-box-id="{{box.id}}" align="right" width="100%" height="8%" border-bottom>
+                            <div data-role="controlgroup" data-type="horizontal" data-mini="true" align="right">
+                                {% for priority in box_priority_array %}
+                                    <div class="priority-icon" data-box-priority="{{priority}}"
+                                        {% if priority >= box.box_priority %}
+                                            <a href="#" data-role="button" data-icon="star" data-iconpos="notext" data-theme="e" </a>
+                                        {% else %}
+                                            <a href="#" data-role="button" data-icon="star" data-iconpos="notext"</a>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
                         </td>
-                        <td colspan="2"align="right" ><a href="{% url 'feed_list' box.id %}" rel="external">フィード管理</a></td>
+                        <td colspan="2" align="right" ><a href="{% url 'feed_list' box.id %}" rel="external">フィード管理</a></td>
                     </tr>
-                    <tr><td colspan="3"><hr></td></tr>
+                    <tr><td colspan="4"><hr></td></tr>
                 {% endfor %}
             </table>
             <br />
             </ br>
             <div Align="right">
-                <a style="right:20px;" href="{% url 'box_add' %}" rel="external">BOX追加</a>
+                <a href="{% url 'box_add' %}" data-role="button" data-inline="true"
+                   data-icon="add" data-theme="e" rel="external">BOXを追加</a>
             </div>
         </div>
         {# == ↑フィードメニュー  ========== #}
@@ -125,37 +144,46 @@
         {% include 'footer.html' %}
         <script type="text/template" id="box-list-template">
             <% _.each(box_list, function(box) { %>
-                <tr class="box-info" bgcolor="silver">
-                    <td width="80%" nowrap>
-                        <% if (box.id == default_box_id) { %>
-                            <input type="radio" data-box-id="<%= box.id %>" name="box_default" class="box_default" style="margin-left: -20px; -webkit-transform: scale(2); transform: scale(2); " checked/>
-                        <% } else { %>
-                            <input type="radio" data-box-id="<%= box.id %>" name="box_default" class="box_default" style="margin-left: -20px; -webkit-transform: scale(2); transform: scale(2); "/>
-                        <% } %>
-                        <div style="display: table-cell; vertical-align: middle;" id="box_edit">
-                            <textarea id="box_name_<%= box.id %>" class="box_name" name="box_name" ROWS="1" style="margin-left: 20px; "><%= box.box_name %></textarea>
-                        </div>
-                    </td>
-                    <td width="10%" nowrap>
-                        <img class="edit-button" style="margin-left:10px;" data-box-id="<%= box.id %>" src="/media/drawable/ic_edit.png?{{ QUERY_STRING }}" alt="edit" width="50" height="50">
-                    </td>
-                    <td width="10%" nowrap>
-                        <img class="delete-button" style="margin-left:10px;" data-box-id="<%= box.id %>" src="/media/drawable/ic_delete.png?{{ QUERY_STRING }}" alt="delete" width="50" height="50">
-                    </td>
-                </tr>
-                <tr class="box-under-info" bgcolor="silver">
-                    <td class="box-priority" data-box-id="<%= box.id %>" align="right" width="100%" height="8%" border-bottom>
-                        <span class="priority-icon" data-box-priority="3"><% if (box.box_priority <= 3) { %>★<% } else { %>☆<% } %></span><!--
-                        --><span class="priority-icon" data-box-priority="2"><% if (box.box_priority <= 2) { %>★<% } else { %>☆<% } %></span><!--
-                        --><span class="priority-icon" data-box-priority="1"><% if (box.box_priority == 1) { %>★<% } else { %>☆<% } %></span><!--
-                        -->現優先度<%= box.box_priority %>
-                    </td>
-                    <td colspan="2"align="right" ><a href="<%= box.feed_list_url %>" rel="external">フィード管理</a></td>
-                </tr>
+                    <tr class="box-info" bgcolor="silver" valign="middle">
+                        <td width="2%" nowrap >
+                            <% if ( box.id == default_box_id ) { %>
+                                <img data-box-id="<%= box.id %>" src="/media/drawable/ic_box_default.png" width="50" height="50" name="box_default" class="box_default" style="display:inline; vertical-align:middle; " />
+                            <% } else { %>
+                                <img data-box-id="<%= box.id %>" src="/media/drawable/ic_box.png" width="50" height="50" name="box_default" class="box_default" style="display:inline; vertical-align:middle; " />
+                            <% } %>
+                        </td>
+                        <td nowrap>
+                            <textarea id="box_name_<%= box.id %>" class="box_name" name="box_name" ROWS="1" style="margin-left:10px; display:inline; vertical-align:middle; "><%= box.box_name %></textarea>
+                        </td>
+                        <td width="2%" nowrap >
+                            <img class="edit-button" style="margin-left:20px; display:inline; vertical-align:middle; " data-box-id="<%= box.id %>" src="/media/drawable/ic_edit.png?<%= QUERY_STRING %>" alt="edit" width="50" height="50">
+                        </td>x
+                        <td width="2%" nowrap >
+                            <img class="delete-button" style="margin-left:10px; display:inline; vertical-align:middle; " data-box-id="<%= box.id %>" src="/media/drawable/ic_delete.png?<%= QUERY_STRING %>" alt="delete" width="50" height="50">
+                        </td>
+                    </tr>
+                    <tr class="box-under-info" bgcolor="silver">
+                        <td colspan="2" class="box-priority" data-box-id="<%= box.id %>" align="right" width="100%" height="8%" border-bottom>
+                            <div data-role="controlgroup" data-type="horizontal" data-mini="true" align="right">
+                                <% for (var i in box_priority_array) {
+                                    var priority = feed_priority[i];%>
+                                    <div class="priority-icon" data-box-priority="<%= priority %>"
+                                        <% if ( priority >= box.box_priority ) { %>
+                                            <a href="#" data-role="button" data-icon="star" data-iconpos="notext" data-theme="e" </a>
+                                        <% } else { %>
+                                            <a href="#" data-role="button" data-icon="star" data-iconpos="notext"</a>
+                                        <% } %>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </td>
+                        <td colspan="2" align="right" ><a href="<% url 'feed_list' box.id %>" rel="external">フィード管理</a></td>
+                    </tr>
                 <tr><td colspan="3"><hr></td></tr>
             <% }); %>
             <div Align="right">
-                <a style="right:20px;" href="{% url 'box_add' %}" rel="external">BOX追加</a>
+                <a href="{% url 'box_add' %}" data-role="button" data-inline="true"
+                   data-icon="add" data-theme="e" rel="external">BOXを追加</a>
             </div>
         </script>
     </div>

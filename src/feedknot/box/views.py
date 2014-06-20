@@ -33,7 +33,8 @@ def commonEdit(request):
     return render(request,
                   'feedknot/CommonEdit.html',
                   {'box_list' : box_list,
-                   'default_box_id' : default_box_id
+                   'default_box_id' : default_box_id,
+                   'box_priority_array': [3, 2, 1]
                    })
 
 # ボックス登録
