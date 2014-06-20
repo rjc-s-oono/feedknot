@@ -94,9 +94,13 @@ def edit_box_priority(request):
         box = Box.objects.get(id=box_id, user=request.user)
         box.edit_box_priority(box_priority);
 
+        login_info = LoginMaster.objects.get(user=request.user)
+        default_box_id = login_info.default_box.id
+
         box_list = Box.objects.filter(user=request.user, del_flg=False).order_by('box_priority')
 
         result = {'result': 'success',
+                  'default_box_id' : default_box_id,
                   'box_list': [box.as_json() for box in box_list],
                   'box_priority_array': [3, 2, 1]}
     except Box.DoesNotExist:
@@ -128,9 +132,13 @@ def del_box(request):
         feed_list.delete()
         box.delete()
 
+        login_info = LoginMaster.objects.get(user=request.user)
+        default_box_id = login_info.default_box.id
+
         box_list = Box.objects.filter(user=request.user, del_flg=False).order_by('box_priority')
 
         result = {'result': 'success',
+                  'default_box_id' : default_box_id,
                   'box_list': [box.as_json() for box in box_list],
                   'box_priority_array': [3, 2, 1]}
     except Box.DoesNotExist:
