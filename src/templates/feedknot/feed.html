@@ -10,17 +10,14 @@
 .ui-li-feed{
     height: 2em;
 }
-.ui-grid-feed .ui-block-a{
-    width: 60%;
-    align-vertical: middle;
-}
-.ui-grid-feed .ui-block-b{
-    width: 150px;
+.ui-grid-feed .ui-block-a,
+.ui-grid-feed .ui-block-b,
+.ui-grid-feed .ui-block-c {
     align-vertical: middle;
 }
 .ui-grid-feed .ui-block-c{
-    width: 50px;
-    align-vertical: middle;
+    float: right;
+    width: 82px;
 }
 </style>
 {% endblock %}
@@ -44,9 +41,13 @@
             data: $deleteFeedForm.serialize(),
             dataType: "json",
             success: function(data, status) {
-                var template  = _.template($('#feed-list-template').text());
-                $("#feed-list").html(template(data)).listview('refresh');
-                $(".ui-grid-feed").trigger("create");
+                if (data.result == "success") {
+                    var template  = _.template($('#feed-list-template').text());
+                    $("#feed-list").html(template(data)).listview('refresh');
+                    $(".ui-grid-feed").trigger("create");
+                } else {
+                    logger.error(data.message);
+                }
             },
             error: function(XMLHttpRequest, statusText, errorThrown) {
                 var errorMsg="Javascript Error:"+XMLHttpRequest.status+" "+XMLHttpRequest.statusText+", ";
@@ -136,7 +137,7 @@
                                 {% endif %}
                             {% endfor %}
                         </div>
-                        <div class="ui-block-c" align="right">
+                        <div class="ui-block-c">
                             <a href="#" data-role="button" data-inline="true" rel="external"
                                data-icon="delete" data-theme="e" data-mini="true" class="deleteButton"
                                onclick="deleteFeed({{feed.id}})">削除</a>

@@ -70,18 +70,16 @@
             data: $updateFeddForm.serialize(),
             dataType: "json",
             success: function(data, status) {
-
-                //var template  = _.template($('#feed-list-template').text());
-                //$("#feed-list").html(template(data)).listview('refresh');
-
-                //既読マークの消込
-                var wkObj = "#img_new_" + article_id;
-                $(wkObj).remove();
-                $("feedUL").listview().listview('refresh');
-
+                if (data.result == "success") {
+                    //既読マークの消込
+                    var wkObj = "#img_new_" + article_id;
+                    $(wkObj).remove();
+                    $("feedUL").listview().listview('refresh');
+                } else {
+                    logger.error(data.message);
+                }
             },
             error: function(XMLHttpRequest, statusText, errorThrown) {
-
                 var errorMsg="Javascript Error:"+XMLHttpRequest.status+" "+XMLHttpRequest.statusText+", ";
                 errorMsg=errorMsg+"error detail: "+errorThrown;
                 logger.error(errorMsg);
