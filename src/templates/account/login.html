@@ -35,7 +35,7 @@ $(document).bind("mobileinit", function(){
             {% if not user.is_authenticated and socialaccount.providers %}
                 <div class="socialaccount_ballot">
                     <div>
-                        {% for provider in socialaccount.providers %}
+                        {% for provider in socialaccount.providers|dictsort:"name" %}
                              <input type="button" value="{{provider.name}}アカウントでログイン" onclick="location.href='{% provider_login_url provider.id %}'" data-role="button" data-icon="arrow-r" data-theme="e" data-iconpos="right" data-transition="slide" />
                         {% endfor %}
                     </div>
