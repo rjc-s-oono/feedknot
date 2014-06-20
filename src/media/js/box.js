@@ -14,7 +14,11 @@ function editDefaultBox(box_id) {
         data: $boxEditDefaultFrom.serialize(),
         dataType: "json",
         success: function(data, status) {
-            logger.debug(data);
+            if (data.result == "success") {
+                logger.debug(data);
+            } else {
+                logger.error(data.message);
+            }
         },
         error: function(XMLHttpRequest, statusText, errorThrown) {
             var errorMsg="Javascript Error:"+XMLHttpRequest.status+" "+XMLHttpRequest.statusText+", "
@@ -42,7 +46,11 @@ function editBoxName(box_id, box_name) {
         data: $boxEditNameFrom.serialize(),
         dataType: "json",
         success: function(data, status) {
-            logger.debug(data);
+            if (data.result == "success") {
+                logger.debug(data);
+            } else {
+                logger.error(data.message);
+            }
         },
         error: function(XMLHttpRequest, statusText, errorThrown) {
             var errorMsg="Javascript Error:"+XMLHttpRequest.status+" "+XMLHttpRequest.statusText+", "
@@ -70,8 +78,12 @@ function editBoxPriority(box_id, box_priority) {
         data: $boxEditNameFrom.serialize(),
         dataType: "json",
         success: function(data, status) {
-            var template  = _.template($('#box-list-template').text());
-            $("#box-list").html(template(data)).trigger('create');
+            if (data.result == "success") {
+                var template  = _.template($('#box-list-template').text());
+                $("#box-list").html(template(data)).trigger('create');
+            } else {
+                logger.error(data.message);
+            }
         },
         error: function(XMLHttpRequest, statusText, errorThrown) {
             var errorMsg="Javascript Error:"+XMLHttpRequest.status+" "+XMLHttpRequest.statusText+", "
@@ -98,8 +110,12 @@ function deleteBox(box_id) {
         data: $boxDeleteForm.serialize(),
         dataType: "json",
         success: function(data, status) {
-            var template  = _.template($('#box-list-template').text());
-            $("#box-list").html(template(data)).trigger('create');
+            if (data.result == "success") {
+                var template  = _.template($('#box-list-template').text());
+                $("#box-list").html(template(data)).trigger('create');
+            } else {
+                logger.error(data.message);
+            }
         },
         error: function(XMLHttpRequest, statusText, errorThrown) {
             var errorMsg="Javascript Error:"+XMLHttpRequest.status+" "+XMLHttpRequest.statusText+", "

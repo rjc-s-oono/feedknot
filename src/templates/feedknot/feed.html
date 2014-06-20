@@ -44,9 +44,13 @@
             data: $deleteFeedForm.serialize(),
             dataType: "json",
             success: function(data, status) {
-                var template  = _.template($('#feed-list-template').text());
-                $("#feed-list").html(template(data)).listview('refresh');
-                $(".ui-grid-feed").trigger("create");
+                if (data.result == "success") {
+                    var template  = _.template($('#feed-list-template').text());
+                    $("#feed-list").html(template(data)).listview('refresh');
+                    $(".ui-grid-feed").trigger("create");
+                } else {
+                    logger.error(data.message);
+                }
             },
             error: function(XMLHttpRequest, statusText, errorThrown) {
                 var errorMsg="Javascript Error:"+XMLHttpRequest.status+" "+XMLHttpRequest.statusText+", "
