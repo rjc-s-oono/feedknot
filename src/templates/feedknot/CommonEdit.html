@@ -32,6 +32,16 @@
             $(function(){
                 $('#box-list').on('click', '.box-info .box_default', function(){
                     var box_id = $(this).attr('data-box-id');
+
+                    for (var i = 0; i < $('.box_default').length; i++) {
+                        var box = $('.box_default').eq(i)
+                        if (box_id == box.attr('data-box-id')) {
+                            box.attr('src', "/media/drawable/ic_box_default.png");
+
+                        } else if ("/media/drawable/ic_box_default.png" == box.attr('src')) {
+                            box.attr('src', "/media/drawable/ic_box.png");
+                        }
+                    }
                     editDefaultBox(box_id);
                 });
 
