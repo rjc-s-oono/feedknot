@@ -82,8 +82,8 @@
             },
             error: function(XMLHttpRequest, statusText, errorThrown) {
 
-                var errorMsg="Javascript Error:"+XMLHttpRequest.status+" "+XMLHttpRequest.statusText+", "
-                errorMsg="error detail: "+errorThrown
+                var errorMsg="Javascript Error:"+XMLHttpRequest.status+" "+XMLHttpRequest.statusText+", ";
+                errorMsg=errorMsg+"error detail: "+errorThrown;
                 logger.error(errorMsg);
             },
             complete: function() {

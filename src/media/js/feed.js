@@ -2,7 +2,6 @@
 
 // フィード検索開始 (Google findFeeds)
 function searchFeed(searchTxt) {
-    //alert("検索値：" + searchTxt);
     if ( ! startLoadingEffect("Searching...")) {
         return;
     }
@@ -11,7 +10,6 @@ function searchFeed(searchTxt) {
 
 // 検索結果 (Google findFeeds)
 function dispFeed(result) {
-    //alert("dispFeed: start");
     if (!result.error){
         // エラーが発生していない場合の処理
         if (0 < result.entries.length) {
@@ -34,13 +32,13 @@ function dispFeed(result) {
                 $(".feed_list_ul")
                     .attr("data-role","listview")
                     .append(tag);
-
-                //alert(link);
-                //alert(url);
             }
             $(".feed_list_ul")
                 .listview().listview('refresh');
         }
+    } else {
+        var errMsg = "feed検索でエラー:["+result.query+"]";
+        log.warn(errMsg);
     }
     finishLoadingEffect();
 }
@@ -71,7 +69,6 @@ function addFeed(url, title, className) {
                 alert("フィードの追加に失敗しました。ログインし直してください。");
             } else if ("success" == data.result) {
                 // 成功
-                //alert("フィード【" + data.title + "】の追加が完了しました。");
                 $("#popupNotice #popupMsg").html("フィード【" + data.title + "】の追加が完了しました。");
                 $("." + data.className).hide();
                 $(".feed_list_ul").listview().listview('refresh');
@@ -79,12 +76,16 @@ function addFeed(url, title, className) {
             } else {
                 // 失敗
                 alert("フィード【" + data.title + "】の追加に失敗しました。暫くしてから再度お試しください。");
+                logger.error("フィード【" + data.title + "】の追加に失敗");
             }
-            finishLoadingEffect();
         },
-        error: function() {
+        error: function(XMLHttpRequest, statusText, errorThrown) {
+            var errorMsg="Javascript Error:"+XMLHttpRequest.status+" "+XMLHttpRequest.statusText+", ";
+            errorMsg=errorMsg+"error detail: "+errorThrown;
+            logger.error(errorMsg);
+        },
+         complete: function() {
             finishLoadingEffect();
-            alert("失敗！");
         }
     });
 
