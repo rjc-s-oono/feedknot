@@ -26,18 +26,6 @@
             $(function(){
                 $('#box-list').on('click', '.box-info .box_default', function(){
                     var box_id = $(this).attr('data-box-id');
-                    var box_list = $("#box-list");
-                    for (var box in box_list) {
-
-                    alert("b");
-                 //       if (box_id == box.id) {
-alert(box_id + ":default");
-                            //document.getElementById("default_target_" + box_id).src = "/media/drawable/ic_box_default.png";
-                  //      } else if (box_id == default_box_id) {
-alert(box_id + ":not_default");
-                            //document.getElementById("default_target_" + box_id).src = "/media/drawable/ic_box.png";
-                  //      }
-                    }
                     editDefaultBox(box_id);
                 });
 
@@ -55,7 +43,6 @@ alert(box_id + ":not_default");
                 $('#box-list').on('click', '.box-under-info .priority-icon', function(){
                     var box_id = $(this).parents('td.box-priority').attr('data-box-id');
                     var box_priority = $(this).attr('data-box-priority');
-                    alert(box_id + ":" + box_priority);
                     editBoxPriority(box_id, box_priority);
                 });
             });
@@ -107,7 +94,7 @@ alert(box_id + ":not_default");
                         </td>
                         <td width="2%" nowrap >
                             <img class="edit-button" style="margin-left:20px; display:inline; vertical-align:middle; " data-box-id="{{box.id}}" src="/media/drawable/ic_edit.png?{{ QUERY_STRING }}" alt="edit" width="50" height="50">
-                        </td>x
+                        </td>
                         <td width="2%" nowrap >
                             <img class="delete-button" style="margin-left:10px; display:inline; vertical-align:middle; " data-box-id="{{box.id}}" src="/media/drawable/ic_delete.png?{{ QUERY_STRING }}" alt="delete" width="50" height="50">
                         </td>
@@ -157,7 +144,7 @@ alert(box_id + ":not_default");
                         </td>
                         <td width="2%" nowrap >
                             <img class="edit-button" style="margin-left:20px; display:inline; vertical-align:middle; " data-box-id="<%= box.id %>" src="/media/drawable/ic_edit.png?{{ QUERY_STRING }}" alt="edit" width="50" height="50">
-                        </td>x
+                        </td>
                         <td width="2%" nowrap >
                             <img class="delete-button" style="margin-left:10px; display:inline; vertical-align:middle; " data-box-id="<%= box.id %>" src="/media/drawable/ic_delete.png?{{ QUERY_STRING }}" alt="delete" width="50" height="50">
                         </td>
