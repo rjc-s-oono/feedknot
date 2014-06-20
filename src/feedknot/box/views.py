@@ -96,7 +96,9 @@ def edit_box_priority(request):
 
         box_list = Box.objects.filter(user=request.user, del_flg=False).order_by('box_priority')
 
-        result = {'result': 'success', 'box_list': [box.as_json() for box in box_list]}
+        result = {'result': 'success',
+                  'box_list': [box.as_json() for box in box_list],
+                  'box_priority_array': [3, 2, 1]}
     except Box.DoesNotExist:
         result = {'result': 'error',
                   'message': 'Box does not exist.[box_id=' + str(box_id) + ']'}
@@ -128,7 +130,9 @@ def del_box(request):
 
         box_list = Box.objects.filter(user=request.user, del_flg=False).order_by('box_priority')
 
-        result = {'result': 'success', 'box_list': [box.as_json() for box in box_list]}
+        result = {'result': 'success',
+                  'box_list': [box.as_json() for box in box_list],
+                  'box_priority_array': [3, 2, 1]}
     except Box.DoesNotExist:
         result = {'result': 'error',
                   'message': 'Box does not exist.[box_id=' + str(box_id) + ']'}

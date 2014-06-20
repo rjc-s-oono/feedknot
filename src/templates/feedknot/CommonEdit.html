@@ -156,17 +156,16 @@ alert(box_id + ":not_default");
                             <textarea id="box_name_<%= box.id %>" class="box_name" name="box_name" ROWS="1" style="margin-left:10px; display:inline; vertical-align:middle; "><%= box.box_name %></textarea>
                         </td>
                         <td width="2%" nowrap >
-                            <img class="edit-button" style="margin-left:20px; display:inline; vertical-align:middle; " data-box-id="<%= box.id %>" src="/media/drawable/ic_edit.png?<%= QUERY_STRING %>" alt="edit" width="50" height="50">
+                            <img class="edit-button" style="margin-left:20px; display:inline; vertical-align:middle; " data-box-id="<%= box.id %>" src="/media/drawable/ic_edit.png?{{ QUERY_STRING }}" alt="edit" width="50" height="50">
                         </td>x
                         <td width="2%" nowrap >
-                            <img class="delete-button" style="margin-left:10px; display:inline; vertical-align:middle; " data-box-id="<%= box.id %>" src="/media/drawable/ic_delete.png?<%= QUERY_STRING %>" alt="delete" width="50" height="50">
+                            <img class="delete-button" style="margin-left:10px; display:inline; vertical-align:middle; " data-box-id="<%= box.id %>" src="/media/drawable/ic_delete.png?{{ QUERY_STRING }}" alt="delete" width="50" height="50">
                         </td>
                     </tr>
                     <tr class="box-under-info" bgcolor="silver">
                         <td colspan="2" class="box-priority" data-box-id="<%= box.id %>" align="right" width="100%" height="8%" border-bottom>
                             <div data-role="controlgroup" data-type="horizontal" data-mini="true" align="right">
-                                <% for (var i in box_priority_array) {
-                                    var priority = feed_priority[i];%>
+                                <% _.each(box_priority_array, function(priority) { %>
                                     <div class="priority-icon" data-box-priority="<%= priority %>"
                                         <% if ( priority >= box.box_priority ) { %>
                                             <a href="#" data-role="button" data-icon="star" data-iconpos="notext" data-theme="e" </a>
@@ -174,10 +173,10 @@ alert(box_id + ":not_default");
                                             <a href="#" data-role="button" data-icon="star" data-iconpos="notext"</a>
                                         <% } %>
                                     </div>
-                                <% } %>
+                                <% }); %>
                             </div>
                         </td>
-                        <td colspan="2" align="right" ><a href="<% url 'feed_list' box.id %>" rel="external">フィード管理</a></td>
+                        <td colspan="2" align="right" ><a href="<% box.feed_list_url %>" rel="external">フィード管理</a></td>
                     </tr>
                 <tr><td colspan="3"><hr></td></tr>
             <% }); %>
