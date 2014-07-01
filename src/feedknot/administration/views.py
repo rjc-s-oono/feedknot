@@ -22,7 +22,7 @@ def index(request):
         loginMaster.set_default_box(request)
 
     return render(request,
-                  'feedknot/Mypage.html')
+                  'feedknot/mypage.html')
 
 @ajax_view(FormClass=EditDefaultBoxForm ,login_required=True)
 def edit_default_box(request):
