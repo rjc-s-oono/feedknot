@@ -42,7 +42,7 @@ class Box(models.Model):
     def read_feed(self):
         feed_info_list = self.feed_box.all()
         for feed_info in feed_info_list:
-            feed_info.readArticle()
+            feed_info.read_article()
 
     def edit_box_name(self, box_name):
         # 現在日時取得
