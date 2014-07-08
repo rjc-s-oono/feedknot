@@ -65,7 +65,10 @@ function addFeed(url, title, className) {
             //alert("data:" + data);
             //alert("result:" + data.result);
             //alert($("#csrfmiddlewaretoken").val());
-            if (data == null || undefined == data.title || undefined == data.result) {
+            //alert(data.result)
+            if(data.result == 'error2') {
+                alert("選択したフィードはすでに設定済です。");
+            } else if (data == null || undefined == data.title || undefined == data.result) {
                 alert("フィードの追加に失敗しました。ログインし直してください。");
             } else if ("success" == data.result) {
                 // 成功
