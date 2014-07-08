@@ -42,14 +42,22 @@
 
             // 削除ボタンが枠外にはみ出さない為のフィード名サイズ調整
             $(window).resize(function() {
-                var parentWidth = $(".ui-li-feed").width();
-                var delWidth = $(".ui-feed-del").width();
-                $(".ui-feed-name").each(function() {
-                    $(this).css("width",(parentWidth - delWidth - 20) + "px");
-                });
+                resizeFeedName();
+            });
+
+            $(window).load(function() {
+                resizeFeedName();
             });
         });
     });
+
+    function resizeFeedName() {
+        var parentWidth = $(".ui-li-feed").width();
+        var delWidth = $(".ui-feed-del").width();
+        $(".ui-feed-name").each(function() {
+            $(this).css("width",(parentWidth - delWidth - 20) + "px");
+        });
+    }
 
     function viewConfirm(feed_id) {
         if (confirm("フィードを削除します。宜しいですか？")) {
@@ -89,6 +97,7 @@
             },
             complete: function() {
                 finishLoadingEffect();
+                resizeFeedName();
             }
         });
     }
