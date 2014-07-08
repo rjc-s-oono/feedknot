@@ -195,7 +195,7 @@ AUTHENTICATION_BACKENDS = (
     "allauth.account.auth_backends.AuthenticationBackend",
 )
 
-QUERY_STRING = "201403231620"
+QUERY_STRING = "201407081800"
 
 LOG_LEVEL = 'INFO'
 LOG_DIR_ROOT = os.path.realpath(os.path.join(BASE_DIR, '../../../'))
