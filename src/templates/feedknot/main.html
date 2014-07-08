@@ -142,7 +142,7 @@
                             <div class="ui-block-a"><img src="/media/drawable/new022_12.gif" style="max-width:32px;max-height:16px;" id="img_new_{{article.id}}"></div>
                         {% endif %}
                         </div><!-- /grid-a -->
-                        <p class="ui-li-aside">{{article.pub_date}}</p>
+                        <p class="ui-li-aside">{{article.pub_date|date:"m/d G:i"}}</p>
                         <h1>{{article.site_title}}</h1>
                         <h2>{{article.article_title}}</h2>
 <!-- 以下デバック用
