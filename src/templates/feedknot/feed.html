@@ -19,6 +19,15 @@
     float: right;
     width: 82px;
 }
+.ui-feed-name{
+    height: 2em;
+    width: 80%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    -webkit-text-overflow: ellipsis; /* Safari */
+    -o-text-overflow: ellipsis; /* Opera */
+}
 </style>
 {% endblock %}
 {# == ↑スタイルシート部分 ====================================== #}
@@ -27,10 +36,34 @@
 {% block include_js %}
 <script type="text/javascript">
 <!--
+    $(function() {
+        $(document).on('pagecreate', '#main', function(){
+            //$(document).on('tap', '.ui-feed-del', viewConfirm);
+
+            // 削除ボタンが枠外にはみ出さない為のフィード名サイズ調整
+            $(window).resize(function() {
+                var parentWidth = $(".ui-li-feed").width();
+                var delWidth = $(".ui-feed-del").width();
+                $(".ui-feed-name").each(function() {
+                    $(this).css("width",(parentWidth - delWidth - 20) + "px");
+                });
+            });
+        });
+    });
+
+    function viewConfirm(feed_id) {
+        if (confirm("フィードを削除します。宜しいですか？")) {
+            deleteFeed(feed_id);
+        }
+        //$("#popupConfirm").popup("open");
+        //$("#del-feed-id").val(feed_id);
+    }
+
     function deleteFeed(feed_id) {
         if (!startLoadingEffect("Adding...")) {
             return;
         }
+        //var feed_id = $("#del-feed-id").val();
 
         var $deleteFeedForm = $('#feed-delete-form');
         $('#feed_id').val(feed_id);
@@ -67,6 +100,7 @@
 {# == ↓表示部分 ====================================== #}
 {% block content %}
     <div id="main"  data-role="page">
+    <input type="hidden" id="del-feed-id" value="" />
 
         {# == タイトルバー ========== #}
         <div data-role="header" data-position="fixed" data-theme="e">
@@ -81,7 +115,7 @@
         </div> <!-- header -->
 
         {# == ↓ポップアップ内容  ========== #}
-        <div data-role="popup" id="popupNotice">
+        <div data-role="popup" id="popupConfirm">
             <div data-role="content" data-theme="d" class="ui-corner-bottom ui-content" id="popupMsg">
             </div>
         </div>
@@ -98,13 +132,13 @@
                 <li data-theme="c" class="ui-li-feed">
                     <div width="100%">
                     <div class="ui-grid-feed">
-                        <div class="ui-block-a">
+                        <div class="ui-block-a ui-feed-name">
                             {{feed.feed_name|striptags}}
                         </div>
-                        <div class="ui-block-c">
+                        <div class="ui-block-c ui-feed-del">
                             <a href="#" data-role="button" data-inline="true" rel="external"
                                data-icon="delete" data-theme="e" data-mini="true" class="deleteButton"
-                               onclick="deleteFeed({{feed.id}})">削除</a>
+                               onclick="viewConfirm({{feed.id}})">削除</a>
                         </div>
                     </div>
                     </div>
@@ -127,13 +161,13 @@
                 <li data-theme="c" class="ui-li-feed">
                     <div width="100%">
                     <div class="ui-grid-feed">
-                        <div class="ui-block-a">
+                        <div class="ui-block-a ui-feed-name">
                             <%= feed.feed_name %>
                         </div>
-                        <div class="ui-block-c" align="right">
+                        <div class="ui-block-c ui-feed-del" align="right">
                             <a href="#" data-role="button" data-inline="true"
                                data-icon="delete" data-theme="e" data-mini="true"
-                               onclick="deleteFeed(<%= feed.id %>)">削除</a>
+                               onclick="viewConfirm(<%= feed.id %>)">削除</a>
                         </div>
                     </div>
                     </div>
