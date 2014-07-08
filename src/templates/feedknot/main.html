@@ -18,8 +18,12 @@
     var curMonth$ = 0;
     $(document).ready(function() {
         $("#feedUL").children("li").each(function() {
+
+
             var year = $(this).find("#pub_year").val();
             var month = $(this).find("#pub_month").val();
+
+
             if (curYear$ != year || curMonth$ != month) {
                 $(this).before("<li data-role='list-divider'>" + year + "/" + month + "</li>");
                 curYear$ = year;
@@ -98,6 +102,7 @@
 {# == ↑ジャバスクリプト部分 ====================================== #}
 
 {# == ↓表示部分 ====================================== #}
+
 {% block content %}
     <div id="main"  data-role="page">
 
@@ -150,8 +155,11 @@
                         </p>
 -->
                     </a>
-                    <input type="hidden" id="pub_year" value="{{article.pub_date.year}}" />
-                    <input type="hidden" id="pub_month" value="{{article.pub_date.month}}" />
+                    <input type="hidden" id="pub_year" value="{{article.pub_date|date:"Y" }}" />
+                    <input type="hidden" id="pub_month" value="{{article.pub_date|date:"M"}}" />
+
+
+
                 </li>
             {% endfor %}
             </ul>
