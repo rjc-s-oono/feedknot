@@ -19,7 +19,7 @@ from box.forms import EditBoxNameForm, EditBoxPriorityForm, DeleteBoxForm
 logger = logging.getLogger('application')
 
 @login_required
-def commonEdit(request):
+def common_edit(request):
 
     user = request.user
     logger.debug("user_id: %s" % (user.id))
@@ -31,7 +31,7 @@ def commonEdit(request):
     logger.debug(box_list)
 
     return render(request,
-                  'feedknot/CommonEdit.html',
+                  'feedknot/common_edit.html',
                   {'box_list' : box_list,
                    'default_box_id' : default_box_id,
                    'box_priority_array': [3, 2, 1]

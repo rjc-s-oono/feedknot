@@ -48,7 +48,7 @@ class Feed(models.Model):
         self.del_flg = False
         self.save()
 
-    def readArticle(self):
+    def read_article(self):
         rssurl= self.rss_address
         ltd = self.last_take_date
         tz = ltd.tzinfo

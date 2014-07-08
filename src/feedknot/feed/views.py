@@ -104,7 +104,7 @@ def feed_list(request, box_id):
                   param)
 
 @login_required
-def searchFeed(request, box_id):
+def search_feed(request, box_id):
 
     try:
         box = Box.objects.get(id=box_id, user=request.user, del_flg=False)
@@ -112,7 +112,7 @@ def searchFeed(request, box_id):
         raise Http404
 
     return render(request,
-                  'feedknot/SearchFeed.html',
+                  'feedknot/search_feed.html',
                   {'box_id':box.id})
 
 # フィード追加(ajax)
