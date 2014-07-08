@@ -133,6 +133,15 @@ def add_feed(request, box_id):
         # 最初は2000年1月1日からのフィードを全て取得する
         today = datetime.date(2000, 1, 1)
 
+
+        existChk = Feed.objects.filter(rss_address=rss_address)
+
+        if len(existChk) != 0:
+            result = {'result': 'error2',
+                      'message': 'addNG'}
+
+            return HttpResponse(simplejson.dumps(result, ensure_ascii=False), mimetype='application/json')
+
         # フィード登録
         feed = Feed(
             box = box,
@@ -147,6 +156,9 @@ def add_feed(request, box_id):
     except Exception:
         # フィードの登録失敗
         return HttpResponse(simplejson.dumps({'result': 'regist feed faild.'}, ensure_ascii=False), mimetype='application/json')
+
+
+
 
     # タグを一時的に削除
     # のちのちdivかなんかのメッセージウィンドウで表示すると思うので、その時に消します
