@@ -134,7 +134,7 @@ def add_feed(request, box_id):
         today = datetime.date(2000, 1, 1)
 
 
-        existChk = Feed.objects.filter(rss_address=rss_address)
+        existChk = Feed.objects.filter(rss_address=rss_address, user=request.user, del_flg=False)
 
         if len(existChk) != 0:
             result = {'result': 'error2',
