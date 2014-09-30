@@ -25,6 +25,12 @@ def index(request):
         logger.info("Call set_default_box")
         loginMaster = LoginMaster()
         loginMaster.set_default_box(request)
+        return render(request,
+                      'feedknot/common_edit.html',
+                      {'box_list' : [loginMaster.default_box],
+                       'default_box_id' : loginMaster.default_box.id,
+                       'box_priority_array': [3, 2, 1]
+                       })
 
 
     #main(request)
