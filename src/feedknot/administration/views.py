@@ -7,6 +7,11 @@ from django.utils import simplejson
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
+
+from box.models import Box
+from feed.models import Article, Feed
+
+
 from administration.models import LoginMaster
 from box.forms import EditDefaultBoxForm
 
@@ -21,8 +26,48 @@ def index(request):
         loginMaster = LoginMaster()
         loginMaster.set_default_box(request)
 
+
+    #main(request)
+    user = request.user
+    logger.debug("user_id: %s" % (user.id))
+
+    # ユーザの全ボックス取得
+    box_list = Box.objects.filter(user=user).order_by('box_priority')
+
+    try:
+        logger.info("get default box id." )
+        login_info = LoginMaster.objects.get(user=user)
+        default_box = login_info.default_box
+        box_info = Box.objects.get(pk=default_box.id)
+        box_name = box_info.box_name
+        box_info.read_feed()
+
+        article_list = Article.objects.filter(box=box_info, user=user, del_flg=False).order_by('-pub_date', 'id')
+    except LoginMaster.DoesNotExist or Box.DoesNotExist:
+        if len(box_list) > 0:
+            box_info =  box_list[0]
+            box_name = box_info.box_name
+            box_info.read_feed()
+
+            article_list = Article.objects.filter(box=box_info, user=user, del_flg=False).order_by('-pub_date', 'id')
+        else:
+            box_name = "ボックスが登録されていません。"
+            article_list = []
+
+    param = {'box_name' : box_name,
+             'box_list' : box_list,
+             'article_list' : article_list}
+
     return render(request,
-                  'feedknot/mypage.html')
+                  'feedknot/main.html',
+                  param)
+
+
+
+
+
+    #return render(request,
+    #              'feedknot/main.html')
 
 @ajax_view(FormClass=EditDefaultBoxForm ,login_required=True)
 def edit_default_box(request):
