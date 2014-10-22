@@ -156,7 +156,11 @@
         {# == ↑フィードメニュー  ========== #}
 
         {# == フッタ  ========== #}
-        {% include 'footer.html' %}
+        {# == 会社ロゴ  ========== #}
+        <div data-role="footer" data-position="fixed">
+            {% include 'footer.html' %}
+        </div>
+
         <script type="text/template" id="box-list-template">
             <% _.each(box_list, function(box) { %>
                     <tr class="box-info" bgcolor="silver" valign="middle">
