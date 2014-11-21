@@ -26,7 +26,7 @@ urlpatterns = patterns('',
     url(r'^$', 'administration.views.index', name='index'),
     url(r'^accounts/', include('allauth.urls')),
     #url(r'^accounts/feedknotLogout/$', 'django.contrib.auth.views.logout',{'next_page': '/'}),
-    url(r'^accounts/feedknotLogout/$', 'administration.views.logout',),
+    url(r'^accounts/feedknotLogout/$', 'administration.views.logout', name='feedknotLogout'),
 
     url(r'^main/$', 'feed.views.main', name='main'),
     url(r'^main/(?P<box_id>\d+)/$', 'feed.views.main_select_box', name='main_select_box'),
