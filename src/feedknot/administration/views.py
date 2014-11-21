@@ -96,3 +96,15 @@ def edit_default_box(request):
 
     logger.debug(result)
     return HttpResponse(simplejson.dumps(result, ensure_ascii=False), mimetype='application/json')
+
+
+
+
+def logout(request):
+
+    param = {}
+
+    return render(request,
+                  'account/logout.html',
+                  param)
+
