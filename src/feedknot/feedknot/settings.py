@@ -20,7 +20,6 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-LOGIN_REDIRECT_URL = 'account_login'
 
 DATABASES = {
     'default': {
