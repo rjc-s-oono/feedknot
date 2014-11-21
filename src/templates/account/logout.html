@@ -30,7 +30,7 @@ $(document).bind("mobileinit", function(){
 
     <div data-role="content">
 
-        <form method="post" action="/accounts/logout/">
+        <form method="post" action="{% url 'account_logout' %}">
             {% csrf_token %}
             <input type="submit" value="ログアウト" data-role="button" data-icon="arrow-r" data-theme="e" data-iconpos="right" data-transition="slide" />
         </form>
