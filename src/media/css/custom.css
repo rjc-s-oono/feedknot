@@ -1,0 +1,25 @@
+/*--フッタータイトルのみ--*/
+.ui-footer .ui-title{
+    font-size:0.5em;
+}
+
+
+/*---表示文字数を増やす（全文字表示---
+(ヘッダー,フッター,ボタン,リスト見出し,リンクリスト,リスト詳細部分)---*/
+.ui-header .ui-title,
+.ui-footer .ui-title,
+.ui-btn-inner,
+.ui-li-heading,
+.ui-li .ui-btn-text a.ui-link-inherit,
+.ui-li-desc
+{
+    overflow: visible;
+    white-space: normal;
+}
+
+/* ヘッダータイトルの外側余白なし*/
+.ui-header .ui-title
+{
+    margin-left:25%;
+    margin-right:25%;
+}

@@ -36,7 +36,7 @@
     $(function (){
         $(document).on('pagecreate', '#main', function(){
             //タップ
-            $(document).on('tap', '#boxName', doAction);
+            //$(document).on('tap', '#boxName', doAction);
             //$(document).on('taphold', '#boxName', doAction2);
             // スワイプした時の動作（swipeleftでpage2viewの関数を呼び出す）
             $(document).on('swiperight', '#view', page2view);
@@ -108,12 +108,21 @@
 
         {# == ボックス選択  ========== #}
         <div data-role="header" data-position="fixed" data-theme="e">
-            <a href="{% url 'index' %}" data-iconpos="notext" data-icon="gear" rel="external">管理画面</a>
+            <div class="ui-btn-left" style="top: 0px;">
+                <a href="{% url 'common_edit' %}"                                    style="top: 0px;" data-iconpos="notext" data-role="button" data-icon="gear" rel="external" data-inline="true">管理画面</a>
+                <a target="_blank" href="http://tech.r-jc.jp/feedknot/help/main.html"style="top: 0px;" data-icon="info" data-role="button" rel="external" data-transition="fade" data-iconpos="notext" data-inline="true">ヘルプ</a>
+            </div>
+
             <h1 id="boxName">{{box_name}}</h1>
+            <div class="ui-btn-right" style="top: 0px;">
+                <a href="#popupMenu" style="top: 0px;" data-role="button"  data-rel="popup"    data-iconpos="notext" data-icon="grid" data-inline="true" data-position-to="window">ボックス選択</a>
+                <a href="{% url 'feedknotLogout' %}"style="top: 0px;" data-role="button" rel="external" data-transition="fade" data-iconpos="notext" data-icon="delete" data-inline="true">ログアウト</a>
+
+            </div>
 
             {# == ↓ポップアップ内容  ========== #}
-            <div data-role="popup" id="popupMenu">
-              <a href="#" data-rel="back" data-role="button" data-theme="c" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+            <div data-role="popup" id="popupMenu" >
+              <!--<a href="#" data-rel="back" data-role="button" data-theme="c" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>-->
               <ul data-role="listview" data-inset="true" style="min-width:210px;" data-theme="c">
                 <li data-role="divider" data-theme="e">ナビゲーションメニュー</li>
                 {% for box in box_list %}
@@ -122,8 +131,10 @@
               </ul>
             </div>
             {# == ↑ポップアップ内容  ========== #}
-        </div>
 
+
+
+        </div>
         {# == フィード情報  ========== #}
         <div data-role="content">
 
@@ -166,7 +177,9 @@
         </div>
 
         {# == 会社ロゴ  ========== #}
-        {% include 'footer.html' %}
+        <div data-role="footer" data-position="fixed">
+            {% include 'footer.html' %}
+        </div>
     </div>
 
 {% endblock %}

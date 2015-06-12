@@ -24,7 +24,11 @@ $(document).bind("mobileinit", function(){
 <div id="auth"  data-role="page">
 
     <div data-role="header" data-position="fixed" data-theme="e">
+        <div class="ui-btn-left" style="top: 0px;">
+            <a target="_blank" href="http://tech.r-jc.jp/feedknot/help/login.html"style="top: 0px;" data-icon="info" data-role="button" rel="external" data-transition="fade" data-iconpos="notext" data-inline="true">ヘルプ</a>
+        </div>
         <h1 id="siteName">feedknot</h1>
+
     </div>
 
     <div data-role="content">
@@ -44,6 +48,9 @@ $(document).bind("mobileinit", function(){
     </div>
 
     {# == 会社ロゴ  ========== #}
-    {% include 'footer.html' %}
+    <div data-role="footer" data-position="fixed">
+        {% include 'footer.html' %}
+    </div>
+
 </div>
 {% endblock %}

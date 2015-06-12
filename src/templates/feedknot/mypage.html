@@ -48,12 +48,14 @@
         <div data-role="content">
             {# 各ページ遷移ボタン #}
             <a href="{% url 'common_edit'%}" data-role="button" data-icon="arrow-r" data-theme="e" data-iconpos="right" data-transition="slide">フィードを管理</a>
-            <a href="{% url 'account_logout' %}" data-role="button" data-icon="arrow-r" data-theme="e" data-iconpos="right" data-transition="fade">ログアウト</a>
+            <a href="{% url 'feedknotLogout' %}" data-role="button" data-icon="arrow-r" data-theme="e" data-iconpos="right" data-transition="fade">ログアウト</a>
 
         </div>
 
         {# == 会社ロゴ  ========== #}
-        {% include 'footer.html' %}
+        <div data-role="footer" data-position="fixed">
+            {% include 'footer.html' %}
+        </div>
     </div>
 {% endblock %}
 {# == ↑表示部分 ====================================== #}

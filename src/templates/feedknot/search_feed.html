@@ -22,14 +22,20 @@
 
         {# == タイトルバー ========== #}
         <div data-role="header" data-position="fixed" data-theme="e">
-            {# ホームボタン #}
-            <a href="{% url 'main' %}" data-iconpos="notext" data-icon="home" rel="external">ホーム</a>
+            <div class="ui-btn-left" style="top: 0px;">
+                {# ホームボタン #}
+                <a href="{% url 'main' %}" style="top: 0px;" data-iconpos="notext" data-icon="home"  data-role="button" rel="external" data-inline="true">メイン画面</a>
+                <a target="_blank" href="http://tech.r-jc.jp/feedknot/help/search_feed.html" style="top: 0px;" data-icon="info" data-role="button" rel="external" data-transition="fade" data-iconpos="notext" data-inline="true">ヘルプ</a>
+            </div>
 
             {# タイトル #}
             <h1 id="title">フィード検索</h1>
 
-            {# 戻るボタン #}
-            <a href="{% url 'feed_list' box_id %}" data-iconpos="notext" data-icon="back" rel="external">戻る</a>
+            <div class="ui-btn-right" style="top: 0px;">
+                {# 戻るボタン #}
+                <a href="{% url 'feed_list' box_id %}"style="top: 0px;" data-role="button" rel="external" data-iconpos="notext" data-icon="back" rel="external" data-inline="true">戻る</a>
+                <a href="{% url 'feedknotLogout' %}"style="top: 0px;" data-role="button" rel="external" data-transition="fade" data-iconpos="notext" data-icon="delete" data-inline="true">ログアウト</a>
+            </div>
         </div> <!-- header -->
 
         {# == ↓ポップアップ内容  ========== #}
@@ -60,7 +66,9 @@
         {# == ↑フィード情報  ========== #}
 
         {# == 会社ロゴ  ========== #}
-        {% include 'footer.html' %}
+        <div data-role="footer" data-position="fixed">
+            {% include 'footer.html' %}
+        </div>
     </div> <!-- main -->
 {% endblock %}
 {# == ↑表示部分 ====================================== #}

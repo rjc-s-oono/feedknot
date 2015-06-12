@@ -69,10 +69,17 @@
 
         {# == ヘッダ  ========== #}
         <div data-role="header" data-position="fixed" data-theme="e">
-            <a href="{% url 'main' %}" data-iconpos="notext" data-icon="home" rel="external">ホーム</a>
+            <div class="ui-btn-left" style="top: 0px;">
+                <a href="{% url 'main' %}" data-iconpos="notext" data-icon="home" rel="external" style="top: 0px;" data-role="button" data-inline="true">メイン画面</a>
+                <a target="_blank" href="http://tech.r-jc.jp/feedknot/help/common_edit.html"style="top: 0px;" data-icon="info" data-role="button" rel="external" data-iconpos="notext" data-inline="true">ヘルプ</a>
+            </div>
+
             <H3>登録フィード</H3>
-            <a href="{% url 'index' %}" data-prefetch="false" data-transition="slide" data-direction="reverse" data-iconpos="notext" data-icon="back">戻る</a>
-        </div>
+            <div class="ui-btn-right" style="top: 0px;">
+                {# メニュー削除により戻るボタンコメントアウト #}
+                {# <a href="{% url 'index' %}" style="top: 0px;" data-role="button" rel="external" data-prefetch="false" data-transition="slide" data-direction="reverse" data-iconpos="notext" data-icon="back" data-inline="true">戻る</a> #}
+                <a href="{% url 'feedknotLogout' %}"style="top: 0px;" data-role="button" rel="external" data-transition="fade" data-iconpos="notext" data-icon="delete" data-inline="true">ログアウト</a>        </div>
+            </div>
         {# == ↑ヘッダ  ========== #}
 
         {# == ↓ポップアップ内容  ========== #}
@@ -153,7 +160,11 @@
         {# == ↑フィードメニュー  ========== #}
 
         {# == フッタ  ========== #}
-        {% include 'footer.html' %}
+        {# == 会社ロゴ  ========== #}
+        <div data-role="footer" data-position="fixed">
+            {% include 'footer.html' %}
+        </div>
+
         <script type="text/template" id="box-list-template">
             <% _.each(box_list, function(box) { %>
                     <tr class="box-info" bgcolor="silver" valign="middle">

@@ -24,19 +24,22 @@ $(document).bind("mobileinit", function(){
 <div id="auth"  data-role="page">
 
     <div data-role="header" data-position="fixed" data-theme="e">
-        <a href="{% url 'index' %}" data-iconpos="notext" data-icon="gear" rel="external">管理画面</a>
+        <a href="{% url 'index' %}" data-iconpos="notext" data-icon="home" rel="external">メイン画面</a>
         <h1 id="siteName">feedknot</h1>
     </div>
 
     <div data-role="content">
 
-        <form method="post" action="/accounts/logout/">
+        <form method="post" action="{% url 'account_logout' %}" data-ajax="false">
             {% csrf_token %}
-            <input type="submit" value="ログアウト" data-role="button" data-icon="arrow-r" data-theme="e" data-iconpos="right" data-transition="slide" />
+            <input type="submit" value="ログアウト" data-role="button" data-icon="arrow-r" data-theme="e" data-iconpos="right" data-transition="slide" rel="external" />
         </form>
     </div>
 
     {# == 会社ロゴ  ========== #}
-    {% include 'footer.html' %}
+    <div data-role="footer" data-position="fixed">
+        {% include 'footer.html' %}
+    </div>
+
 </div>
 {% endblock %}

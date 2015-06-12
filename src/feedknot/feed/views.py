@@ -17,6 +17,7 @@ from feed.models import Article, Feed
 from feed.forms import AddFeedForm, DeleteFeedForm, MarkReadArticleForm
 
 logger = logging.getLogger('application')
+limit_cnt = 100
 
 @login_required
 def main(request):
@@ -35,14 +36,14 @@ def main(request):
         box_name = box_info.box_name
         box_info.read_feed()
 
-        article_list = Article.objects.filter(box=box_info, user=user, del_flg=False).order_by('-pub_date', 'id')
+        article_list = Article.objects.filter(box=box_info, user=user, del_flg=False).order_by('-pub_date', 'id')[:limit_cnt]
     except LoginMaster.DoesNotExist or Box.DoesNotExist:
         if len(box_list) > 0:
             box_info =  box_list[0]
             box_name = box_info.box_name
             box_info.read_feed()
 
-            article_list = Article.objects.filter(box=box_info, user=user, del_flg=False).order_by('-pub_date', 'id')
+            article_list = Article.objects.filter(box=box_info, user=user, del_flg=False).order_by('-pub_date', 'id')[:limit_cnt]
         else:
             box_name = "ボックスが登録されていません。"
             article_list = []
@@ -70,7 +71,7 @@ def main_select_box(request, box_id):
 
     box_list = Box.objects.filter(user=user, del_flg=False).order_by('box_priority')
 
-    article_list = Article.objects.filter(box=box_info, user=user, del_flg=False).order_by('-pub_date', 'pk')
+    article_list = Article.objects.filter(box=box_info, user=user, del_flg=False).order_by('-pub_date', 'pk')[:limit_cnt]
 
     param = {'box_name' : box_name,
              'article_list' : article_list,
@@ -134,7 +135,7 @@ def add_feed(request, box_id):
         today = datetime.date(2000, 1, 1)
 
 
-        existChk = Feed.objects.filter(rss_address=rss_address, user=request.user, del_flg=False)
+        existChk = Feed.objects.filter(box=box,rss_address=rss_address, user=request.user, del_flg=False)
 
         if len(existChk) != 0:
             result = {'result': 'error2',
