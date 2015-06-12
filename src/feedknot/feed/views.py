@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from django.utils import simplejson
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from common.decorators import ajax_view
 #from common.utils import datetime_util
 
@@ -25,10 +25,14 @@ def main(request):
     user = request.user
     logger.debug("user_id: %s" % (user.id))
 
+
+
     # ユーザの全ボックス取得
     box_list = Box.objects.filter(user=user).order_by('box_priority')
+    page = request.GET.get('page')
 
     try:
+
         logger.info("get default box id." )
         login_info = LoginMaster.objects.get(user=user)
         default_box = login_info.default_box
@@ -36,21 +40,36 @@ def main(request):
         box_name = box_info.box_name
         box_info.read_feed()
 
-        article_list = Article.objects.filter(box=box_info, user=user, del_flg=False).order_by('-pub_date', 'id')[:limit_cnt]
+        article_list = Article.objects.filter(box=box_info, user=user, del_flg=False).order_by('-pub_date', 'id')
+
     except LoginMaster.DoesNotExist or Box.DoesNotExist:
         if len(box_list) > 0:
             box_info =  box_list[0]
             box_name = box_info.box_name
             box_info.read_feed()
 
-            article_list = Article.objects.filter(box=box_info, user=user, del_flg=False).order_by('-pub_date', 'id')[:limit_cnt]
+            article_list = Article.objects.filter(box=box_info, user=user, del_flg=False).order_by('-pub_date', 'id')
         else:
             box_name = "ボックスが登録されていません。"
             article_list = []
 
+
+
+    paginator = Paginator(article_list, 10)
+    page = request.GET.get('page')
+
+    try:
+        wk_list = paginator.page(page)
+    except PageNotAnInteger:
+        wk_list = paginator.page(1)
+    except EmptyPage:
+        wk_list = paginator.page(paginator.num_pages)
+
+
+
     param = {'box_name' : box_name,
              'box_list' : box_list,
-             'article_list' : article_list}
+             'article_list' : wk_list}
 
     return render(request,
                   'feedknot/main.html',
