@@ -2,10 +2,39 @@
 
 // フィード検索開始 (Google findFeeds)
 function searchFeed(searchTxt) {
+    if (searchTxt.replace(/\s+$/, "") == "") {
+        finishLoadingEffect();
+        $(".feed_list_ul").empty();
+        return;
+    }
+
     if ( ! startLoadingEffect("Searching...")) {
         return;
     }
-    google.feeds.findFeeds(searchTxt, dispFeed);
+    if ( searchTxt.match(/^(http|https)\:\/\/.+/) ) {
+        // 検索テキストがURLである為、そのデータを取得
+        var feed = new google.feeds.Feed(searchTxt);
+        feed.load(addFeedFromUrl);
+    } else {
+        // Google RSS検索
+        google.feeds.findFeeds(searchTxt, dispFeed);
+    }
+}
+
+// 取得結果 (Google Feed.load)
+function addFeedFromUrl(result) {
+    if (!result.error){
+        //alert("title: " + result.feed.title);
+        $("#searc-basic").val("");
+        finishLoadingEffect();    // addFeed()内でもくるくる開始してるので先に終了させる
+        addFeed(result.feed.link, result.feed.title, "");
+    } else {
+        alert("フィードの追加に失敗しました。正しいURLか検索キーワードを入力してください。。");
+//        var errMsg = "feed情報取得でエラー:["+ result.error.code + ":" + result.error.message +"]";
+//        alert(errMsg);
+//        log.warn(errMsg);
+        finishLoadingEffect();
+    }
 }
 
 // 検索結果 (Google findFeeds)
@@ -65,7 +94,7 @@ function addFeed(url, title, className) {
             //alert("data:" + data);
             //alert("result:" + data.result);
             //alert($("#csrfmiddlewaretoken").val());
-            //alert(data.result)
+            //alert("title:" + data.title)
             if(data.result == 'error2') {
                 alert("選択したフィードはすでに設定済です。");
             } else if (data == null || undefined == data.title || undefined == data.result) {
@@ -73,7 +102,9 @@ function addFeed(url, title, className) {
             } else if ("success" == data.result) {
                 // 成功
                 $("#popupNotice #popupMsg").html("フィード【" + data.title + "】の追加が完了しました。");
-                $("." + data.className).hide();
+                if (data.className != "") {
+                    $("." + data.className).hide();
+                }
                 $(".feed_list_ul").listview().listview('refresh');
                 $("#popupNotice").popup("open");
             } else {
