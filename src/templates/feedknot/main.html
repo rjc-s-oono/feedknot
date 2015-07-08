@@ -78,6 +78,20 @@
                     //既読マークの消込
                     var wkObj = "#img_new_" + article_id;
                     $(wkObj).remove();
+
+                    var wkLiObj = "#li_new_" + article_id;
+                    $(wkLiObj).removeAttr('style');
+                    $(wkLiObj).css("font-weight", "normal");
+                    //$(wkLiObj).css( "font-weight", "normal" );
+
+                    var wkh1Obj = "#h1_new_" + article_id;
+                    $(wkh1Obj).removeAttr('style');
+                    $(wkh1Obj).css( "font-weight", "normal" );
+
+                    var wkh2Obj = "#h2_new_" + article_id;
+                    $(wkh2Obj).removeAttr('style');
+                    $(wkh2Obj).css( "font-weight", "normal" );
+
                     $("feedUL").listview().listview('refresh');
                 } else {
                     logger.error(data.message);
@@ -150,7 +164,7 @@
                     <li>
                 {% endif %}
                 {% if not article.read_flg %}
-                    <li style="background-image: linear-gradient( #ffefaa,#ffe155 );background:#fff8dc;border: 1px solid #f4c63f;font-weight:normal;">
+                    <li id="li_new_{{article.id}}" style="background-image: linear-gradient( #ffefaa,#ffe155 );background:#fff8dc;border: 1px solid #f4c63f;font-weight:normal;">
                 {% endif %}
 
                     <a target="_blank" href="{{article.article_address}}" onclick="readingCheck({{article.id}})">
@@ -161,8 +175,8 @@
                         </div><!-- /grid-a -->
                         <p class="ui-li-aside">{{article.pub_date|date:"m/d G:i"}}</p>
                         {% if not article.read_flg %}
-                            <h1>{{article.site_title}}</h1>
-                            <h2>{{article.article_title}}</h2>
+                            <h1 id="h1_new_{{article.id}}" >{{article.site_title}}</h1>
+                            <h2 id="h2_new_{{article.id}}" >{{article.article_title}}</h2>
                         {% endif %}
                         {% if article.read_flg %}
                             <h1 style="font-weight:normal;">{{article.site_title}}</h1>
