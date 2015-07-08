@@ -146,7 +146,13 @@
 
             <ul data-role="listview" data-divider-theme="e" data-inset="true" data-filter="true" id="feedUL">
             {% for article in article_list %}
-                <li data-theme="c">
+                {% if article.read_flg %}
+                    <li>
+                {% endif %}
+                {% if not article.read_flg %}
+                    <li style="background-image: linear-gradient( #ffefaa,#ffe155 );background:#fff8dc;border: 1px solid #f4c63f;font-weight:normal;">
+                {% endif %}
+
                     <a target="_blank" href="{{article.article_address}}" onclick="readingCheck({{article.id}})">
                         <div class="ui-grid-b">
                         {% if not article.read_flg %}
@@ -154,8 +160,15 @@
                         {% endif %}
                         </div><!-- /grid-a -->
                         <p class="ui-li-aside">{{article.pub_date|date:"m/d G:i"}}</p>
-                        <h1>{{article.site_title}}</h1>
-                        <h2>{{article.article_title}}</h2>
+                        {% if not article.read_flg %}
+                            <h1>{{article.site_title}}</h1>
+                            <h2>{{article.article_title}}</h2>
+                        {% endif %}
+                        {% if article.read_flg %}
+                            <h1 style="font-weight:normal;">{{article.site_title}}</h1>
+                            <h2 style="font-weight:normal;">{{article.article_title}}</h2>
+                        {% endif %}
+
 <!-- 以下デバック用
                         <p>
                             ArticleId={{article.id}},
@@ -168,9 +181,6 @@
                     </a>
                     <input type="hidden" id="pub_year" value="{{article.pub_date|date:"Y" }}" />
                     <input type="hidden" id="pub_month" value="{{article.pub_date|date:"M"}}" />
-
-
-
                 </li>
             {% endfor %}
             </ul>
