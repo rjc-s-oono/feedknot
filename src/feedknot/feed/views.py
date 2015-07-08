@@ -90,10 +90,21 @@ def main_select_box(request, box_id):
 
     box_list = Box.objects.filter(user=user, del_flg=False).order_by('box_priority')
 
-    article_list = Article.objects.filter(box=box_info, user=user, del_flg=False).order_by('-pub_date', 'pk')[:limit_cnt]
+    article_list = Article.objects.filter(box=box_info, user=user, del_flg=False).order_by('-pub_date', 'pk')
+
+    paginator = Paginator(article_list, 10)
+    page = request.GET.get('page')
+
+    try:
+        wk_list = paginator.page(page)
+    except PageNotAnInteger:
+        wk_list = paginator.page(1)
+    except EmptyPage:
+        wk_list = paginator.page(paginator.num_pages)
+
 
     param = {'box_name' : box_name,
-             'article_list' : article_list,
+             'article_list' : wk_list,
              'box_list' : box_list}
 
     return render(request,
