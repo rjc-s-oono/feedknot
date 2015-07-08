@@ -17,11 +17,23 @@
 }
 .ui-grid-feed .ui-block-c{
     float: right;
-    width: 82px;
+    width: 5em;
 }
 .ui-feed-name{
-    height: 2em;
+    height: 1.2em;
     width: 80%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    -webkit-text-overflow: ellipsis; /* Safari */
+    -o-text-overflow: ellipsis; /* Opera */
+}
+.ui-feed-url{
+    height: 1.2em;
+    width: 80%;
+	font-size: 80%;
+	font-weight: normal;
+	padding-left: 1.5em;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -55,6 +67,9 @@
         var parentWidth = $(".ui-li-feed").width();
         var delWidth = $(".ui-feed-del").width();
         $(".ui-feed-name").each(function() {
+            $(this).css("width",(parentWidth - delWidth - 20) + "px");
+        });
+        $(".ui-feed-url").each(function() {
             $(this).css("width",(parentWidth - delWidth - 20) + "px");
         });
     }
@@ -155,6 +170,9 @@
                                data-icon="delete" data-theme="e" data-mini="true" class="deleteButton"
                                onclick="viewConfirm({{feed.id}})">削除</a>
                         </div>
+                        <div class="ui-block-b ui-feed-url">
+                            {{feed.rss_address}}
+                        </div>
                     </div>
                     </div>
                 </li>
@@ -185,6 +203,9 @@
                             <a href="#" data-role="button" data-inline="true"
                                data-icon="delete" data-theme="e" data-mini="true"
                                onclick="viewConfirm(<%= feed.id %>)">削除</a>
+                        </div>
+                        <div class="ui-block-b ui-feed-url">
+                            <%= feed.rss_address %>
                         </div>
                     </div>
                     </div>
