@@ -50,13 +50,13 @@ function dispFeed(result) {
                 var contentSnippet = result.entries[i].contentSnippet;
                 var url = result.entries[i].url;
 
-                var tag = "<li data-theme=\"c\" data-icon=\"plus\" class=\"feedLI" + i + "\">" +
-                          "<a onclick=\"addFeed('#url#', '#title#','feedLI" + i + "')\">#title#</a>" +
-                          "</li>";
-                //tag = tag.replace("#link#", link);
-                tag = tag.replace("#url#", url);
-                tag = tag.replace("#title#", title);
-                tag = tag.replace("#title#", title);
+	            var tag = "<li data-theme=\"c\" data-icon=\"plus\" class=\"feedLI" + i + "\">" +
+	                          "<a onclick=\"addFeed('#url#', '#title#','feedLI" + i + "')\">" +
+	                              "<div class=\"ui-feed-name\">#title#</div>" +
+	                              "<div class=\"ui-feed-url\">#url#</div></a>" +
+	                      "</li>";
+                tag = tag.replace(/#url#/g, url);
+                tag = tag.replace(/#title#/g, title);
 
                 $(".feed_list_ul")
                     .attr("data-role","listview")

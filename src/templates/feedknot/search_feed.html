@@ -7,6 +7,22 @@
 {# == ↓スタイルシート部分 ====================================== #}
 {% block include_css %}
 <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<style type="text/css">
+.ui-feed-url{
+    height: 1.2em;
+	font-size: 80%;
+	font-weight: normal;
+	padding-left: 1.5em;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    -webkit-text-overflow: ellipsis; /* Safari */
+    -o-text-overflow: ellipsis; /* Opera */
+}
+.ui-content {
+    padding: 5px;
+}
+</style>
 {% endblock %}
 {# == ↑スタイルシート部分 ====================================== #}
 
@@ -46,13 +62,14 @@
         {# == ↑ポップアップ内容  ========== #}
 
         {# == ↓検索ボックス ========== #}
-        <div class="search_frame" >
-            <input type="search" name="search" id="searc-basic" value="" data-mini="true" class="search_box" placeholder="RSS検索ワードを入力してください。" onchange="searchFeed(this.value);" />
-        </div>
+        <div data-role="content">
+	        <div class="search_frame" >
+	            <input type="search" name="search" id="searc-basic" value="" data-mini="true"
+	             class="search_box" placeholder="RSS検索ワードを入力してください。" onchange="searchFeed(this.value);" />
+	        </div>
         {# == ↑検索ボックス ========== #}
 
         {# == ↓フィード情報  ========== #}
-        <div data-role="content">
             <ul data-role="listview" data-divider-theme="e" data-inset="true"
                 data-filter="false" id="feedUL" class="feed_list_ul">
             </ul>
