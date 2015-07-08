@@ -13,8 +13,7 @@ function searchFeed(searchTxt) {
     }
     if ( searchTxt.match(/^(http|https)\:\/\/.+/) ) {
         // 検索テキストがURLである為、そのデータを取得
-        var feed = new google.feeds.Feed(searchTxt);
-        feed.load(addFeedFromUrl);
+        google.feeds.lookupFeed(searchTxt, addFeedFromUrl);
     } else {
         // Google RSS検索
         google.feeds.findFeeds(searchTxt, dispFeed);
@@ -24,12 +23,24 @@ function searchFeed(searchTxt) {
 // 取得結果 (Google Feed.load)
 function addFeedFromUrl(result) {
     if (!result.error){
-        //alert("title: " + result.feed.title);
-        $("#searc-basic").val("");
-        finishLoadingEffect();    // addFeed()内でもくるくる開始してるので先に終了させる
-        addFeed(result.feed.link, result.feed.title, "");
+        if (result.url != null) {
+            var feed = new google.feeds.Feed(result.url);
+            feed.load(function (result){
+                if (!result.error){
+	                //alert("title: " + result.feed.title);
+			        $("#searc-basic").val("");
+			        finishLoadingEffect();    // addFeed()内でもくるくる開始してるので先に終了させる
+			        addFeed(result.feed.feedUrl, result.feed.title, "");
+                } else {
+                    alert("フィードの追加に失敗しました。暫くしてから再度お試しください。");
+                }
+            });
+        } else {
+            alert("フィードが存在しません。正しいURLか検索キーワードを入力してください。");
+            finishLoadingEffect();
+        }
     } else {
-        alert("フィードの追加に失敗しました。正しいURLか検索キーワードを入力してください。。");
+        alert("フィードの追加に失敗しました。暫くしてから再度お試しください。");
 //        var errMsg = "feed情報取得でエラー:["+ result.error.code + ":" + result.error.message +"]";
 //        alert(errMsg);
 //        log.warn(errMsg);
