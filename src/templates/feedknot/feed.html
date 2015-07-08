@@ -142,7 +142,7 @@
                  <input type="hidden" id="feed_id" name="feed_id" value="" />
                  {% csrf_token %}
             </form>
-            <ul id="feed-list" data-role="listview" data-divider-theme="e" data-inset="true" data-filter="true">
+            <ul id="feed-list" data-role="listview" data-divider-theme="e" data-inset="true" data-filter="false">
             {% for feed in feed_list %}
                 <li data-theme="c" class="ui-li-feed">
                     <div width="100%">

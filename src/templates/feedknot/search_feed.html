@@ -54,7 +54,7 @@
         {# == ↓フィード情報  ========== #}
         <div data-role="content">
             <ul data-role="listview" data-divider-theme="e" data-inset="true"
-                data-filter="true" id="feedUL" class="feed_list_ul">
+                data-filter="false" id="feedUL" class="feed_list_ul">
             </ul>
             <form id="feed_form" action="{% url 'feed_add' box_id %}" method="POST">
                 <input type="hidden" id="url" name="url" value="" />
