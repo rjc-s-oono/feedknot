@@ -108,10 +108,30 @@
         });
     }
 
-
+	// ページ飛ぶ
+    function pageNowJump() {
+    	location.reload();
+    }
 
 //-->
+
 </script>
+
+
+<style type="text/css">
+<!--
+.ui-listview-filter {width: 200px;}
+-->
+
+.filter_pos_change{
+    position: absolute;
+    top: 40px;
+    width: 130px;
+    height: 30px;
+    right: 0px;
+}
+</style>
+
 {% endblock %}
 {# == ↑ジャバスクリプト部分 ====================================== #}
 
@@ -158,15 +178,14 @@
                  {% csrf_token %}
             </form>
 
-            <ul data-role="listview" data-divider-theme="e" data-inset="true" data-filter="true" id="feedUL">
-            {% for article in article_list %}
-                {% if article.read_flg %}
-                    <li>
-                {% endif %}
-                {% if not article.read_flg %}
-                    <li id="li_new_{{article.id}}" style="background-image: linear-gradient( #ffefaa,#ffe155 );background:#fff8dc;border: 1px solid #f4c63f;font-weight:normal;">
-                {% endif %}
 
+            <div class="filter_pos_change">
+                  <a onclick="pageNowJump();" style="width:110px;" rel="external" data-transition="fade" data-role="button" data-icon="refresh">再更新</a>
+            </div>
+
+            <ul data-role="listview" data-divider-theme="e" data-inset="true" data-filter="true" data-filter-class="test" id="feedUL">
+            {% for article in article_list %}
+                <li data-theme="c">
                     <a target="_blank" href="{{article.article_address}}" onclick="readingCheck({{article.id}})">
                         <div class="ui-grid-b">
                         {% if not article.read_flg %}
@@ -195,6 +214,9 @@
                     </a>
                     <input type="hidden" id="pub_year" value="{{article.pub_date|date:"Y" }}" />
                     <input type="hidden" id="pub_month" value="{{article.pub_date|date:"M"}}" />
+
+
+
                 </li>
             {% endfor %}
             </ul>
