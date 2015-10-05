@@ -6,7 +6,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.utils import simplejson
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from box.models import Box
 from feed.models import Article, Feed
@@ -60,9 +60,20 @@ def index(request):
             box_name = "ボックスが登録されていません。"
             article_list = []
 
+
+    paginator = Paginator(article_list, 10)
+    page = request.GET.get('page')
+
+    try:
+        wk_list = paginator.page(page)
+    except PageNotAnInteger:
+        wk_list = paginator.page(1)
+    except EmptyPage:
+        wk_list = paginator.page(paginator.num_pages)
+
     param = {'box_name' : box_name,
              'box_list' : box_list,
-             'article_list' : article_list}
+             'article_list' : wk_list}
 
     return render(request,
                   'feedknot/main.html',
