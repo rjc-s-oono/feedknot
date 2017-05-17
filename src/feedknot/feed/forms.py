@@ -4,8 +4,6 @@ from django import forms
 class AddFeedForm(forms.Form):
 
     url = forms.URLField(max_length = 255)
-    title = forms.CharField(max_length=100)
-    className = forms.CharField(required=False)
 
 class DeleteFeedForm(forms.Form):
 
