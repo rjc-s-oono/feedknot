@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import logging
 import feedparser
 from time import mktime
 from datetime import datetime
@@ -6,6 +7,8 @@ from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
 from box.models import Box
+
+logger = logging.getLogger('application')
 
 class Feed(models.Model):
     box = models.ForeignKey(Box, verbose_name=u'ボックスID', db_column='box_id', related_name='feed_box')
@@ -43,6 +46,10 @@ class Feed(models.Model):
         # 現在日時取得
         now = datetime.now()
 
+        # フィードを取得
+        fdp = feedparser.parse(self.rss_address)
+
+        self.feed_name = fdp.feed.title
         self.create_date = now
         self.updated_date = now
         self.del_flg = False
@@ -79,8 +86,17 @@ class Feed(models.Model):
 
             dt = datetime.fromtimestamp(mktime(published_parsed) + 32400, tz)
 
+            logger.debug("last_take_date: %s, published_parsed: %s" % (ltd, dt));
+
             if ltd < dt:
-                Article.objects.create(feed_id=self.id ,box_id=self.box_id ,user_id=self.user_id ,site_title=stitle,article_title=title,article_address=link,pub_date=dt)
+                try:
+                    article = Article.objects.get(feed_id=self.id, box_id=self.box_id ,user_id=self.user_id, article_address=link, del_flg=False)
+                    article.article_title = title
+                    article.pub_date = dt
+                    article.edit_article()
+                except Article.DoesNotExist:
+                    # 記事アドレスが同じ既存データがない場合は、記事を新規作成
+                    Article.objects.create(feed_id=self.id ,box_id=self.box_id ,user_id=self.user_id ,site_title=stitle,article_title=title,article_address=link,pub_date=dt)
 
             if self.last_take_date < dt:
                 self.last_take_date = dt
@@ -125,10 +141,16 @@ class Article(models.Model):
             )
 
     def mark_read_article(self):
-
         # 現在日時取得
         now = datetime.now()
 
         self.read_flg = True
+        self.updated_date = now
+        self.save()
+
+    def edit_article(self):
+        # 現在日時取得
+        now = datetime.now()
+
         self.updated_date = now
         self.save()

@@ -1,7 +1,3 @@
-
-// フィード検索機能 ロード
-google.load("feeds", "1");
-
 // ダイアログを開く
 function dialog(dialogName){
     $("<a href='" + dialogName + "' data-rel='dialog'></a>").click().remove();
