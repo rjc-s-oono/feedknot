@@ -40,10 +40,10 @@ urlpatterns = patterns('',
     url(r'^box/delete/$', 'box.views.del_box', name='box_delete'),
 
     url(r'^box/(?P<box_id>\d+)/feed/list/$', 'feed.views.feed_list', name='feed_list'),
-    url(r'^box/(?P<box_id>\d+)/feed/search/$', 'feed.views.search_feed', name='feed_search'),
+    url(r'^box/(?P<box_id>\d+)/feed/setting/$', 'feed.views.feed_setting', name='feed_setting'),
     url(r'^box/(?P<box_id>\d+)/feed/add/$', 'feed.views.add_feed', name='feed_add'),
-    url(r'^box/(?P<box_id>\d+)/feed/edit/$', 'feed.views.get_feeds', name='feed_edit'),
-    url(r'^box/(?P<box_id>\d+)/feed/change_box/$', 'feed.views.change_box', name='feed_change_box'),
+    #url(r'^box/(?P<box_id>\d+)/feed/edit/$', 'feed.views.get_feeds', name='feed_edit'),
+    #url(r'^box/(?P<box_id>\d+)/feed/change_box/$', 'feed.views.change_box', name='feed_change_box'),
     url(r'^box/(?P<box_id>\d+)/feed/delete/$', 'feed.views.del_feed', name='feed_delete'),
 
     url(r'^error/$', 'common.views.err', name='common_error'),

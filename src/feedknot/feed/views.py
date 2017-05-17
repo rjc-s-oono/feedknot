@@ -25,8 +25,6 @@ def main(request):
     user = request.user
     logger.debug("user_id: %s" % (user.id))
 
-
-
     # ユーザの全ボックス取得
     box_list = Box.objects.filter(user=user).order_by('box_priority')
     page = request.GET.get('page')
@@ -53,8 +51,6 @@ def main(request):
             box_name = "ボックスが登録されていません。"
             article_list = []
 
-
-
     paginator = Paginator(article_list, 10)
     page = request.GET.get('page')
 
@@ -64,8 +60,6 @@ def main(request):
         wk_list = paginator.page(1)
     except EmptyPage:
         wk_list = paginator.page(paginator.num_pages)
-
-
 
     param = {'box_name' : box_name,
              'box_list' : box_list,
@@ -102,7 +96,6 @@ def main_select_box(request, box_id):
     except EmptyPage:
         wk_list = paginator.page(paginator.num_pages)
 
-
     param = {'box_name' : box_name,
              'article_list' : wk_list,
              'box_list' : box_list}
@@ -135,7 +128,7 @@ def feed_list(request, box_id):
                   param)
 
 @login_required
-def search_feed(request, box_id):
+def feed_setting(request, box_id):
 
     try:
         box = Box.objects.get(id=box_id, user=request.user, del_flg=False)
@@ -143,7 +136,7 @@ def search_feed(request, box_id):
         raise Http404
 
     return render(request,
-                  'feedknot/search_feed.html',
+                  'feedknot/feed_setting.html',
                   {'box_id':box.id})
 
 # フィード追加(ajax)
@@ -154,8 +147,6 @@ def add_feed(request, box_id):
     add_feed_form.is_valid()
 
     rss_address = add_feed_form.cleaned_data['url']
-    title = add_feed_form.cleaned_data['title']
-    class_name = add_feed_form.cleaned_data['className']
 
     try:
         # ボックス取得
@@ -177,7 +168,6 @@ def add_feed(request, box_id):
         feed = Feed(
             box = box,
             user = request.user,
-            feed_name = title,
             rss_address = rss_address,
             feed_priority = 3,
             last_take_date = today,
@@ -188,14 +178,7 @@ def add_feed(request, box_id):
         # フィードの登録失敗
         return HttpResponse(simplejson.dumps({'result': 'regist feed faild.'}, ensure_ascii=False), mimetype='application/json')
 
-
-
-
-    # タグを一時的に削除
-    # のちのちdivかなんかのメッセージウィンドウで表示すると思うので、その時に消します
-    #title = re.sub(r'</*[bBuU]>', '', title)
-
-    res = simplejson.dumps({'result': 'success', 'title': title, 'className': class_name}, ensure_ascii=False)
+    res = simplejson.dumps({'result': 'success', 'title': feed.feed_name}, ensure_ascii=False)
 
     return HttpResponse(res, mimetype='application/json')
 

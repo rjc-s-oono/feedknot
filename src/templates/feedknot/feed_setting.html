@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {# == ↓タイトル部分 ====================================== #}
-{% block title %}&nbsp;|&nbsp;フィード検索{% endblock %}
+{% block title %}&nbsp;|&nbsp;フィード設定{% endblock %}
 {# == ↑タイトル部分 ====================================== #}
 
 {# == ↓スタイルシート部分 ====================================== #}
@@ -45,7 +45,7 @@
             </div>
 
             {# タイトル #}
-            <h1 id="title">フィード検索</h1>
+            <h1 id="title">フィード設定</h1>
 
             <div class="ui-btn-right" style="top: 0px;">
                 {# 戻るボタン #}
@@ -64,8 +64,12 @@
         {# == ↓検索ボックス ========== #}
         <div data-role="content">
 	        <div class="search_frame" >
-	            <input type="search" name="search" id="searc-basic" value="" data-mini="true"
-	             class="search_box" placeholder="RSS検索ワードを入力してください。" onchange="searchFeed(this.value);" />
+	            <input type="text" name="rss-url" id="rss-url" value="" data-mini="true"
+	             placeholder="フィードのURL(.xml, .rss, .rdx等)を入力してください" />
+	            <div align="right">
+	                <a href="javascript:void(0);" id="addFeedBtn" data-role="button" data-inline="true"
+                     data-icon="add" data-theme="e" rel="external">登録</a>
+                </div>
 	        </div>
         {# == ↑検索ボックス ========== #}
 
@@ -75,8 +79,6 @@
             </ul>
             <form id="feed_form" action="{% url 'feed_add' box_id %}" method="POST">
                 <input type="hidden" id="url" name="url" value="" />
-                <input type="hidden" id="title" name="title" value="" />
-                <input type="hidden" id="className" name="className" value="" />
                 {% csrf_token %}
             </form>
         </div>
